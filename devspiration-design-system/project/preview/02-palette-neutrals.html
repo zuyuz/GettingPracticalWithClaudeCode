@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Neutrals</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 16px; background: var(--ds-paper); }
+  .row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .swatch {
+    aspect-ratio: 1/1.05;
+    border-radius: var(--ds-radius-md);
+    padding: 10px 12px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    box-shadow: var(--ds-shadow-1);
+    border: 1px solid rgba(0,0,0,.06);
+  }
+  .swatch .name { font-weight: 700; font-size: 12px; letter-spacing: -0.01em; }
+  .swatch .hex  { font-family: var(--ds-font-mono); font-size: 10px; opacity: .75; margin-top: 2px; }
+</style>
+</head><body>
+<div class="row">
+  <div class="swatch" style="background:#FFFFFF; color:#303030;">
+    <div class="name">Paper</div><div class="hex">#FFFFFF</div>
+  </div>
+  <div class="swatch" style="background:#F5F5F5; color:#303030;">
+    <div class="name">Mist</div><div class="hex">#F5F5F5</div>
+  </div>
+  <div class="swatch" style="background:#E6E6E6; color:#303030;">
+    <div class="name">Line</div><div class="hex">#E6E6E6</div>
+  </div>
+  <div class="swatch" style="background:#5A5A5A; color:#fff; border-color: transparent;">
+    <div class="name">Ink-2</div><div class="hex">#5A5A5A</div>
+  </div>
+  <div class="swatch" style="background:#303030; color:#fff; border-color: transparent;">
+    <div class="name">Ink</div><div class="hex">#303030</div>
+  </div>
+</div>
+</body></html>

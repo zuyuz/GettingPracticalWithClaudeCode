@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Slide backgrounds</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 16px; background: var(--ds-paper); font-family: var(--ds-font-sans); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stage { aspect-ratio: 16/9; border-radius: 12px; position: relative; overflow: hidden; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; }
+  .stage.light { background: #FFFFFF; border: 1px solid var(--ds-line); color: var(--ds-ink); }
+  .stage.dark  { background: var(--ds-ink); color: #fff; }
+  .stage img { position: absolute; }
+  .stage .a { right: -30px; bottom: -30px; height: 80%; }
+  .h { font-family: var(--ds-font-display); font-weight: 700; font-size: 18px; letter-spacing: -0.02em; line-height: 1.1; max-width: 60%; z-index: 1; }
+  .e { font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--ds-blue); font-weight: 700; }
+  .wm { font-size: 10px; opacity: .65; z-index: 1; }
+</style>
+</head><body>
+<div class="grid">
+  <div class="stage light">
+    <div><div class="e">Background · paper</div><div class="h">Headline on white</div></div>
+    <div class="wm">devspiration</div>
+    <img class="a" src="../assets/brand-objects/3d-a-light.png">
+  </div>
+  <div class="stage dark">
+    <div><div class="e">Background · ink</div><div class="h" style="color:#fff">Headline on dark</div></div>
+    <div class="wm">devspiration</div>
+    <img class="a" src="../assets/brand-objects/3d-a-dark.png">
+  </div>
+</div>
+</body></html>

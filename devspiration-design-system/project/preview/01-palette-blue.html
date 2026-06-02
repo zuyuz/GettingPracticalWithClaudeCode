@@ -1,0 +1,32 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Primary blue</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 16px; background: var(--ds-paper); }
+  .row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .swatch {
+    aspect-ratio: 16/7;
+    border-radius: var(--ds-radius-md);
+    padding: 14px 16px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    box-shadow: var(--ds-shadow-1);
+  }
+  .swatch .name { font-weight: 700; font-size: 13px; letter-spacing: -0.01em; }
+  .swatch .hex  { font-family: var(--ds-font-mono); font-size: 11px; opacity: .8; }
+  .swatch .role { font-size: 11px; opacity: .8; line-height: 1.35; }
+</style>
+</head><body>
+<div class="row">
+  <div class="swatch" style="background:#1B9CF8; color:#fff;">
+    <div><div class="name">Blue</div><div class="role">Primary brand · CTAs · 3D props</div></div>
+    <div class="hex">#1B9CF8</div>
+  </div>
+  <div class="swatch" style="background:#0023FF; color:#fff;">
+    <div><div class="name">Electric blue</div><div class="role">Links · hot accents · deepest shadows</div></div>
+    <div class="hex">#0023FF</div>
+  </div>
+  <div class="swatch" style="background:#8ACFF5; color:#1A4566;">
+    <div><div class="name">Soft blue</div><div class="role">Tints · chart fills · soft backgrounds</div></div>
+    <div class="hex">#8ACFF5</div>
+  </div>
+</div>
+</body></html>

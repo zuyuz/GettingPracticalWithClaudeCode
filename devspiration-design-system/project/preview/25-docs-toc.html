@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Docs · TOC + breadcrumbs</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 16px 22px; background: var(--ds-paper); font-family: var(--ds-font-sans); }
+  .crumb { font-size: 11px; color: var(--ds-ink-3); margin-bottom: 12px; display: flex; gap: 6px; }
+  .crumb a { color: var(--ds-ink-3); text-decoration: none; }
+  .crumb .sep { color: var(--ds-line-strong); }
+  .row { display: grid; grid-template-columns: 1fr 200px; gap: 32px; align-items: start; }
+  .h { font-size: 11px; text-transform: uppercase; letter-spacing: .12em; font-weight: 700; color: var(--ds-ink-3); margin-bottom: 10px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  .toc a { display: block; padding: 4px 0 4px 10px; border-left: 2px solid var(--ds-line); color: var(--ds-ink-3); font-size: 12px; text-decoration: none; }
+  .toc a.on { color: var(--ds-blue); border-left-color: var(--ds-blue); font-weight: 700; }
+  .toc .sub a { padding-left: 22px; }
+  .body p { font-size: 14px; line-height: 1.6; color: var(--ds-ink); margin: 0 0 10px; }
+  .body h2 { font-size: 18px; margin: 0 0 6px; font-weight: 700; letter-spacing: -0.01em; }
+</style></head>
+<body>
+  <div class="crumb"><a>Guide</a><span class="sep">/</span><a>Foundations</a><span class="sep">/</span><span>Colors</span></div>
+  <div class="row">
+    <div class="body">
+      <h2>Colors</h2>
+      <p>Three blues, two neutrals — and two background modes only. The system never grades into off-whites or coloured tints.</p>
+      <p style="color:var(--ds-ink-2);font-size:13px;">Read the full reference in <code style="font-family:var(--ds-font-mono);background:var(--ds-mist);padding:1px 5px;border-radius:3px;">colors_and_type.css</code>.</p>
+    </div>
+    <div class="toc">
+      <div class="h">On this page</div>
+      <ul>
+        <li><a class="on">Overview</a></li>
+        <li><a>Primary blue</a></li>
+        <li class="sub"><a>Soft variants</a></li>
+        <li><a>Neutrals</a></li>
+        <li><a>Semantic</a></li>
+      </ul>
+    </div>
+  </div>
+</body></html>

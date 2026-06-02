@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Devspiration · sample slides</title>
+  <link rel="stylesheet" href="../colors_and_type.css">
+  <link rel="stylesheet" href="../motion.css">
+  <style>
+    /* ───────── Deck-level tokens ─────────── */
+    deck-stage {
+      --slide-width: 1920px;
+      --slide-height: 1080px;
+    }
+
+    /* deck-stage children are <section> slides; size them to the stage */
+    deck-stage > section {
+      width: 1920px;
+      height: 1080px;
+      position: relative;
+      overflow: hidden;
+      background: var(--ds-paper);
+      color: var(--ds-ink);
+      font-family: var(--ds-font-sans);
+    }
+    deck-stage > section.dark { background: var(--ds-ink); color: var(--ds-paper); }
+
+    /* ───────── Reusable slide chrome ─────── */
+    .wm {
+      position: absolute;
+      left: 96px; bottom: 60px;
+      font-weight: 800;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+      color: var(--ds-ink);
+      opacity: .55;
+    }
+    .dark .wm { color: var(--ds-paper); opacity: .7; }
+    .pg {
+      position: absolute;
+      right: 96px; bottom: 60px;
+      font-family: var(--ds-font-mono);
+      font-size: 22px;
+      color: var(--ds-ink-3);
+    }
+    .dark .pg { color: rgba(255,255,255,.55); }
+
+    .eyebrow {
+      font-weight: 700;
+      font-size: 26px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--ds-blue);
+    }
+
+    /* Brand-prop placement helpers */
+    .prop { position: absolute; pointer-events: none; user-select: none; }
+    .prop-tr { right: -120px; top: -120px; }
+    .prop-br { right: -160px; bottom: -180px; }
+    .prop-bl { left: -200px; bottom: -120px; }
+    .prop-tl { left: -120px; top: -120px; }
+
+    /* ───────── Slide 1 — Title ─────────── */
+    .s-title { padding: 200px 0 0 200px; }
+    .s-title h1 {
+      font-family: var(--ds-font-display);
+      font-weight: 800;
+      font-size: 160px;
+      letter-spacing: -0.03em;
+      line-height: .95;
+      margin: 0;
+      max-width: 1280px;
+      text-wrap: balance;
+    }
+    .s-title .kicker {
+      font-weight: 700;
+      font-size: 32px;
+      color: var(--ds-blue);
+      letter-spacing: -0.01em;
+      margin-bottom: 56px;
+    }
+    .s-title .sub {
+      font-size: 36px;
+      color: var(--ds-ink-2);
+      margin-top: 48px;
+      max-width: 900px;
+      line-height: 1.4;
+    }
+    .s-title .prop img { width: 1100px; }
+
+    /* ───────── Slide 2 — Agenda ─────────── */
+    .s-agenda { padding: 160px 200px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .s-agenda .lead h2 {
+      font-family: var(--ds-font-display); font-weight: 800; font-size: 96px;
+      letter-spacing: -0.02em; line-height: 1; margin: 24px 0 0;
+    }
+    .s-agenda ol {
+      counter-reset: ag; padding: 0; margin: 0; list-style: none;
+      display: grid; gap: 36px;
+    }
+    .s-agenda li {
+      counter-increment: ag;
+      display: grid; grid-template-columns: 80px 1fr; gap: 24px;
+      align-items: baseline;
+      padding-bottom: 32px;
+      border-bottom: 2px solid var(--ds-line);
+    }
+    .s-agenda li::before {
+      content: counter(ag, decimal-leading-zero);
+      font-family: var(--ds-font-mono);
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--ds-blue);
+    }
+    .s-agenda li b {
+      font-weight: 700;
+      font-size: 40px;
+      letter-spacing: -0.01em;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .s-agenda li span {
+      font-size: 22px;
+      color: var(--ds-ink-2);
+      line-height: 1.4;
+    }
+
+    /* ───────── Slide 3 — Section divider ─────────── */
+    .s-section { display: flex; align-items: center; padding: 0 200px; }
+    .s-section .eyebrow { color: var(--ds-blue); margin-bottom: 32px; }
+    .s-section h2 {
+      font-family: var(--ds-font-display); font-weight: 800;
+      font-size: 220px; letter-spacing: -0.03em; line-height: .92;
+      margin: 0;
+      max-width: 1300px;
+    }
+    .s-section .num {
+      font-family: var(--ds-font-mono);
+      font-size: 200px; font-weight: 400;
+      color: rgba(255,255,255,.12);
+      position: absolute;
+      left: 200px; top: 120px;
+      line-height: 1;
+    }
+    .s-section .prop img { width: 1200px; }
+
+    /* ───────── Slide 4 — Content + Visual ─────────── */
+    .s-content { padding: 160px 200px; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 80px; align-items: center; }
+    .s-content h2 {
+      font-family: var(--ds-font-display); font-weight: 800;
+      font-size: 88px; letter-spacing: -0.02em; line-height: 1.0; margin: 24px 0 40px;
+    }
+    .s-content p {
+      font-size: 28px; line-height: 1.55; color: var(--ds-ink-2);
+      max-width: 720px; margin: 0 0 32px;
+    }
+    .s-content .bullets { list-style: none; padding: 0; margin: 40px 0 0; display: grid; gap: 22px; }
+    .s-content .bullets li {
+      display: grid; grid-template-columns: 40px 1fr; gap: 16px;
+      align-items: baseline;
+      font-size: 26px; color: var(--ds-ink);
+    }
+    .s-content .bullets li::before {
+      content: ""; display: inline-block; width: 14px; height: 14px;
+      background: var(--ds-blue); border-radius: 999px;
+      transform: translateY(4px);
+    }
+    .s-content .visual {
+      aspect-ratio: 1/1;
+      background: var(--ds-mist);
+      border-radius: 32px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .s-content .visual img { width: 88%; }
+
+    /* ───────── Slide 5 — Stats ─────────── */
+    .s-stats { padding: 140px 200px; display: grid; grid-template-rows: auto 1fr; gap: 96px; }
+    .s-stats h2 {
+      font-family: var(--ds-font-display); font-weight: 800;
+      font-size: 88px; letter-spacing: -0.02em; line-height: 1; margin: 16px 0 0;
+      max-width: 1300px;
+    }
+    .s-stats .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; align-content: center; }
+    .s-stats .stat {
+      background: var(--ds-mist); border-radius: 24px;
+      padding: 40px 36px;
+      display: flex; flex-direction: column; gap: 16px;
+      min-height: 340px; justify-content: space-between;
+    }
+    .s-stats .stat .num {
+      font-family: var(--ds-font-display);
+      font-weight: 800;
+      font-size: 140px;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: var(--ds-blue);
+    }
+    .s-stats .stat .num .unit { font-size: 64px; color: var(--ds-ink-2); margin-left: 4px; }
+    .s-stats .stat .lbl {
+      font-size: 22px; line-height: 1.4; color: var(--ds-ink-2);
+    }
+    .s-stats .stat .tag {
+      font-size: 14px; letter-spacing: .14em; text-transform: uppercase;
+      font-weight: 700; color: var(--ds-blue);
+    }
+
+    /* ───────── Slide 6 — Quote ─────────── */
+    .s-quote { padding: 180px 240px; display: grid; grid-template-rows: auto 1fr auto; }
+    .s-quote .mark {
+      font-family: var(--ds-font-display); font-weight: 800;
+      font-size: 240px; line-height: .8;
+      color: var(--ds-blue);
+    }
+    .s-quote blockquote {
+      font-family: var(--ds-font-display); font-weight: 700;
+      font-size: 88px; letter-spacing: -0.02em; line-height: 1.1;
+      max-width: 1440px;
+      margin: 24px 0 0;
+      text-wrap: balance;
+    }
+    .s-quote .cite { display: flex; align-items: center; gap: 24px; margin-top: 64px; }
+    .s-quote .cite .avatar {
+      width: 80px; height: 80px; border-radius: 999px;
+      background: linear-gradient(135deg,#1B9CF8,#8ACFF5);
+      flex: none;
+    }
+    .s-quote .cite .name { font-weight: 700; font-size: 26px; }
+    .s-quote .cite .role { font-size: 20px; color: var(--ds-ink-3); margin-top: 2px; }
+    .s-quote .prop img { width: 600px; }
+
+    /* ───────── Slide 7 — Chart ─────────── */
+    .s-chart { padding: 140px 200px; display: grid; grid-template-rows: auto 1fr; gap: 56px; }
+    .s-chart h2 {
+      font-family: var(--ds-font-display); font-weight: 800; font-size: 72px;
+      letter-spacing: -0.02em; line-height: 1; margin: 16px 0 0; max-width: 1100px;
+    }
+    .s-chart .body { display: grid; grid-template-columns: 1.4fr 1fr; gap: 96px; align-items: center; }
+    .s-chart svg { width: 100%; height: 460px; }
+    .s-chart .legend { display: grid; gap: 24px; }
+    .s-chart .legend .row { display: grid; grid-template-columns: 24px 1fr auto; align-items: center; gap: 16px; }
+    .s-chart .legend .sw { width: 20px; height: 20px; border-radius: 6px; }
+    .s-chart .legend .name { font-size: 26px; font-weight: 700; }
+    .s-chart .legend .v { font-family: var(--ds-font-mono); font-size: 22px; color: var(--ds-ink-2); }
+    .s-chart .legend .note { font-size: 18px; color: var(--ds-ink-3); margin-top: 24px; line-height: 1.5; max-width: 460px; }
+
+    /* ───────── Slide 8 — Closing ─────────── */
+    .s-close { padding: 160px 200px 200px; display: grid; grid-template-rows: auto 1fr auto; row-gap: 64px; }
+    .s-close h2 {
+      font-family: var(--ds-font-display); font-weight: 800;
+      font-size: 220px; letter-spacing: -0.03em; line-height: .95; margin: 32px 0 0;
+    }
+    .s-close .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; align-self: end; }
+    .s-close .card {
+      background: var(--ds-mist); border-radius: 20px; padding: 32px;
+      display: grid; gap: 20px;
+      min-height: 200px;
+    }
+    .s-close .card img { width: 56px; height: 56px; }
+    .s-close .card b { font-weight: 700; font-size: 26px; letter-spacing: -0.01em; }
+    .s-close .card span { font-size: 18px; color: var(--ds-ink-2); line-height: 1.45; }
+
+    /* Speaker notes target ID required by deck-stage */
+  </style>
+</head>
+<body>
+  <deck-stage>
+
+    <!-- 1 Title -->
+    <section class="s-title" data-screen-label="01 Title" data-comment-anchor="955d163246-section">
+      <div class="kicker" data-comment-anchor="a95864b976-div">From the marketing team</div>
+      <h1>Building decks<br>the Devspiration way.</h1>
+      <p class="sub">A short, opinionated guide to staying on brand without slowing down — the same rules every deck on this template follows.</p>
+      <div class="prop prop-br"><img src="../assets/brand-objects/3d-asterisk-blue.png" alt=""></div>
+      <span class="wm">devspiration</span>
+      <span class="pg">01 / 08</span>
+    </section>
+
+    <!-- 2 Agenda -->
+    <section class="s-agenda" data-screen-label="02 Agenda">
+      <div class="lead">
+        <div class="eyebrow">Agenda</div>
+        <h2>Four things to<br>keep in mind.</h2>
+        <p style="font-size:24px;color:var(--ds-ink-2);margin-top:40px;max-width:520px;line-height:1.5;">Each section maps to a slide template — pick the right one, fill it in, ship it.</p>
+      </div>
+      <ol>
+        <li><div><b>Voice & tone</b><span>Direct, helpful, calm. Sentence case everywhere.</span></div></li>
+        <li><div><b>Colors & type</b><span>Two backgrounds, one blue, one type family.</span></div></li>
+        <li><div><b>3D props</b><span>One per slide, bleeding past the edge.</span></div></li>
+        <li><div><b>Layout</b><span>Headline left, prop diagonal, generous margins.</span></div></li>
+      </ol>
+      <span class="wm">devspiration</span>
+      <span class="pg">02 / 08</span>
+    </section>
+
+    <!-- 3 Section divider -->
+    <section class="s-section dark" data-screen-label="03 Section divider">
+      <span class="num">01</span>
+      <div style="z-index:2">
+        <div class="eyebrow">Foundations</div>
+        <h2>The brand,<br>in plain words.</h2>
+      </div>
+      <div class="prop prop-br" style="right:-220px;bottom:-260px;">
+        <img src="../assets/brand-objects/3d-a-dark.png" alt="">
+      </div>
+      <span class="wm">devspiration</span>
+      <span class="pg">03 / 08</span>
+    </section>
+
+    <!-- 4 Content + visual -->
+    <section class="s-content" data-screen-label="04 Content + visual">
+      <div>
+        <div class="eyebrow">02 · Imagery</div>
+        <h2>One prop,<br>one slide.</h2>
+        <p>The 3D library does the heavy lifting. A single prop per slide — cropped past the edge — gives every page a strong visual anchor without crowding the copy.</p>
+        <ul class="bullets">
+          <li>Cobalt-blue plastic or clear glass</li>
+          <li>3/4 view, never head-on</li>
+          <li>Soft contact shadow underneath</li>
+          <li>Always bleeding past one edge</li>
+        </ul>
+      </div>
+      <div class="visual">
+        <img src="../assets/brand-objects/3d-cloud-glass.png" alt="">
+      </div>
+      <span class="wm">devspiration</span>
+      <span class="pg">04 / 08</span>
+    </section>
+
+    <!-- 5 Stats -->
+    <section class="s-stats" data-screen-label="05 Stats">
+      <div>
+        <div class="eyebrow">By the numbers</div>
+        <h2>Consistency, measured.</h2>
+      </div>
+      <div class="grid">
+        <div class="stat">
+          <div class="tag">Time saved</div>
+          <div class="num">12<span class="unit">×</span></div>
+          <div class="lbl">faster to assemble a new deck than starting from a blank file.</div>
+        </div>
+        <div class="stat">
+          <div class="tag">On-brand</div>
+          <div class="num">98<span class="unit">%</span></div>
+          <div class="lbl">of slides land within tolerance on the brand-review pass.</div>
+        </div>
+        <div class="stat">
+          <div class="tag">Reuse</div>
+          <div class="num">8</div>
+          <div class="lbl">core layouts cover every deck shipped this quarter.</div>
+        </div>
+        <div class="stat">
+          <div class="tag">Props</div>
+          <div class="num">10</div>
+          <div class="lbl">3D objects in the prop library — pick one, place it, move on.</div>
+        </div>
+      </div>
+      <span class="wm">devspiration</span>
+      <span class="pg">05 / 08</span>
+    </section>
+
+    <!-- 6 Quote -->
+    <section class="s-quote" data-screen-label="06 Quote">
+      <div class="eyebrow">In their words</div>
+      <div>
+        <div class="mark">“</div>
+        <blockquote>A deck shouldn't feel like a deck. It should feel like the brand spoke.</blockquote>
+        <div class="cite">
+          <div class="avatar"></div>
+          <div>
+            <div class="name">Marta Shanaida</div>
+            <div class="role">Marketing · Devspiration</div>
+          </div>
+        </div>
+      </div>
+      <div class="prop" style="right:-100px;bottom:-100px;">
+        <img src="../assets/brand-objects/3d-sphere-blue.png" alt="" style="width:520px;">
+      </div>
+      <span class="wm">devspiration</span>
+      <span class="pg">06 / 08</span>
+    </section>
+
+    <!-- 7 Chart -->
+    <section class="s-chart" data-screen-label="07 Chart">
+      <div>
+        <div class="eyebrow">Color usage</div>
+        <h2>You can use these colors<br>for your graphics.</h2>
+      </div>
+      <div class="body">
+        <svg viewBox="0 0 760 460" preserveAspectRatio="none">
+          <!-- baseline -->
+          <line x1="0" y1="430" x2="760" y2="430" stroke="#E6E6E6" stroke-width="2"/>
+          <!-- bars -->
+          <g>
+            <rect x="40"  y="120" width="100" height="310" rx="12" fill="#1B9CF8"/>
+            <rect x="180" y="60"  width="100" height="370" rx="12" fill="#0023FF"/>
+            <rect x="320" y="200" width="100" height="230" rx="12" fill="#8ACFF5"/>
+            <rect x="460" y="170" width="100" height="260" rx="12" fill="#303030"/>
+            <rect x="600" y="240" width="100" height="190" rx="12" fill="#F5F5F5" stroke="#E6E6E6"/>
+          </g>
+          <!-- labels -->
+          <g font-family="Nunito" font-size="20" fill="#5A5A5A" font-weight="700" text-anchor="middle">
+            <text x="90"  y="455">Blue</text>
+            <text x="230" y="455">Electric</text>
+            <text x="370" y="455">Soft</text>
+            <text x="510" y="455">Ink</text>
+            <text x="650" y="455">Mist</text>
+          </g>
+        </svg>
+        <div class="legend">
+          <div class="row"><span class="sw" style="background:#1B9CF8"></span><span class="name">Blue</span><span class="v">#1B9CF8</span></div>
+          <div class="row"><span class="sw" style="background:#0023FF"></span><span class="name">Electric</span><span class="v">#0023FF</span></div>
+          <div class="row"><span class="sw" style="background:#8ACFF5"></span><span class="name">Soft</span><span class="v">#8ACFF5</span></div>
+          <div class="row"><span class="sw" style="background:#303030"></span><span class="name">Ink</span><span class="v">#303030</span></div>
+          <div class="row"><span class="sw" style="background:#F5F5F5;border:1px solid #E6E6E6"></span><span class="name">Mist</span><span class="v">#F5F5F5</span></div>
+          <p class="note">Charts always seat dark text on the mist/soft fields and white text on ink/blue.</p>
+        </div>
+      </div>
+      <span class="wm">devspiration</span>
+      <span class="pg">07 / 08</span>
+    </section>
+
+    <!-- 8 Closing -->
+    <section class="s-close" data-screen-label="08 Closing">
+      <div class="eyebrow">Thank you</div>
+      <h2>Now go<br>ship the deck.</h2>
+      <div class="grid">
+        <div class="card">
+          <img src="../assets/icons/icon-book.svg" alt="">
+          <b>Read the README</b>
+          <span>One page covers voice, layout, and props.</span>
+        </div>
+        <div class="card">
+          <img src="../assets/icons/icon-document.svg" alt="">
+          <b>Use the layouts</b>
+          <span>Eight templates, pick the closest match.</span>
+        </div>
+        <div class="card">
+          <img src="../assets/icons/icon-flag.svg" alt="">
+          <b>Drop a flag</b>
+          <span>Anything off-brand? Ping marketing in Slack.</span>
+        </div>
+        <div class="card">
+          <img src="../assets/icons/icon-lightning.svg" alt="">
+          <b>Ship faster</b>
+          <span>The system stays out of your way.</span>
+        </div>
+      </div>
+      <span class="wm">devspiration</span>
+      <span class="pg">08 / 08</span>
+    </section>
+
+  </deck-stage>
+
+  <script src="deck-stage.js"></script>
+</body>
+</html>

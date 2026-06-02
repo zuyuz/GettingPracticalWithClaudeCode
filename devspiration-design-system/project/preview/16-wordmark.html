@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Wordmark</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 22px; background: var(--ds-paper); font-family: var(--ds-font-sans); display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .card { border-radius: 12px; padding: 22px; display: flex; align-items: center; justify-content: center; min-height: 130px; }
+  .card.light { background: #fff; border: 1px solid var(--ds-line); }
+  .card.dark  { background: var(--ds-ink); }
+  .card.blue  { background: var(--ds-blue); }
+  .card.mist  { background: var(--ds-mist); }
+  img { max-height: 64px; max-width: 80%; }
+  .lbl { position: absolute; font-size: 10px; font-family: var(--ds-font-mono); color: var(--ds-ink-3); margin: -10px 0 0 12px; }
+</style>
+</head><body>
+  <div class="card light"><img src="../assets/logo/devspiration-wordmark.png" alt="devspiration"></div>
+  <div class="card mist"><img src="../assets/logo/devspiration-wordmark.png" alt="devspiration"></div>
+  <div class="card dark"><img src="../assets/logo/devspiration-wordmark.png" alt="devspiration" style="filter: invert(1) hue-rotate(180deg);"></div>
+  <div class="card blue"><img src="../assets/logo/devspiration-wordmark.png" alt="devspiration" style="filter: invert(1) hue-rotate(180deg);"></div>
+</body></html>

@@ -1,0 +1,46 @@
+name: Deploy presentation to GitHub Pages
+
+# Publishes the whole repo tree verbatim so the deck's relative paths
+# (presentation/ -> ../devspiration-design-system/) resolve unchanged.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Least privilege: only what the official Pages deploy needs.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time; let an in-flight production deploy finish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # '.' = repo root, keeping presentation/ and the design system siblings.
+          path: '.'
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

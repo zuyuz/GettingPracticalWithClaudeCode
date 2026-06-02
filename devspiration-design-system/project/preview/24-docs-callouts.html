@@ -1,0 +1,19 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Docs · callouts</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 14px 18px; background: var(--ds-paper); font-family: var(--ds-font-sans); display: grid; gap: 8px; }
+  .co { display: grid; grid-template-columns: 22px 1fr; gap: 10px; padding: 10px 12px; border-radius: 8px; border: 1px solid; font-size: 12.5px; line-height: 1.5; }
+  .co .ic { width: 18px; height: 18px; border-radius: 4px; color: #fff; font-weight: 700; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; }
+  .co .t  { font-weight: 700; font-size: 12px; }
+  .co .p  { color: var(--ds-ink-2); }
+  .info  { background: #F4F9FE; border-color: #DCE9F6; } .info  .ic { background: var(--ds-blue); }
+  .tip   { background: #F1FAF4; border-color: #D5EFE0; } .tip   .ic { background: #2BB673; }
+  .warn  { background: #FEF8EC; border-color: #F6E6BD; } .warn  .ic { background: #C28800; }
+  .danger{ background: #FDF2F2; border-color: #F4D2D2; } .danger.ic, .danger .ic { background: #E04545; }
+</style></head>
+<body>
+  <div class="co info"><span class="ic">i</span><div><div class="t">Info</div><span class="p">Neutral context.</span></div></div>
+  <div class="co tip"><span class="ic">✓</span><div><div class="t">Tip</div><span class="p">Best-practice nudge.</span></div></div>
+  <div class="co warn"><span class="ic">!</span><div><div class="t">Warn</div><span class="p">Easy to miss.</span></div></div>
+  <div class="co danger"><span class="ic">×</span><div><div class="t">Danger</div><span class="p">Hard rule — read.</span></div></div>
+</body></html>

@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1280">
+  <title>Devspiration · interactive playground</title>
+  <link rel="stylesheet" href="../colors_and_type.css">
+  <link rel="stylesheet" href="../motion.css">
+  <link rel="stylesheet" href="../playground.css">
+  <style>
+    body { background: var(--ds-mist); font-family: var(--ds-font-sans); color: var(--ds-ink); }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+    .hdr { display: flex; align-items: end; justify-content: space-between; margin-bottom: 36px; }
+    .hdr h1 { font-family: var(--ds-font-display); font-size: 36px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; margin: 0; }
+    .hdr p { font-size: 16px; color: var(--ds-ink-2); max-width: 540px; margin: 8px 0 0; line-height: 1.55; }
+    .back { font-size: 13px; font-weight: 700; color: var(--ds-blue); text-decoration: none; }
+    .back:hover { text-decoration: underline; }
+
+    .section { margin-top: 64px; }
+    .section > h2 {
+      font-family: var(--ds-font-display);
+      font-size: 22px; font-weight: 700; letter-spacing: -0.015em;
+      margin: 0 0 8px;
+    }
+    .section > p {
+      font-size: 14.5px; color: var(--ds-ink-2);
+      margin: 0 0 20px;
+      max-width: 640px;
+      line-height: 1.55;
+    }
+
+    /* layout for "terminal on its own" demos */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .pg-terminal, .pg-editor, .pg-browser {
+      height: 360px;
+    }
+
+    /* page preview (inside browser frame) */
+    .demo-page {
+      padding: 36px 40px;
+      background: var(--pg-bg-light);
+      min-height: 100%;
+    }
+    .demo-page .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--pg-accent); }
+    .demo-page h1 { font-family: var(--ds-font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.02em; margin: 8px 0 10px; line-height: 1.1; }
+    .demo-page p { font-size: 14px; color: var(--ds-ink-2); line-height: 1.55; max-width: 520px; }
+    .demo-page .cta {
+      display: inline-block;
+      margin-top: 16px;
+      background: var(--pg-accent);
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+    .demo-page .preview {
+      margin-top: 24px;
+      padding: 16px;
+      background: var(--ds-mist);
+      border-radius: 12px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .demo-page .preview img { width: 60px; }
+    .demo-page .preview .meta { font-size: 12.5px; color: var(--ds-ink-2); }
+    .demo-page .preview .meta b { font-size: 14px; color: var(--ds-ink); display: block; margin-bottom: 2px; }
+
+  </style>
+</head>
+<body data-deck-active>
+
+  <div class="wrap">
+
+    <div class="hdr">
+      <div>
+        <h1 class="m-rise m-hero">Playground</h1>
+        <p class="m-rise" style="transition-delay:120ms">Interactive elements for presentations — terminals you can run, flows that step between contexts, code that updates as you click. Built on the same brand tokens as everything else.</p>
+      </div>
+      <a class="back m-fade-in" href="../presentation/index.html">← back to the guide</a>
+    </div>
+
+    <!-- ─────────────── Terminal demo ─────────────── -->
+    <section class="section m-rise">
+      <h2>Terminal · runnable</h2>
+      <p>Press <b>Run</b> to play the scripted Claude Code session. The component types each command at human cadence, then streams output. Press <b>Reset</b> to clear.</p>
+
+      <div class="grid-2">
+
+        <div class="pg-frame theme-dark pg-terminal" data-script="claude-greet">
+          <div class="pg-titlebar">
+            <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+            <div class="title">claude · ~/my-project</div>
+            <div class="meta">zsh</div>
+          </div>
+          <div class="pg-body"></div>
+          <div class="pg-controls">
+            <button class="pg-run"><span class="ico"></span>Run</button>
+            <button class="pg-reset">Reset</button>
+            <span class="status">idle</span>
+          </div>
+        </div>
+
+        <div class="pg-frame theme-dark pg-terminal" data-script="devspiration-init">
+          <div class="pg-titlebar">
+            <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+            <div class="title">terminal · ~/decks</div>
+            <div class="meta">bash</div>
+          </div>
+          <div class="pg-body"></div>
+          <div class="pg-controls">
+            <button class="pg-run"><span class="ico"></span>Run</button>
+            <button class="pg-reset">Reset</button>
+            <span class="status">idle</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ─────────────── Flow ─────────────── -->
+    <section class="section m-rise">
+      <h2>Flow · browser → terminal → editor → result</h2>
+      <p>Step a viewer through a complete workflow with one component. Each frame is its own window — the active frame fades in, the rest dim and lift away. Use <b>Next</b> or click any step in the header to jump.</p>
+
+      <div class="pg-flow" id="flow-1">
+        <div class="steps">
+          <div class="step"><span class="num">01</span><span class="lbl">Brief</span><span class="bar"></span></div>
+          <div class="step"><span class="num">02</span><span class="lbl">Run Claude Code</span><span class="bar"></span></div>
+          <div class="step"><span class="num">03</span><span class="lbl">Inspect output</span><span class="bar"></span></div>
+          <div class="step"><span class="num">04</span><span class="lbl">Preview live</span><span class="bar"></span></div>
+        </div>
+
+        <div class="stage">
+
+          <!-- Panel 1 · Browser brief -->
+          <div class="panel pg-frame theme-light pg-browser" data-caption="Find the brief in your team docs. Copy the requirements.">
+            <div class="pg-titlebar">
+              <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+              <div class="title">Notion · Brief</div>
+              <div class="meta"></div>
+            </div>
+            <div class="pg-tabs">
+              <div class="tab on"><span class="fav"></span>Q4 deck — brief</div>
+              <div class="tab"><span class="fav" style="background:#8ACFF5"></span>Brand guide</div>
+              <div class="tab"><span class="fav" style="background:#2BB673"></span>Linear · DSGN-412</div>
+            </div>
+            <div class="pg-addressbar">
+              <div class="nav">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><polyline points="21 3 21 8 16 8"/></svg>
+              </div>
+              <div class="url"><svg class="lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span class="scheme">notion.so/</span>devspiration/Q4-deck-brief</div>
+            </div>
+            <div class="pg-body" style="padding:0;">
+              <div class="demo-page">
+                <div class="eyebrow">Brief · Q4 narrative</div>
+                <h1>Eight slides on why decks are software</h1>
+                <p>Audience: design + eng all-hands. Tone: confident, calm. Use the brand prop library (1 prop per slide). Open with the asterisk; close with the icons grid. Sentence case throughout.</p>
+                <div class="preview">
+                  <img src="../assets/brand-objects/3d-asterisk-blue.png">
+                  <div class="meta"><b>Brand prop · asterisk-blue</b>Suggested opener · bleed past top-right edge.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel 2 · Terminal claude code -->
+          <div class="panel pg-frame theme-dark pg-terminal"
+               data-caption="Drop into Claude Code. Paste the brief. Watch it scaffold every slide."
+               data-script="claude-greet"
+               data-autorun="true">
+            <div class="pg-titlebar">
+              <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+              <div class="title">claude · ~/decks/q4</div>
+              <div class="meta">zsh</div>
+            </div>
+            <div class="pg-body"></div>
+            <div class="pg-controls">
+              <button class="pg-run"><span class="ico"></span>Run again</button>
+              <button class="pg-reset">Reset</button>
+              <span class="status">idle</span>
+            </div>
+          </div>
+
+          <!-- Panel 3 · Editor -->
+          <div class="panel pg-frame theme-dark pg-editor" data-caption="Drop into the file Claude wrote. Tweak copy in place, lift props.">
+            <div class="pg-titlebar">
+              <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+              <div class="title">slides/index.html — VS Code</div>
+              <div class="meta">html · 137 lines</div>
+            </div>
+            <div class="pg-body">
+              <div class="gutter">
+<span class="ln">42</span><span class="ln">43</span><span class="ln">44</span><span class="ln">45</span><span class="ln">46</span><span class="ln">47</span><span class="ln">48</span><span class="ln">49</span><span class="ln">50</span><span class="ln">51</span><span class="ln">52</span>
+              </div>
+              <div class="code">
+<span class="ln"><span class="pg-tk-com">&lt;!-- 1 Title --&gt;</span></span>
+<span class="ln"><span class="pg-tk-tag">&lt;section</span> <span class="pg-tk-attr">class</span>=<span class="pg-tk-str">"s-title"</span><span class="pg-tk-tag">&gt;</span></span>
+<span class="ln add">  <span class="pg-tk-tag">&lt;div</span> <span class="pg-tk-attr">class</span>=<span class="pg-tk-str">"kicker"</span><span class="pg-tk-tag">&gt;</span>From the marketing team<span class="pg-tk-tag">&lt;/div&gt;</span></span>
+<span class="ln add">  <span class="pg-tk-tag">&lt;h1&gt;</span>Eight slides on why<span class="pg-tk-tag">&lt;br&gt;</span>decks are software.<span class="pg-tk-tag">&lt;/h1&gt;</span></span>
+<span class="ln del">  <span class="pg-tk-tag">&lt;h1&gt;</span>Untitled deck<span class="pg-tk-tag">&lt;/h1&gt;</span></span>
+<span class="ln">  <span class="pg-tk-tag">&lt;p</span> <span class="pg-tk-attr">class</span>=<span class="pg-tk-str">"sub"</span><span class="pg-tk-tag">&gt;</span>For the design + eng all-hands.<span class="pg-tk-tag">&lt;/p&gt;</span></span>
+<span class="ln cur">  <span class="pg-tk-tag">&lt;img</span> <span class="pg-tk-attr">src</span>=<span class="pg-tk-str">"../assets/brand-objects/3d-asterisk-blue.png"</span><span class="pg-tk-tag">&gt;</span></span>
+<span class="ln"><span class="pg-tk-tag">&lt;/section&gt;</span></span>
+<span class="ln"></span>
+<span class="ln"><span class="pg-tk-com">// 2 Agenda</span></span>
+<span class="ln"><span class="pg-tk-tag">&lt;section</span> <span class="pg-tk-attr">class</span>=<span class="pg-tk-str">"s-agenda"</span><span class="pg-tk-tag">&gt;…</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel 4 · Browser preview -->
+          <div class="panel pg-frame theme-light pg-browser" data-caption="Open the file in a browser. Eight slides, on-brand, ready to ship.">
+            <span class="corner-tag">Live</span>
+            <div class="pg-titlebar">
+              <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+              <div class="title">Eight slides on why decks are software</div>
+              <div class="meta"></div>
+            </div>
+            <div class="pg-tabs">
+              <div class="tab on"><span class="fav"></span>q4-deck.html</div>
+              <div class="tab"><span class="fav" style="background:#8ACFF5"></span>brand-guide</div>
+            </div>
+            <div class="pg-addressbar">
+              <div class="nav">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><polyline points="21 3 21 8 16 8"/></svg>
+              </div>
+              <div class="url"><svg class="lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span class="scheme">file://</span>~/decks/q4/index.html</div>
+            </div>
+            <div class="pg-body" style="padding:0; position:relative; overflow:hidden;">
+              <div class="demo-page" style="position:relative; height:100%; overflow:hidden;">
+                <div class="eyebrow">From the marketing team</div>
+                <h1>Eight slides<br>on why decks are software.</h1>
+                <p>For the design + eng all-hands. Audience knows what shipping feels like — meet them there.</p>
+                <a class="cta">Open deck →</a>
+                <img src="../assets/brand-objects/3d-asterisk-blue.png" style="position:absolute; right:-60px; bottom:-90px; width:240px;" class="m-float">
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="nav">
+          <div class="caption">Find the brief in your team docs. Copy the requirements.</div>
+          <div class="ctl">
+            <button class="prev">← Prev</button>
+            <button class="next primary">Next →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────── Static editor sample ─────────────── -->
+    <section class="section m-rise">
+      <h2>Editor frame · static</h2>
+      <p>Use the same chrome without scripting for code walkthroughs. Diff colors are built in.</p>
+
+      <div class="pg-frame theme-dark pg-editor" style="height: 340px;">
+        <div class="pg-titlebar">
+          <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+          <div class="title">motion.css — Devspiration DS</div>
+          <div class="meta">css · 188 lines</div>
+        </div>
+        <div class="pg-body">
+          <div class="gutter">
+<span class="ln">38</span><span class="ln">39</span><span class="ln">40</span><span class="ln">41</span><span class="ln">42</span><span class="ln">43</span><span class="ln">44</span><span class="ln">45</span><span class="ln">46</span>
+          </div>
+          <div class="code">
+<span class="ln"><span class="pg-tk-com">/* Glass-settle entrance — the brand default */</span></span>
+<span class="ln"><span class="pg-tk-fn">.m-rise</span> <span class="pg-tk-tag">{</span></span>
+<span class="ln">  <span class="pg-tk-key">opacity</span>: <span class="pg-tk-num">0</span>;</span>
+<span class="ln">  <span class="pg-tk-key">transform</span>: <span class="pg-tk-fn">translateY</span>(<span class="pg-tk-num">24px</span>);</span>
+<span class="ln"><span class="pg-tk-tag">}</span></span>
+<span class="ln"><span class="pg-tk-tag">[</span><span class="pg-tk-attr">data-deck-active</span><span class="pg-tk-tag">] </span><span class="pg-tk-fn">.m-rise</span> <span class="pg-tk-tag">{</span></span>
+<span class="ln cur">  <span class="pg-tk-key">opacity</span>: <span class="pg-tk-num">1</span>;</span>
+<span class="ln cur">  <span class="pg-tk-key">transform</span>: <span class="pg-tk-key">none</span>;</span>
+<span class="ln"><span class="pg-tk-tag">}</span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="../playground.js"></script>
+</body>
+</html>

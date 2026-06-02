@@ -1,0 +1,267 @@
+/* ============================================================
+   Devspiration Design System — Motion
+   ============================================================
+   Brand ethos: glassy and quiet. Settle, never bounce.
+   Use this alongside colors_and_type.css.
+
+   Two layers of motion:
+     1) ENTRANCE  — runs once when a slide becomes active. The
+        deck stage toggles [data-deck-active] on the live <section>
+        on every slidechange, and these classes key off that.
+     2) AMBIENT   — runs continuously (slow float, slow spin) on
+        decorative elements. Independent of slide state.
+
+   Stagger system:
+     Add `data-stagger` to a container. Direct children get a
+     delay = (index × var(--stagger-step, 80ms)) so a list of
+     items lifts in sequence. Override per-container with
+     style="--stagger-step: 120ms".
+
+   Reduce-motion respected globally at the bottom of this file.
+   ============================================================ */
+
+:root {
+  /* easing — keep in sync with colors_and_type.css */
+  --m-ease-glass:   cubic-bezier(.16, 1, .3, 1);     /* default for entrances */
+  --m-ease-out:     cubic-bezier(.2, .8, .2, 1);
+  --m-ease-in-out:  cubic-bezier(.65, 0, .35, 1);
+
+  /* durations */
+  --m-dur-quick:  280ms;
+  --m-dur:        560ms;
+  --m-dur-hero:   900ms;
+  --m-dur-amb:    14s;     /* default ambient cycle */
+
+  /* stagger */
+  --stagger-step: 80ms;
+
+  /* travel — keep small. The brand never throws things across the slide. */
+  --m-rise:    24px;
+  --m-rise-sm: 12px;
+  --m-rise-lg: 48px;
+}
+
+/* ============================================================
+   ENTRANCE — pre-state
+   Off-screen visually until the slide becomes active. We use
+   `will-change: transform, opacity` so the compositor can promote
+   layers ahead of time.
+   ============================================================ */
+
+[class*="m-"] {
+  will-change: transform, opacity, filter;
+}
+
+/* Pre-state: invisible / displaced / blurred. */
+.m-fade-in    { opacity: 0; }
+.m-rise       { opacity: 0; transform: translateY(var(--m-rise)); }
+.m-rise-sm    { opacity: 0; transform: translateY(var(--m-rise-sm)); }
+.m-rise-lg    { opacity: 0; transform: translateY(var(--m-rise-lg)); }
+.m-drop       { opacity: 0; transform: translateY(calc(-1 * var(--m-rise))); }
+.m-from-left  { opacity: 0; transform: translateX(-32px); }
+.m-from-right { opacity: 0; transform: translateX(32px); }
+.m-scale-in   { opacity: 0; transform: scale(.92); transform-origin: center; }
+.m-zoom-in    { opacity: 0; transform: scale(1.08); transform-origin: center; }
+.m-blur-in    { opacity: 0; filter: blur(12px); }
+.m-mask       { clip-path: inset(0 100% 0 0); }   /* wipes from left */
+.m-rise-prop  { opacity: 0; transform: translateY(80px) rotate(-6deg); }  /* big 3D props */
+
+/* ============================================================
+   ENTRANCE — active state
+   When the parent <section> gets [data-deck-active], descendants
+   animate to their final position with the glass-settle ease.
+   ============================================================ */
+
+[data-deck-active] [class*="m-"] {
+  transition:
+    opacity   var(--m-dur)      var(--m-ease-glass),
+    transform var(--m-dur)      var(--m-ease-glass),
+    filter    var(--m-dur)      var(--m-ease-glass),
+    clip-path var(--m-dur-hero) var(--m-ease-glass);
+}
+
+[data-deck-active] .m-fade-in,
+[data-deck-active] .m-rise,
+[data-deck-active] .m-rise-sm,
+[data-deck-active] .m-rise-lg,
+[data-deck-active] .m-drop,
+[data-deck-active] .m-from-left,
+[data-deck-active] .m-from-right,
+[data-deck-active] .m-scale-in,
+[data-deck-active] .m-zoom-in,
+[data-deck-active] .m-blur-in,
+[data-deck-active] .m-rise-prop {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+[data-deck-active] .m-mask { clip-path: inset(0 0 0 0); }
+
+/* Hero variant — slower, larger, more deliberate. Use for slide titles. */
+.m-hero { transition-duration: var(--m-dur-hero) !important; }
+
+/* Quick variant — for chrome elements like page-numbers and wordmarks. */
+.m-quick { transition-duration: var(--m-dur-quick) !important; }
+
+/* ============================================================
+   STAGGER — children of [data-stagger]
+   ============================================================ */
+[data-stagger] > *           { transition-delay: 0ms; }
+[data-deck-active] [data-stagger] > *:nth-child(1)  { transition-delay: calc(0  * var(--stagger-step)); }
+[data-deck-active] [data-stagger] > *:nth-child(2)  { transition-delay: calc(1  * var(--stagger-step)); }
+[data-deck-active] [data-stagger] > *:nth-child(3)  { transition-delay: calc(2  * var(--stagger-step)); }
+[data-deck-active] [data-stagger] > *:nth-child(4)  { transition-delay: calc(3  * var(--stagger-step)); }
+[data-deck-active] [data-stagger] > *:nth-child(5)  { transition-delay: calc(4  * var(--stagger-step)); }
+[data-deck-active] [data-stagger] > *:nth-child(6)  { transition-delay: calc(5  * var(--stagger-step)); }
+[data-deck-active] [data-stagger] > *:nth-child(7)  { transition-delay: calc(6  * var(--stagger-step)); }
+[data-deck-active] [data-stagger] > *:nth-child(8)  { transition-delay: calc(7  * var(--stagger-step)); }
+[data-deck-active] [data-stagger] > *:nth-child(9)  { transition-delay: calc(8  * var(--stagger-step)); }
+[data-deck-active] [data-stagger] > *:nth-child(10) { transition-delay: calc(9  * var(--stagger-step)); }
+[data-deck-active] [data-stagger] > *:nth-child(11) { transition-delay: calc(10 * var(--stagger-step)); }
+[data-deck-active] [data-stagger] > *:nth-child(12) { transition-delay: calc(11 * var(--stagger-step)); }
+
+/* A "head-start" offset for the whole container.
+   <ul data-stagger style="--stagger-offset: 240ms"> */
+[data-deck-active] [data-stagger] > * {
+  transition-delay: calc(var(--stagger-offset, 0ms) + (var(--i, 0) * var(--stagger-step)));
+}
+
+/* ============================================================
+   AMBIENT — loops independently of slide state
+   ============================================================ */
+
+@keyframes m-float {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50%      { transform: translateY(-14px) rotate(.4deg); }
+}
+@keyframes m-float-soft {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+@keyframes m-spin-slow {
+  to { transform: rotate(360deg); }
+}
+@keyframes m-pulse-soft {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .82; }
+}
+@keyframes m-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+@keyframes m-caret {
+  0%, 49%   { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+.m-float        { animation: m-float       var(--m-dur-amb)         var(--m-ease-in-out) infinite; }
+.m-float-soft   { animation: m-float-soft  calc(var(--m-dur-amb)*.6) var(--m-ease-in-out) infinite; }
+.m-spin-slow    { animation: m-spin-slow   60s linear infinite; }
+.m-pulse-soft   { animation: m-pulse-soft  3.4s var(--m-ease-in-out) infinite; }
+.m-caret        { animation: m-caret 1.1s steps(2, end) infinite; }
+
+/* Shimmer/skeleton bar — useful for loading states in product mockups. */
+.m-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(48,48,48,.06) 0%,
+    rgba(48,48,48,.14) 50%,
+    rgba(48,48,48,.06) 100%
+  );
+  background-size: 200% 100%;
+  animation: m-shimmer 1.8s linear infinite;
+}
+
+/* ============================================================
+   SLIDE-TO-SLIDE TRANSITION
+   The previous slide cross-fades out; the new slide content
+   lifts in via the entrance classes above. Driven by
+   <deck-stage>'s visibility toggling — no JS needed beyond
+   the data attribute that the wire-up script writes.
+   ============================================================ */
+deck-stage > section {
+  transition: opacity 380ms var(--m-ease-glass);
+}
+deck-stage > section:not([data-deck-active]) {
+  opacity: 0;
+}
+
+/* ============================================================
+   NUMBER COUNTER
+   Pair with the counter-up.js helper (see deck wire-up) for
+   animated stat numbers. The .m-counter class just opts the
+   element in; the JS reads data-target.
+   ============================================================ */
+.m-counter { font-variant-numeric: tabular-nums; }
+
+/* ============================================================
+   PROP MICRO-MOTION
+   For 3D-prop entrances. Brand props are large and heavy-looking;
+   a tiny rotation + drift on entry sells the "settle" feeling.
+   ============================================================ */
+.m-prop-settle {
+  opacity: 0;
+  transform: translate(40px, 40px) rotate(-4deg) scale(.96);
+}
+[data-deck-active] .m-prop-settle {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity   var(--m-dur-hero) var(--m-ease-glass),
+    transform calc(var(--m-dur-hero) + 200ms) var(--m-ease-glass);
+}
+
+/* ============================================================
+   TEXT REVEAL — line-by-line
+   Wrap each visual line in a <span class="m-line"> inside a
+   container with .m-lines. The container clips, lines rise.
+   ============================================================ */
+.m-lines { display: inline-block; }
+.m-line {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.m-line > span {
+  display: inline-block;
+  transform: translateY(110%);
+  transition: transform var(--m-dur-hero) var(--m-ease-glass);
+}
+[data-deck-active] .m-line > span { transform: none; }
+
+/* ============================================================
+   HOVER & PRESS — for buttons / cards in interactive contexts
+   ============================================================ */
+.m-press {
+  transition: transform 80ms var(--m-ease-out),
+              box-shadow var(--m-dur-quick) var(--m-ease-out);
+}
+.m-press:active { transform: scale(.98); }
+
+.m-hover-lift {
+  transition: transform var(--m-dur-quick) var(--m-ease-out),
+              box-shadow var(--m-dur-quick) var(--m-ease-out);
+}
+.m-hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ds-shadow-3, 0 12px 32px rgba(48,48,48,.10));
+}
+
+/* ============================================================
+   REDUCED MOTION — collapse everything to a soft fade only
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 200ms !important;
+  }
+  .m-rise, .m-rise-sm, .m-rise-lg, .m-drop,
+  .m-from-left, .m-from-right,
+  .m-scale-in, .m-zoom-in, .m-rise-prop,
+  .m-prop-settle, .m-line > span {
+    transform: none !important;
+  }
+  .m-blur-in { filter: none !important; }
+  .m-mask { clip-path: none !important; }
+}

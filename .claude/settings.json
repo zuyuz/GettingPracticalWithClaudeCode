@@ -1,0 +1,44 @@
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(ls:*)",
+      "Bash(cp:*)",
+      "Bash(curl -I:*)",
+      "Bash(curl -sI:*)",
+      "Bash(curl --head:*)",
+      "Bash(start presentation/index.html)",
+      "Bash(start .)",
+      "Bash(find:*)",
+      "Bash(file:*)",
+      "Bash(wc:*)",
+      "Bash(stat:*)",
+      "Read(./**)",
+      "Read(./.claude/**)",
+      "Read(./devspiration-design-system/**)",
+      "Read(./presentation/**)",
+      "Read(./content/**)",
+      "Read(./wireframes/**)",
+      "Write(./presentation/**)",
+      "Write(./content/**)",
+      "Write(./wireframes/**)",
+      "Write(./CLAUDE.md)",
+      "Write(./.claude/**)",
+      "Edit(./presentation/**)",
+      "Edit(./content/**)",
+      "Edit(./wireframes/**)",
+      "Edit(./CLAUDE.md)"
+    ],
+    "defaultMode": "auto"
+  },
+  "enabledPlugins": {
+    "csharp-lsp@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "ralph-loop@claude-plugins-official": true
+  },
+  "teammateMode": "in-process",
+  "agentPushNotifEnabled": true
+}

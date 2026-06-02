@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Pills & chips</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 22px; background: var(--ds-paper); font-family: var(--ds-font-sans); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .pill { font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 999px; display: inline-flex; gap: 6px; align-items: center; }
+  .blue { background: var(--ds-blue); color: #fff; }
+  .soft { background: #E7F3FD; color: #0E70B8; }
+  .ink  { background: var(--ds-ink); color: #fff; }
+  .ghost{ background: transparent; color: var(--ds-ink); border: 1px solid var(--ds-line); }
+  .success { background: #DCF3E7; color: #1A7F4D; }
+  .warning { background: #FDF3D6; color: #8A6500; }
+  .danger  { background: #FAE0E0; color: #A22424; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+</style>
+</head><body>
+<div class="row">
+  <span class="pill blue">Primary</span>
+  <span class="pill soft">Soft blue</span>
+  <span class="pill ink">Ink</span>
+  <span class="pill ghost">Ghost</span>
+</div>
+<div class="row">
+  <span class="pill success"><span class="dot"></span>Live</span>
+  <span class="pill warning"><span class="dot"></span>Draft</span>
+  <span class="pill danger"><span class="dot"></span>Blocked</span>
+</div>
+</body></html>

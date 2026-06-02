@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Buttons</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 22px; background: var(--ds-paper); font-family: var(--ds-font-sans); }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; align-items: center; }
+  .btn { font: 700 14px var(--ds-font-sans); border-radius: 12px; padding: 12px 18px; border: 0; cursor: pointer; transition: all 220ms cubic-bezier(.2,.8,.2,1); display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+  .primary { background: var(--ds-blue); color: #fff; box-shadow: 0 8px 22px rgba(27,156,248,.32); }
+  .primary:hover { background: #0E8AE3; }
+  .secondary { background: var(--ds-ink); color: #fff; }
+  .ghost { background: transparent; color: var(--ds-ink); border: 1px solid var(--ds-line); }
+  .pill { background: var(--ds-blue); color: #fff; border-radius: 999px; padding: 10px 18px; }
+  .lbl { font-family: var(--ds-font-mono); font-size: 10px; color: var(--ds-ink-3); text-align: center; margin-top: 6px; }
+</style>
+</head><body>
+<div class="grid">
+  <div><button class="btn primary">Get started</button><div class="lbl">primary</div></div>
+  <div><button class="btn secondary">View deck</button><div class="lbl">secondary</div></div>
+  <div><button class="btn ghost">Learn more</button><div class="lbl">ghost</div></div>
+  <div><button class="btn pill">Read guide →</button><div class="lbl">pill</div></div>
+</div>
+</body></html>

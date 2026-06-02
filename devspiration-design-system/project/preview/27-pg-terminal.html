@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Terminal frame</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../playground.css">
+<style>
+  body { margin: 0; padding: 14px; background: var(--ds-mist); }
+  .pg-frame { height: 280px; }
+</style></head>
+<body>
+  <div class="pg-frame theme-dark pg-terminal">
+    <div class="pg-titlebar">
+      <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+      <div class="title">claude · ~/my-project</div>
+      <div class="meta">zsh</div>
+    </div>
+    <div class="pg-body">
+<span class="pg-line"><span class="pg-prompt"></span><span class="pg-cmd">claude</span></span>
+<span class="pg-line"><span class="pg-bold pg-cl-blue">Claude Code</span>  <span class="pg-cl-dim">v1.4.2</span></span>
+<span class="pg-line"></span>
+<span class="pg-line"><span class="pg-pip green"></span><span class="pg-cmd">Ready. What are we building?</span></span>
+<span class="pg-line"><span class="pg-prompt"></span><span class="pg-cmd">help me build a landing page<span class="pg-caret"></span></span></span>
+    </div>
+    <div class="pg-controls">
+      <button class="pg-run"><span class="ico"></span>Run</button>
+      <button class="pg-reset">Reset</button>
+      <span class="status">idle</span>
+    </div>
+  </div>
+</body></html>

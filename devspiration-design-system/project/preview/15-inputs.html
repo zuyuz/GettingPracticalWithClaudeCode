@@ -1,0 +1,22 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Form inputs</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 22px; background: var(--ds-paper); font-family: var(--ds-font-sans); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  label { font-size: 11px; font-weight: 700; color: var(--ds-ink-2); letter-spacing: .04em; text-transform: uppercase; }
+  input, select { font: 400 14px var(--ds-font-sans); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--ds-line); background: #fff; color: var(--ds-ink); outline: none; transition: border 200ms ease; }
+  input:focus { border-color: var(--ds-blue); border-width: 2px; padding: 9px 11px; }
+  .check { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 14px; }
+  .box { width: 18px; height: 18px; border-radius: 6px; border: 1px solid var(--ds-line); display: inline-flex; align-items: center; justify-content: center; }
+  .box.on { background: var(--ds-blue); border-color: var(--ds-blue); }
+  .box.on::after { content: ""; width: 9px; height: 5px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg) translate(1px, -1px); }
+</style>
+</head><body>
+<div class="grid">
+  <div class="field"><label>Email</label><input value="hello@devspiration.io"></div>
+  <div class="field"><label>Project</label><input placeholder="Q4 brand refresh"></div>
+  <div class="check"><span class="box on"></span>Send me deck updates</div>
+  <div class="check"><span class="box"></span>Schedule for review</div>
+</div>
+</body></html>

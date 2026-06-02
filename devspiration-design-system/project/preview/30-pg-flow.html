@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Flow stepper</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../playground.css">
+<style>
+  body { margin: 0; padding: 14px; background: var(--ds-paper); }
+  .pg-flow { padding: 16px; }
+  .pg-flow .stage { min-height: 80px; }
+  .pg-flow .placeholder {
+    grid-area: 1/1;
+    border: 1px dashed var(--ds-line);
+    border-radius: 12px;
+    height: 90px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--ds-font-sans);
+    color: var(--ds-ink-3);
+    font-size: 13px;
+  }
+</style></head>
+<body>
+  <div class="pg-flow">
+    <div class="steps">
+      <div class="step done"><span class="num">01</span><span class="lbl">Brief</span><span class="bar"></span></div>
+      <div class="step done"><span class="num">02</span><span class="lbl">Run Claude</span><span class="bar"></span></div>
+      <div class="step on"><span class="num">03</span><span class="lbl">Inspect</span><span class="bar"></span></div>
+      <div class="step"><span class="num">04</span><span class="lbl">Preview</span><span class="bar"></span></div>
+    </div>
+    <div class="stage">
+      <div class="placeholder">Active panel slot · panels cross-fade with glass-settle</div>
+    </div>
+  </div>
+</body></html>

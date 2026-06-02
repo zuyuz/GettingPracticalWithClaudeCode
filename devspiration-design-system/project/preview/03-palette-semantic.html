@@ -1,0 +1,32 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Semantic</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 16px; background: var(--ds-paper); }
+  .row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .swatch {
+    aspect-ratio: 16/7;
+    border-radius: var(--ds-radius-md);
+    padding: 14px 16px;
+    color: #fff;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .name { font-weight: 700; font-size: 13px; }
+  .role { font-size: 11px; opacity: .85; }
+  .hex { font-family: var(--ds-font-mono); font-size: 11px; opacity: .85; }
+</style>
+</head><body>
+<div class="row">
+  <div class="swatch" style="background:#2BB673;">
+    <div><div class="name">Success</div><div class="role">Confirmation, positive deltas</div></div>
+    <div class="hex">#2BB673</div>
+  </div>
+  <div class="swatch" style="background:#F7B500; color:#3A2A00;">
+    <div><div class="name">Warning</div><div class="role">Caution, soft alerts</div></div>
+    <div class="hex">#F7B500</div>
+  </div>
+  <div class="swatch" style="background:#E04545;">
+    <div><div class="name">Danger</div><div class="role">Errors, destructive actions</div></div>
+    <div class="hex">#E04545</div>
+  </div>
+</div>
+</body></html>

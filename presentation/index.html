@@ -1,0 +1,2518 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Getting practical with Claude Code · Devspiration</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <script>
+    /* Always open on slide 1. A leftover deep-link / reload hash would otherwise
+       leave the title slide rendered behind the target slide, because the deck
+       controller marks the first slide active before it restores the hash. */
+    if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  </script>
+
+  <link rel="stylesheet" href="../devspiration-design-system/project/colors_and_type.css">
+  <link rel="stylesheet" href="../devspiration-design-system/project/motion.css">
+  <link rel="stylesheet" href="../devspiration-design-system/project/playground.css">
+
+  <!-- Preload the 11 brand-prop PNGs used across the deck -->
+  <link rel="preload" as="image" href="../devspiration-design-system/project/assets/brand-objects/3d-sphere-blue.png">
+  <link rel="preload" as="image" href="../devspiration-design-system/project/assets/brand-objects/3d-hex-blue.png">
+  <link rel="preload" as="image" href="../devspiration-design-system/project/assets/brand-objects/3d-sphere-clear.png">
+  <link rel="preload" as="image" href="../devspiration-design-system/project/assets/brand-objects/3d-a-dark.png">
+  <link rel="preload" as="image" href="../devspiration-design-system/project/assets/brand-objects/3d-donut-blue.png">
+  <link rel="preload" as="image" href="../devspiration-design-system/project/assets/brand-objects/3d-pebble-cyan.png">
+  <link rel="preload" as="image" href="../devspiration-design-system/project/assets/brand-objects/3d-asterisk-black.png">
+  <link rel="preload" as="image" href="../devspiration-design-system/project/assets/brand-objects/3d-disc-glass.png">
+  <link rel="preload" as="image" href="../devspiration-design-system/project/assets/brand-objects/3d-square-glass.png">
+  <link rel="preload" as="image" href="../devspiration-design-system/project/assets/brand-objects/3d-c-glass.png">
+  <link rel="preload" as="image" href="../devspiration-design-system/project/assets/brand-objects/3d-a-light.png">
+
+  <style>
+    /* Hide the deck while the custom element is registering — prevents
+       a flash of the first slide at authored 1920px before scale kicks in. */
+    deck-stage:not(:defined){ visibility: hidden; }
+
+    /* ───────── Deck-level stage rules ───────── */
+    deck-stage {
+      --slide-width: 1920px;
+      --slide-height: 1080px;
+    }
+    deck-stage > section {
+      width: 1920px;
+      height: 1080px;
+      position: relative;
+      overflow: hidden;
+      background: var(--ds-paper);
+      color: var(--ds-ink);
+      font-family: var(--ds-font-sans);
+    }
+    deck-stage > section.dark {
+      background: var(--ds-ink);
+      color: var(--ds-paper);
+    }
+
+    /* ───────── §1 Safe content box — one shared inner wrapper ───────── */
+    .slide > .stage-pad {
+      position: absolute;
+      left: 176px; top: 96px;
+      width: 1568px;            /* 1920 − 176 − 176 */
+      height: 788px;            /* 1080 − 96 − 196  */
+      z-index: 2;               /* always above .prop (z-index:1) */
+    }
+
+    /* ───────── §3 Shared chrome (z-index:3 — always above the prop) ───────── */
+    .wm {
+      position: absolute; left: 176px; bottom: 64px; z-index: 3;
+      font-weight: 800; font-size: 26px; letter-spacing: -0.02em;
+      color: var(--ds-ink); opacity: .60;              /* ≈ 6.0:1 */
+    }
+    .dark .wm { color: var(--ds-paper); opacity: .72; }
+
+    .pg {
+      position: absolute; right: 176px; bottom: 64px; z-index: 3;
+      font-family: var(--ds-font-mono); font-size: 22px;
+      color: var(--ds-ink-2);                          /* 6.9:1 */
+    }
+    .dark .pg { color: rgba(255,255,255,.72); }
+
+    .src {
+      position: absolute; right: 176px; bottom: 104px; z-index: 3;
+      font-family: var(--ds-font-mono); font-size: 20px;
+      color: var(--ds-ink-2);                          /* 6.9:1 */
+      max-width: 1180px; text-align: right; line-height: 1.3;
+    }
+    .src a { color: var(--ds-blue-electric); border-bottom: 1px solid currentColor; }
+    .dark .src   { color: rgba(255,255,255,.72); }
+    .dark .src a { color: var(--ds-blue); }
+
+    /* Eyebrow */
+    .eyebrow {
+      font-weight: 700; font-size: 22px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--ds-blue-electric);   /* 7.82:1 */
+    }
+    .dark .eyebrow { color: var(--ds-blue); }          /* 4.5:1 on ink */
+
+    /* ───────── §4 Prop discipline ───────── */
+    .prop { position: absolute; z-index: 1; pointer-events: none; user-select: none; }
+    .prop img { display: block; }
+    .prop-tr { right: -140px; top: -120px; }
+    .prop-br { right: -150px; bottom: -150px; }
+    .prop-bl { left: -150px; bottom: -150px; }
+    .prop-tl { left: -140px; top: -120px; }
+
+    /* ───────── §5 Inline-code rule (short tokens only) ───────── */
+    :where(.bullets, .col, .lead) code {
+      font-family: var(--ds-font-mono);
+      font-size: 0.82em;
+      padding: 1px 6px;
+      border-radius: 6px;
+      background: var(--ds-mist);
+      color: var(--ds-ink);
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      line-break: anywhere;
+    }
+    .dark :where(.bullets, .col, .lead) code {
+      background: rgba(255,255,255,.10);
+      color: var(--ds-paper);
+    }
+
+    /* ───────── Archetype 1: Title (s-title) ───────── */
+    .s-title .stage-pad { display: flex; flex-direction: column; justify-content: center; }
+    .s-title .kicker { font-weight: 700; font-size: 30px; color: var(--ds-blue-electric); margin: 0 0 40px; }
+    .s-title h1 {
+      font-family: var(--ds-font-display); font-weight: 800; font-size: 132px;
+      letter-spacing: -0.03em; line-height: .98; margin: 0; max-width: 1180px; text-wrap: balance;
+    }
+    .s-title .sub { font-size: 32px; color: var(--ds-ink-2); margin: 36px 0 0; max-width: 880px; line-height: 1.35; }
+    .s-title .prop img { width: 520px; }
+
+    /* ───────── Archetype 2: Section Divider (s-section) ───────── */
+    .s-section .stage-pad { display: flex; flex-direction: column; justify-content: center; }
+    .s-section .num {
+      position: absolute; left: 140px; top: 40px; z-index: 0;
+      font-family: var(--ds-font-mono); font-size: 320px; font-weight: 400;
+      color: rgba(255,255,255,.12); line-height: 1; pointer-events: none;
+    }
+    .s-section .content { position: relative; z-index: 2; }
+    .s-section .eyebrow { font-size: 24px; margin-bottom: 28px; }
+    .s-section h2 {
+      font-family: var(--ds-font-display); font-weight: 800; font-size: 150px;
+      letter-spacing: -0.03em; line-height: .95; margin: 0; max-width: 1240px;
+    }
+    .s-section .prop img { width: 560px; }
+
+    /* ───────── Archetype 3: Content (s-content) ───────── */
+    .s-content .stage-pad { display: flex; flex-direction: column; justify-content: center; }
+    .s-content h2 {
+      font-family: var(--ds-font-display); font-weight: 800; font-size: 72px;
+      letter-spacing: -0.02em; line-height: 1.05; margin: 20px 0 28px; max-width: 1120px;
+    }
+    .s-content .lead { font-size: 30px; color: var(--ds-ink-2); max-width: 1000px; line-height: 1.4; margin: 0 0 40px; }
+    .dark.s-content .lead { color: rgba(255,255,255,.78); }
+    .s-content .bullets { list-style: none; margin: 0; padding: 0; display: grid; gap: 24px; max-width: 1120px; }
+    .s-content .bullets li {
+      display: block; position: relative; padding-left: 34px;
+      font-size: 30px; line-height: 1.35; color: var(--ds-ink);
+    }
+    .s-content .bullets li::before {
+      content: ""; position: absolute; left: 0; top: 0.58em;
+      width: 13px; height: 13px; border-radius: 999px;
+      background: var(--ds-blue);
+    }
+    .dark.s-content .bullets li { color: var(--ds-paper); }
+    .s-content .prop img { width: 460px; }
+
+    /* ───────── Archetype 4: Content+Code (s-content-code) — §6 no-squeeze ───────── */
+    .s-content-code .stage-pad {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 660px;   /* text flexes, code is FIXED */
+      column-gap: 72px;
+      align-content: center;
+    }
+    .s-content-code .col-text { min-width: 0; }
+    .s-content-code .col-code { min-width: 0; }
+    .s-content-code h2 {
+      font-family: var(--ds-font-display); font-weight: 800; font-size: 64px;
+      letter-spacing: -0.02em; line-height: 1.05; margin: 16px 0 36px;
+    }
+    .s-content-code .bullets { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
+    .s-content-code .bullets li {
+      display: block; position: relative; padding-left: 30px;
+      font-size: 30px; line-height: 1.35; color: var(--ds-ink);
+    }
+    .s-content-code .bullets li::before {
+      content: ""; position: absolute; left: 0; top: 0.58em;
+      width: 12px; height: 12px; border-radius: 999px;
+      background: var(--ds-blue);
+    }
+    .dark.s-content-code .bullets li { color: var(--ds-paper); }
+    .s-content-code .prop img { width: 460px; }
+
+    .s-content-code .code {
+      width: 660px;
+      max-height: 560px;
+      box-sizing: border-box;
+      background: var(--ds-mist);
+      border: 1px solid var(--ds-line);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin: 0;
+      font-family: var(--ds-font-mono);
+      font-size: 22px;
+      line-height: 1.55;
+      color: var(--ds-ink);
+      white-space: pre;
+      overflow: hidden;
+    }
+    .dark .code {
+      background: rgba(255,255,255,.06);
+      color: var(--ds-paper);
+      border-color: rgba(255,255,255,.10);
+    }
+    .code .cmt { color: var(--ds-ink-2); }            /* 6.9:1 */
+    .code .kw  { color: var(--ds-blue-electric); }    /* 7.82:1 */
+    .dark .code .cmt { color: rgba(255,255,255,.62); }
+    .dark .code .kw  { color: var(--ds-blue); }
+
+    /* Stacked fallback (documented; unused in this deck) */
+    .s-content-code.stacked .stage-pad { grid-template-columns: 1fr; row-gap: 40px; }
+    .s-content-code.stacked .code { width: 100%; max-width: 1568px; }
+
+    /* ───────── Archetype 5: Two-Column Compare (s-compare) ───────── */
+    .s-compare .stage-pad { display: grid; grid-template-rows: auto 1fr; row-gap: 56px; align-content: start; }
+    .s-compare .head h2 {
+      font-family: var(--ds-font-display); font-weight: 800; font-size: 64px;
+      letter-spacing: -0.02em; line-height: 1.05; margin: 16px 0 0; max-width: 1400px;
+    }
+    .s-compare .head .lead { font-size: 30px; color: var(--ds-ink-2); max-width: 1000px; line-height: 1.4; margin: 18px 0 0; }
+    .dark .s-compare .head .lead { color: rgba(255,255,255,.78); }
+    .s-compare .cols { display: grid; grid-template-columns: 1fr 1fr; column-gap: 96px; align-content: start; }
+    .s-compare .col { min-width: 0; }
+    .s-compare .col + .col { padding-left: 96px; border-left: 1px solid var(--ds-line); margin-left: -96px; }
+    .dark .s-compare .col + .col,
+    .s-compare.dark .col + .col { border-left-color: rgba(255,255,255,.14); }
+    .s-compare .col-eyebrow {
+      font-weight: 700; font-size: 18px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--ds-ink-2); margin-bottom: 10px;        /* 6.9:1 */
+    }
+    .dark .s-compare .col-eyebrow { color: rgba(255,255,255,.72); }
+    .s-compare .col h3 { font-weight: 700; font-size: 36px; line-height: 1.1; margin: 0 0 24px; letter-spacing: -0.01em; }
+    .s-compare .col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
+    .s-compare .col li {
+      display: block; position: relative; padding-left: 29px;
+      font-size: 30px; line-height: 1.35;
+    }
+    .s-compare .col li::before {
+      content: ""; position: absolute; left: 0; top: 0.58em;
+      width: 11px; height: 11px; border-radius: 999px;
+      background: var(--ds-blue);
+    }
+    .s-compare .prop img { width: 460px; }
+
+    /* ───────── Archetype 6: Feature Highlight (s-highlight) ───────── */
+    .s-highlight .stage-pad { display: flex; flex-direction: column; justify-content: center; }
+    .s-highlight h2 {
+      font-family: var(--ds-font-display); font-weight: 800; font-size: 72px;
+      letter-spacing: -0.02em; line-height: 1.05; margin: 20px 0 36px; max-width: 1180px;
+    }
+    .s-highlight .bullets { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; max-width: 1180px; }
+    .s-highlight .bullets li {
+      display: block; position: relative; padding-left: 33px;
+      font-size: 30px; line-height: 1.4;
+    }
+    .s-highlight .bullets li b { font-weight: 700; }
+    .s-highlight .bullets li::before {
+      content: ""; position: absolute; left: 0; top: 0.62em;
+      width: 13px; height: 13px; border-radius: 999px;
+      background: var(--ds-blue);
+    }
+    .dark.s-highlight .bullets li { color: var(--ds-paper); }
+    .s-highlight .prop img { width: 460px; }
+
+    /* ───────── Archetype 7: Closing (s-close) ───────── */
+    .s-close .stage-pad { display: grid; grid-template-rows: auto auto 1fr; row-gap: 44px; align-content: start; }
+    .s-close h2 {
+      font-family: var(--ds-font-display); font-weight: 800; font-size: 132px;
+      letter-spacing: -0.03em; line-height: .98; margin: 16px 0 0;
+    }
+    .s-close .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; align-self: end; }
+    .s-close .card {
+      background: var(--ds-mist); border-radius: 20px; padding: 28px;
+      display: grid; gap: 14px; align-content: start; min-height: 196px;
+    }
+    .s-close .card img { width: 52px; height: 52px; }     /* pure ink — never blue */
+    .s-close .card b { font-weight: 700; font-size: 26px; line-height: 1.15; letter-spacing: -0.01em; }
+    .s-close .card span { font-size: 22px; color: var(--ds-ink-2); line-height: 1.4; }   /* 6.9:1 */
+    .s-close .prop img { width: 460px; }
+
+    /* ───────── Dark-slide heading color ─────────
+       The design-system base `h2 { color: var(--ds-fg) }` (ink) wins over
+       `section.dark` inheritance, so headings must be set white on dark.
+       `.dark h2` (0,1,1) beats base `h2` (0,0,1) — no !important needed. */
+    .dark h1, .dark h2, .dark h3 { color: var(--ds-paper); }
+
+    /* ───────── Chrome legibility scrim ─────────
+       Bottom-anchored props (prop-br / prop-bl on 16 slides) can sit behind
+       the wordmark / source / page number. A background-colored text-shadow
+       acts as a scrim: invisible on a plain background, a halo where chrome
+       overlaps an opaque prop. */
+    .wm, .src, .pg { text-shadow: 0 0 6px #fff, 0 0 5px #fff, 0 0 4px #fff; }
+    .dark .wm, .dark .src, .dark .pg { text-shadow: 0 0 7px #303030, 0 0 5px #303030, 0 0 4px #303030; }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SLIDE-SCALE PLAYGROUND FRAMES
+       playground.css authors the pg-* components at docs scale
+       (~12-14px fonts, ~280px frames). On the 1920×1080 stage they must
+       read from the back of a room. Everything below is an explicit
+       font/padding/height override (never transform:scale) so text stays
+       crisp under the deck's own canvas scale. Scoped to .slide so the
+       overrides also travel into the thumbnail-rail shadow clones.
+       ═══════════════════════════════════════════════════════════════ */
+
+    /* ---- Base frame: size, radius, lift ---- */
+    .slide .pg-frame {
+      --pg-radius: 18px;
+      --pg-titlebar-h: 52px;
+      height: 600px;                 /* fits the 788px stage-pad with margin */
+      box-sizing: border-box;
+      font-family: var(--ds-font-sans);
+      /* a touch more lift so the frame separates from the slide ground */
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.05) inset,
+        0 40px 90px -28px rgba(20,20,20,.30),
+        0 10px 28px -10px rgba(20,20,20,.16),
+        0 0 0 1px rgba(0,0,0,.05);
+    }
+    .slide .pg-frame.theme-dark {
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.06) inset,
+        0 40px 90px -28px rgba(0,0,0,.62),
+        0 10px 28px -10px rgba(0,0,0,.40),
+        0 0 0 1px rgba(255,255,255,.07);
+    }
+
+    /* ---- Title bar ---- */
+    .slide .pg-titlebar {
+      grid-template-columns: 96px 1fr 96px;
+      padding: 0 22px;
+      font-size: 19px;
+    }
+    .slide .pg-titlebar .lights { gap: 12px; }
+    .slide .pg-titlebar .lights span {
+      width: 17px; height: 17px;
+    }
+    .slide .pg-titlebar .title  { font-size: 19px; }
+    .slide .pg-titlebar .meta   { font-size: 16px; }
+
+    /* ---- Body (terminal + generic) ---- */
+    .slide .pg-body {
+      padding: 30px 34px;
+      font-size: 24px;
+      line-height: 1.6;
+    }
+    .slide .pg-frame.theme-light .pg-body {
+      font-size: 25px;
+      line-height: 1.5;
+    }
+    .slide .pg-line { min-height: 1.6em; }
+    /* Terminals/editors that sit in the narrower 660px s-content-code track
+       (.col-code) get a smaller body font so dense scripts fit without
+       wrapping. The wide 880px .s-visual frames keep the 24px default. */
+    .slide .col-code.pg-terminal .pg-body { font-size: 19px; line-height: 1.5; }
+    .slide .col-code.pg-editor .pg-body  { font-size: 19px; line-height: 1.6; }
+    /* Gutter shares the code's font-size so the shared 1.7em row min-height
+       resolves to the same px and the numbers line up with their rows. */
+    .slide .col-code.pg-editor .gutter { font-size: 19px; }
+    /* The legacy `.s-content-code .code` rule (for the original <pre> blocks)
+       sets white-space:pre + a fixed 660px/padding/mist background. Our
+       pg-editor `.code` div inherits class="code" and sits inside
+       s-content-code, so those rules bleed in — white-space:pre turns the
+       newlines BETWEEN our .ln block spans into real line breaks (double
+       row spacing, gutter↔code drift). Reset the editor's .code to the
+       playground defaults: block rows, no fixed width/padding/background. */
+    .slide .pg-editor .code {
+      white-space: normal;
+      width: auto; max-height: none;
+      padding: 0 28px; margin: 0;
+      background: none; border: 0; border-radius: 0;
+      font-size: inherit; line-height: inherit;
+    }
+    .slide .pg-editor .code .ln { white-space: pre; }   /* keep intra-line indentation */
+    .slide .pg-prompt { margin-right: 12px; }
+    .slide .pg-pip {
+      width: 13px; height: 13px; margin-right: 12px;
+    }
+    .slide .pg-caret {
+      width: 11px; margin-left: 3px;
+    }
+
+    /* ---- Run controls ---- */
+    .slide .pg-controls {
+      gap: 16px;
+      padding: 16px 24px;
+    }
+    .slide .pg-run {
+      gap: 12px;
+      padding: 13px 26px;
+      border-radius: 12px;
+      font-size: 20px;
+    }
+    .slide .pg-run .ico {
+      border-width: 8px 0 8px 13px;   /* scaled play triangle */
+    }
+    .slide .pg-run.running .ico {
+      width: 13px; height: 13px;
+    }
+    .slide .pg-reset {
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 18px;
+    }
+    .slide .pg-controls .status { font-size: 17px; }
+
+    /* ═══ CLAUDE CODE TUI VOCABULARY (.cc-*) — dark-theme-first; em-sized ═══ */
+    .slide .cc-tool { display:block; color:var(--pg-fg-dark); font-weight:600; }
+    /* ⏺ tool-call dot uses Claude's accent orange (intentional off-palette: matches the real CLI's signature marker for authenticity) */
+    .slide .cc-tool::before { content:"⏺"; color:#D97757; margin-right:.5em; font-weight:700; }
+    .slide .cc-tool .cc-args { color:var(--pg-fg-dim-dark); font-weight:400; }
+
+    .slide .cc-result { display:block; color:var(--pg-fg-dim-dark); padding-left:1.4em; }
+    .slide .cc-result::before { content:"⎿"; color:var(--pg-fg-dim-dark); margin-right:.5em; }
+    .slide .cc-result .cc-add { color:var(--pg-green); }
+    .slide .cc-result .cc-del { color:var(--pg-red); }
+    .slide .cc-result .cc-hint { color:var(--pg-fg-dim-dark); font-style:italic; }
+
+    .slide .cc-status { display:block; color:var(--pg-fg-dim-dark); }
+    .slide .cc-status::before { content:"✻"; color:var(--ds-blue-electric); margin-right:.5em; }
+    .slide .cc-status.done::before { color:var(--pg-green); }
+    .slide .cc-status .cc-meta { color:var(--pg-fg-dim-dark); }
+
+    .slide .cc-banner { display:block; border:1px solid var(--pg-border-dark); border-radius:10px;
+      padding:.5em .8em; margin:.1em 0 .4em; background:rgba(255,255,255,.02); color:var(--pg-fg-dark); }
+    .slide .cc-banner .cc-spark { color:var(--ds-blue-electric); margin-right:.5em; font-weight:700; }
+    .slide .cc-banner .cc-sub { display:block; color:var(--pg-fg-dim-dark); margin-top:.15em; }
+
+    .slide .cc-input { display:block; border:1px solid var(--pg-border-dark); border-radius:10px;
+      padding:.35em .7em; margin:.3em 0; color:var(--pg-fg-dark); }
+    .slide .cc-input::before { content:"> "; color:var(--ds-blue-electric); font-weight:700; }
+
+    .slide .cc-perm { display:block; border:1px solid var(--ds-blue-electric); border-radius:10px;
+      padding:.5em .8em; margin:.35em 0; background:rgba(27,156,248,.06); }
+    .slide .cc-perm .cc-q { display:block; color:var(--pg-fg-dark); font-weight:700; margin-bottom:.3em; }
+    .slide .cc-perm .cc-opt { display:block; color:var(--pg-fg-dim-dark); padding-left:1.2em; }
+    .slide .cc-perm .cc-opt.sel { color:var(--pg-fg-dark); }
+    .slide .cc-perm .cc-opt.sel::before { content:"❯ "; color:var(--ds-blue-electric); margin-left:-1.2em; font-weight:700; }
+
+    /* match the typed-command prompt to the new input glyph (overrides playground.css ❯) */
+    .slide .pg-terminal .pg-prompt::before { content:"> "; }
+
+    /* ---- Browser: tabs + address bar ---- */
+    .slide .pg-tabs { padding: 0 18px; gap: 6px; }
+    .slide .pg-tabs .tab {
+      gap: 12px;
+      padding: 13px 22px;
+      font-size: 19px;
+      border-radius: 12px 12px 0 0;
+      max-width: 320px;
+    }
+    .slide .pg-tabs .tab .fav { width: 18px; height: 18px; border-radius: 5px; }
+    .slide .pg-addressbar {
+      gap: 16px;
+      padding: 13px 22px;
+      font-size: 20px;
+    }
+    .slide .pg-addressbar .nav { gap: 10px; }
+    .slide .pg-addressbar .nav svg { width: 22px; height: 22px; }
+    .slide .pg-addressbar .url {
+      border-radius: 999px;
+      padding: 9px 22px;
+      font-size: 19px;
+      gap: 10px;
+    }
+    .slide .pg-addressbar .url .lock { width: 18px; height: 18px; }
+
+    /* ---- Browser page surface (the rendered "site" inside the frame) ---- */
+    .slide .pg-page { padding: 40px 46px; }
+
+    /* ---- Editor: gutter + code + diff rows ---- */
+    .slide .pg-editor .pg-body {
+      font-size: 23px;
+      line-height: 1.7;
+      padding: 24px 0;
+      grid-template-columns: 76px 1fr;   /* wider gutter for 2-digit lines */
+      overflow-x: hidden;                /* safety net — lines are kept short so none clip */
+    }
+    .slide .pg-editor .gutter {
+      padding-right: 20px;
+      font-size: 21px;
+    }
+    .slide .pg-editor .code { padding: 0 28px; }
+    .slide .pg-editor .code .ln { min-height: 1.7em; }
+    /* Gutter line numbers must stack (the base .ln is inline); without this
+       they run together as "12345…". Match the code rows' min-height so the
+       numbers line up with their source lines. */
+    .slide .pg-editor .gutter .ln { display: block; min-height: 1.7em; }
+
+    /* ---- Flow stepper (used standalone, full-width under the title) ---- */
+    .slide .pg-flow {
+      border-radius: 22px;
+      padding: 40px 44px;
+    }
+    .slide .pg-flow .steps { gap: 8px; margin-bottom: 34px; }
+    .slide .pg-flow .step .num { font-size: 17px; }
+    .slide .pg-flow .step .lbl { font-size: 22px; }
+    .slide .pg-flow .step .bar { height: 5px; margin-top: 12px; }
+    .slide .pg-flow .stage { min-height: 300px; }
+    .slide .pg-flow .nav { margin-top: 28px; gap: 16px; }
+    .slide .pg-flow .nav .caption { font-size: 21px; max-width: 70%; }
+    .slide .pg-flow .nav button {
+      border-radius: 12px;
+      font-size: 20px;
+      padding: 12px 24px;
+    }
+    /* Slide 23 flow panel content card */
+    .slide .pg-flow .flow-card {
+      background: #fff; border: 1px solid var(--ds-line);
+      border-radius: 16px; padding: 32px 34px;
+      min-height: 240px;
+      display: flex; flex-direction: column; justify-content: center; gap: 18px;
+    }
+    .slide .pg-flow .flow-cmd {
+      font-family: var(--ds-font-mono); font-size: 24px; font-weight: 700;
+      color: var(--ds-blue-electric);
+    }
+    .slide .pg-flow .flow-card p {
+      font-size: 24px; line-height: 1.45; color: var(--ds-ink); margin: 0;
+    }
+    .slide .pg-flow .flow-card p b { font-weight: 700; }
+
+    /* ---- Corner tag overlay (e.g. "recreation" / "localhost") ---- */
+    .slide .pg-frame .corner-tag {
+      top: 18px; right: 18px;
+      font-size: 15px;
+      padding: 5px 11px;
+      border-radius: 6px;
+      letter-spacing: .10em;
+    }
+    /* Editor frames have no addressbar/tabs, so the titlebar meta sits where
+       the corner-tag would land — drop the editor's tag below the titlebar. */
+    .slide .pg-editor .corner-tag { top: 66px; }
+
+    /* ═══════════════════════════════════════════════════════════════
+       LAYOUT MODIFIER — text left, framed visual right (.s-visual)
+       For s-highlight / s-content slides that gain a pg-* frame.
+       Mirrors the s-content-code grid: text flexes, visual is a fixed
+       track so it can never be squeezed below a legible size.
+       ═══════════════════════════════════════════════════════════════ */
+    .s-visual .stage-pad {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 880px;  /* text flexes, frame FIXED */
+      column-gap: 80px;
+      align-content: center;
+    }
+    .s-visual .col-text   { min-width: 0; align-self: center; }
+    .s-visual .col-visual { min-width: 0; align-self: center; }
+
+    /* The frame fills the fixed track width; height comes from the
+       slide-scale rule above (600px). */
+    .s-visual .col-visual .pg-frame { width: 100%; }
+
+    /* Keep the highlight/content type ramp, just trim the max-width so the
+       headline wraps inside the left column instead of running under the frame. */
+    .s-visual.s-highlight h2,
+    .s-visual.s-content   h2 { max-width: 100%; }
+    .s-visual .bullets       { max-width: 100%; }
+
+    /* ═══════════════════════════════════════════════════════════════
+       PROP RELOCATION — slides with a right-side frame move the prop to
+       bottom-left and shrink it so it clears the bottom-left wordmark.
+       (Pair with the existing .wm text-shadow scrim for legibility.)
+       ═══════════════════════════════════════════════════════════════ */
+    .s-visual .prop-bl img,
+    .has-right-frame .prop-bl img { width: 340px; }
+
+    /* ═══════════════════════════════════════════════════════════════
+       PRODUCT BADGE — identifies a slide's subject tool (e.g. Warp).
+       A small inline monochrome mark + Nunito wordmark sitting where the
+       eyebrow would; pure ink (#303030) on paper, pure paper on ink.
+       It is a badge, NOT a 3D prop — the one-prop rule is unaffected.
+       ═══════════════════════════════════════════════════════════════ */
+    .warp-badge {
+      display: inline-flex; align-items: center; gap: 14px;
+      margin-bottom: 18px;
+    }
+    .warp-badge .warp-mark { width: 40px; height: 40px; display: block; }
+    .warp-badge .warp-word {
+      font-weight: 800; font-size: 30px; letter-spacing: -0.02em;
+      color: var(--ds-ink);
+    }
+    .dark .warp-badge .warp-mark rect,
+    .dark .warp-badge .warp-mark path { stroke: var(--ds-paper); }
+    .dark .warp-badge .warp-word { color: var(--ds-paper); }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SLIDE 12 — visual-companion page surface (.vc) inside pg-browser
+       Recreates the brainstorming mockup UI: a question, optional
+       subtitle, then A/B/C .option cards with one .selected (the doc's
+       server injects a selection indicator). Brand tokens only — the
+       selected ring uses --pg-accent; all text is pure ink.
+       ═══════════════════════════════════════════════════════════════ */
+    .slide .pg-page.vc { padding: 26px 32px; }
+    .slide .pg-page.vc h2 {
+      font-family: var(--ds-font-display);
+      font-weight: 800; font-size: 31px; letter-spacing: -0.02em;
+      line-height: 1.1; margin: 0 0 6px; color: var(--ds-ink);
+    }
+    .slide .pg-page.vc .subtitle {
+      font-size: 20px; color: var(--ds-ink-2); margin: 0 0 18px; line-height: 1.35;
+    }
+    .slide .pg-page.vc .options { display: grid; gap: 10px; }
+    .slide .pg-page.vc .option {
+      display: flex; align-items: flex-start; gap: 18px;
+      padding: 15px 18px;
+      border: 1px solid var(--pg-border-light);
+      border-radius: 14px;
+      background: #fff;
+      transition: border-color 160ms ease, box-shadow 160ms ease;
+    }
+    .slide .pg-page.vc .option.selected {
+      border-color: var(--pg-accent);
+      box-shadow: inset 6px 0 0 var(--pg-accent), 0 0 0 1px var(--pg-accent);
+    }
+    .slide .pg-page.vc .option .letter {
+      flex: none;
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: var(--ds-mist);
+      color: var(--ds-ink);
+      font-weight: 800; font-size: 21px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .slide .pg-page.vc .option.selected .letter {
+      background: var(--pg-accent); color: #fff;
+    }
+    .slide .pg-page.vc .option .content h3 {
+      font-weight: 700; font-size: 22px; margin: 1px 0 3px; color: var(--ds-ink);
+      letter-spacing: -0.01em;
+    }
+    .slide .pg-page.vc .option .content p {
+      font-size: 18px; color: var(--ds-ink-2); margin: 0; line-height: 1.35;
+    }
+    /* ── Slide 12: mini-wireframe thumbnails inside option cards ── */
+    .slide .pg-page.vc { padding: 10px 14px; gap: 6px; }
+    .slide .pg-page.vc h2 { font-size: 22px; margin: 0 0 4px; }
+    .slide .pg-page.vc .subtitle { display: none; }
+    .slide .pg-page.vc .options { gap: 6px; }
+    .slide .pg-page.vc .option {
+      padding: 7px 9px;
+      gap: 9px;
+      align-items: center;
+    }
+    .slide .pg-page.vc .option .letter {
+      width: 26px; height: 26px;
+      font-size: 14px; border-radius: 6px;
+      flex-shrink: 0; align-self: flex-start; margin-top: 2px;
+    }
+    .slide .pg-page.vc .option .content h3 { font-size: 15px; margin: 0 0 1px; }
+    .slide .pg-page.vc .option .content p  { font-size: 12px; margin: 0 0 4px; }
+
+    /* shared wireframe container */
+    .slide .pg-page.vc .cc-wire {
+      width: 100%; border-radius: 5px;
+      border: 1px solid var(--ds-line);
+      background: #fafafa;
+      padding: 3px 5px;
+      display: flex; flex-direction: column; gap: 2px;
+      overflow: hidden;
+    }
+
+    /* ── Option A: grouped-by-file ── */
+    .slide .pg-page.vc .cc-wire.wf-grouped .wf-section-hdr {
+      height: 5px; border-radius: 3px;
+      background: var(--ds-ink-2); opacity: .35;
+      width: 38%; margin-bottom: 1px;
+    }
+    .slide .pg-page.vc .cc-wire.wf-grouped .wf-row {
+      height: 5px; border-radius: 3px;
+      background: var(--ds-mist);
+      border: 1px solid var(--ds-line);
+    }
+    .slide .pg-page.vc .cc-wire.wf-grouped .wf-row:nth-child(2) { width: 88%; }
+    .slide .pg-page.vc .cc-wire.wf-grouped .wf-row:nth-child(3) { width: 74%; }
+    .slide .pg-page.vc .cc-wire.wf-grouped .wf-row:nth-child(4) { width: 82%; }
+    .slide .pg-page.vc .cc-wire.wf-grouped .wf-spacer { height: 4px; }
+    .slide .pg-page.vc .cc-wire.wf-grouped .wf-row:nth-child(7) { width: 90%; }
+    .slide .pg-page.vc .cc-wire.wf-grouped .wf-row:nth-child(8) { width: 68%; }
+
+    /* ── Option B: flat priority list ── */
+    .slide .pg-page.vc .cc-wire.wf-flat .wf-item {
+      display: flex; align-items: center; gap: 5px;
+    }
+    .slide .pg-page.vc .cc-wire.wf-flat .wf-dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    }
+    .slide .pg-page.vc .cc-wire.wf-flat .wf-dot.p-high  { background: var(--pg-red,   #f87171); }
+    .slide .pg-page.vc .cc-wire.wf-flat .wf-dot.p-mid   { background: #f59e0b; }
+    .slide .pg-page.vc .cc-wire.wf-flat .wf-dot.p-low   { background: var(--pg-green, #4ade80); }
+    .slide .pg-page.vc .cc-wire.wf-flat .wf-bar {
+      height: 5px; border-radius: 3px;
+      background: var(--ds-mist); border: 1px solid var(--ds-line);
+      flex: 1;
+    }
+
+    /* ── Option C: kanban board ── */
+    .slide .pg-page.vc .cc-wire.wf-kanban {
+      flex-direction: row; gap: 5px; align-items: flex-start;
+    }
+    .slide .pg-page.vc .cc-wire.wf-kanban .wf-col {
+      flex: 1; display: flex; flex-direction: column; gap: 3px;
+    }
+    .slide .pg-page.vc .cc-wire.wf-kanban .wf-col-hdr {
+      height: 5px; border-radius: 3px;
+      background: var(--ds-ink-2); opacity: .3;
+      margin-bottom: 2px;
+    }
+    .slide .pg-page.vc .cc-wire.wf-kanban .wf-card {
+      height: 9px; border-radius: 3px;
+      background: var(--ds-mist); border: 1px solid var(--ds-line);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SLIDE 13 — Claude Design UI-kit page surface (.cd) inside
+       pg-browser. A "generated design system" view: extracted color
+       swatches + a Nunito type specimen + component chips. Brand tokens.
+       ═══════════════════════════════════════════════════════════════ */
+    .slide .pg-page.cd { padding: 14px 20px; }
+    .slide .pg-page.cd .cd-eyebrow {
+      font-weight: 700; font-size: 13px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--pg-accent); margin-bottom: 3px;
+    }
+    .slide .pg-page.cd h2 {
+      font-family: var(--ds-font-display);
+      font-weight: 800; font-size: 20px; letter-spacing: -0.02em;
+      line-height: 1.1; margin: 0 0 6px; color: var(--ds-ink);
+    }
+    .slide .pg-page.cd .cd-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 0;
+      border-top: 1px solid var(--pg-border-light);
+    }
+    .slide .pg-page.cd .cd-row:first-of-type { border-top: 0; }
+    .slide .pg-page.cd .cd-label {
+      margin-left: auto;
+      font-size: 15px; color: var(--ds-ink-2);
+      font-weight: 700; letter-spacing: 0.02em;
+    }
+    .slide .pg-page.cd .sw {
+      width: 28px; height: 28px; border-radius: 7px; display: inline-block;
+      box-shadow: 0 1px 3px rgba(20,20,20,.12);
+    }
+    .slide .pg-page.cd .cd-type-xl {
+      font-family: var(--ds-font-display);
+      font-weight: 800; font-size: 28px; line-height: 1; color: var(--ds-ink);
+      letter-spacing: -0.02em;
+    }
+    .slide .pg-page.cd .chip {
+      display: inline-flex; align-items: center;
+      padding: 8px 16px; border-radius: 999px;
+      background: var(--ds-mist); color: var(--ds-ink);
+      font-weight: 700; font-size: 17px;
+    }
+    /* ── Slide 13: spacing/radius scale row ── */
+    .slide .pg-page.cd .cd-spacing-scale {
+      display: flex; align-items: flex-end; gap: 8px;
+    }
+    .slide .pg-page.cd .cd-spacing-scale .sp-box {
+      background: var(--ds-mist);
+      border: 1px solid var(--ds-line);
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    /* sizes: 4 / 8 / 16 / 24 px squares */
+    .slide .pg-page.cd .cd-spacing-scale .sp-box:nth-child(1) { width:10px; height:10px; }
+    .slide .pg-page.cd .cd-spacing-scale .sp-box:nth-child(2) { width:16px; height:16px; border-radius:5px; }
+    .slide .pg-page.cd .cd-spacing-scale .sp-box:nth-child(3) { width:24px; height:24px; border-radius:8px; }
+    .slide .pg-page.cd .cd-spacing-scale .sp-box:nth-child(4) { width:30px; height:30px; border-radius:11px; }
+
+    /* ── Slide 13: rendered component previews ── */
+    .slide .pg-page.cd .cd-comp-row {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+
+    /* Rendered Button */
+    .slide .pg-page.cd .cd-btn {
+      display: inline-flex; align-items: center;
+      padding: 8px 18px; border-radius: 10px;
+      background: var(--pg-accent); color: #fff;
+      font: 700 15px var(--ds-font-sans);
+      border: none; cursor: default; white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(27,156,248,.30);
+    }
+
+    /* Rendered Badge */
+    .slide .pg-page.cd .cd-badge {
+      display: inline-flex; align-items: center;
+      padding: 4px 12px; border-radius: 999px;
+      background: var(--ds-mist);
+      border: 1px solid var(--ds-line);
+      color: var(--ds-ink); font: 700 13px var(--ds-font-sans);
+    }
+
+    /* Rendered mini Card */
+    .slide .pg-page.cd .cd-card {
+      display: flex; flex-direction: column; gap: 4px;
+      padding: 7px 10px; border-radius: 10px;
+      border: 1px solid var(--ds-line);
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(20,20,20,.07);
+      min-width: 80px;
+    }
+    .slide .pg-page.cd .cd-card .cd-card-title {
+      font: 700 13px var(--ds-font-sans); color: var(--ds-ink);
+      white-space: nowrap;
+    }
+    .slide .pg-page.cd .cd-card .cd-card-body {
+      height: 7px; border-radius: 3px;
+      background: var(--ds-mist); width: 80%;
+    }
+    .slide .pg-page.cd .cd-card .cd-card-body.short { width: 55%; }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SLIDE 13 — compact 4-step "set up your design system" strip.
+       A labelled vertical step list (not a pg-flow — keeps it static and
+       dense enough for the s-compare right column). Brand tokens only.
+       ═══════════════════════════════════════════════════════════════ */
+    .slide .step-strip { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; }
+    .slide .step-strip li {
+      display: grid; grid-template-columns: 52px 1fr; align-items: start; gap: 18px;
+      padding: 0;
+    }
+    .slide .step-strip li::before { content: none; }   /* override compare-list bullet */
+    .slide .step-strip .sn {
+      grid-row: span 1;
+      width: 52px; height: 52px; border-radius: 12px;
+      background: var(--ds-mist); color: var(--ds-blue-electric);
+      font-family: var(--ds-font-mono); font-weight: 700; font-size: 22px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .slide .step-strip .st b {
+      display: block; font-weight: 700; font-size: 24px; color: var(--ds-ink);
+      line-height: 1.2; margin-bottom: 4px; letter-spacing: -0.01em;
+    }
+    .slide .step-strip .st span {
+      display: block; font-size: 20px; color: var(--ds-ink-2); line-height: 1.4;
+    }
+    .slide .s-compare .figma-note {
+      margin-top: 22px; padding-top: 18px;
+      border-top: 1px solid var(--ds-line);
+      font-size: 20px; color: var(--ds-ink-2); line-height: 1.45;
+    }
+    .slide .s-compare .figma-note b { color: var(--ds-ink); font-weight: 700; }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SLIDE 14 — Claude in Chrome: a page + a console strip the agent
+       reads. Top = a small login-form mock; bottom = a dark console
+       showing the error Claude reads, then the fix line. Brand tokens.
+       ═══════════════════════════════════════════════════════════════ */
+    .slide .pg-page.chrome-demo { padding: 0; }
+    .slide .chrome-demo .cd-form {
+      padding: 22px 30px 24px;
+    }
+    .slide .chrome-demo .cd-form h2 {
+      font-family: var(--ds-font-display);
+      font-weight: 800; font-size: 25px; letter-spacing: -0.02em;
+      margin: 0 0 12px; color: var(--ds-ink);
+    }
+    .slide .chrome-demo .field {
+      height: 34px; border-radius: 10px; margin-bottom: 10px;
+      background: var(--ds-mist); border: 1px solid var(--pg-border-light);
+    }
+    .slide .chrome-demo .field.err {
+      border-color: var(--pg-red); color: var(--pg-red);
+      background: rgba(248,113,113,.08);
+      display: flex; align-items: center; padding: 0 14px;
+      font-size: 17px; font-weight: 700;
+    }
+    .slide .chrome-demo .btn {
+      margin-top: 4px; padding: 11px 22px; border-radius: 10px;
+      background: var(--pg-accent); color: #fff; border: 0;
+      font: 700 18px var(--ds-font-sans);
+    }
+    .slide .chrome-demo .console {
+      background: var(--pg-bg-dark); color: var(--pg-fg-dark);
+      font-family: var(--ds-font-mono); font-size: 18px; line-height: 1.6;
+      padding: 18px 24px;
+      border-top: 1px solid var(--pg-border-dark);
+      display: block;
+    }
+    .slide .chrome-demo .console .c-line { display: block; white-space: pre-wrap; }
+    .slide .cmd-note {
+      margin: 18px 0 0; font-family: var(--ds-font-mono);
+      font-size: 19px; color: var(--ds-ink-2); text-align: center;
+    }
+    .slide .cmd-note code {
+      font-family: var(--ds-font-mono); font-size: 0.92em;
+      padding: 2px 8px; border-radius: 6px;
+      background: var(--ds-mist); color: var(--ds-ink);
+    }
+
+    /* Slide 17 — a single compact command line under the two compare columns
+       (a full terminal crowded the slide, so we surface the two real commands
+       as one mono note instead). */
+    .slide .s-compare .compare-note {
+      margin: 8px 0 0; font-family: var(--ds-font-mono);
+      font-size: 21px; color: var(--ds-ink-2); line-height: 1.5;
+    }
+    .slide .compare-note .pg-prompt-inline { color: var(--ds-blue-electric); font-weight: 700; margin-right: 8px; }
+    .slide .compare-note code {
+      font-family: var(--ds-font-mono); font-size: 0.92em;
+      padding: 2px 8px; border-radius: 6px;
+      background: var(--ds-mist); color: var(--ds-ink);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SLIDE 21 — GitHub issue #429 page surface (.gh-issue) in a
+       pg-browser. The one place a small green "Open" pill is an
+       on-topic GitHub affordance; all body text stays pure ink.
+       ═══════════════════════════════════════════════════════════════ */
+    .slide .pg-page.gh-issue { padding: 32px 38px; }
+    .slide .gh-issue .gh-state {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 16px; border-radius: 999px;
+      font-weight: 700; font-size: 17px; letter-spacing: .01em;
+      margin-bottom: 16px;
+    }
+    .slide .gh-issue .gh-state.open {
+      background: var(--pg-green); color: #0b3d1a;
+    }
+    .slide .gh-issue .gh-state.open::before {
+      content: ""; width: 11px; height: 11px; border-radius: 50%;
+      background: #0b3d1a;
+    }
+    .slide .gh-issue h2 {
+      font-family: var(--ds-font-display);
+      font-weight: 800; font-size: 30px; letter-spacing: -0.02em;
+      line-height: 1.15; margin: 0 0 8px; color: var(--ds-ink);
+    }
+    .slide .gh-issue .gh-meta {
+      font-family: var(--ds-font-mono); font-size: 17px;
+      color: var(--ds-ink-2); margin: 0 0 20px;
+    }
+    .slide .gh-issue p {
+      font-size: 21px; color: var(--ds-ink); line-height: 1.5; margin: 0 0 16px;
+    }
+    .slide .gh-issue p.gh-work { color: var(--ds-ink-2); }
+    .slide .gh-issue code {
+      font-family: var(--ds-font-mono); font-size: 0.88em;
+      padding: 1px 6px; border-radius: 5px;
+      background: var(--ds-mist); color: var(--ds-ink);
+    }
+  </style>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 01 — Title
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-title" data-screen-label="01 Title">
+    <div class="stage-pad">
+      <div class="kicker m-rise-sm">Devspiration tech note</div>
+      <h1 class="m-rise m-hero">Getting practical<br>with Claude Code.</h1>
+      <p class="sub m-rise-sm">A tour of the agentic coding tool that lives in your terminal — foundations, workflow, orchestration, one end-to-end build.</p>
+    </div>
+    <div class="prop prop-tr m-prop-settle">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-sphere-blue.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">01 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Source: <a href="https://claude.com/product/claude-code" target="_blank" rel="noopener">claude.com/product/claude-code</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 02 — What Claude Code is (Content)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-content s-visual" data-screen-label="02 What is Claude Code">
+    <div class="stage-pad">
+      <div class="col-text">
+        <div class="eyebrow m-rise-sm">Positioning</div>
+        <h2 class="m-rise" style="font-size:54px; margin:12px 0 22px;">An agentic tool that reads, edits, and ships code from your terminal.</h2>
+        <p class="lead m-rise-sm" style="margin-bottom:26px;">One engine across terminal, IDEs, Desktop, and browser.</p>
+        <ul class="bullets m-rise" style="gap:18px;" data-stagger>
+          <li>Reads your codebase, edits across dirs, runs the verifying commands</li>
+          <li>Connects to external tools via MCP — Drive, Jira, browsers, your own services</li>
+          <li>Writes commits, opens pull requests, runs in CI, pipes like any Unix tool</li>
+          <li>The same <code>CLAUDE.md</code> and settings travel with the project everywhere</li>
+        </ul>
+      </div>
+      <div class="col-visual m-from-right">
+        <div class="pg-frame theme-dark pg-terminal" data-script-id="s02" data-autorun="true" style="height:660px">
+          <div class="pg-titlebar">
+            <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+            <div class="title">claude · ~/your-project</div>
+            <div class="meta">zsh</div>
+          </div>
+          <div class="pg-body">
+<span class="pg-line"><span class="cc-banner"><span class="cc-spark">✻</span>Welcome to Claude Code!<span class="cc-sub">cwd: ~/your-project · opus 4.7 · with xhigh effort</span></span></span>
+<span class="pg-line"><span class="cc-input">fix the failing auth test and run the suite</span></span>
+<span class="pg-line cc-tool">Read(<span class="cc-args">src/auth/session.ts</span>)</span>
+<span class="pg-line cc-result">Read 120 lines</span>
+<span class="pg-line cc-tool">Edit(<span class="cc-args">src/auth/session.ts</span>)</span>
+<span class="pg-line cc-result">Applied edit <span class="cc-add">+3</span> <span class="cc-del">-1</span></span>
+<span class="pg-line cc-tool">Bash(<span class="cc-args">npm test</span>)</span>
+<span class="pg-line cc-result"><span class="cc-add">PASS</span> tests/auth.test.ts <span class="cc-hint">(12 tests)</span></span>
+<span class="pg-line cc-status done">Done · read → edit → ran the verifying command</span>
+          </div>
+          <div class="pg-controls">
+            <button class="pg-run" type="button"><span class="ico"></span>Run</button>
+            <button class="pg-reset" type="button">Reset</button>
+            <span class="status">idle</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="prop prop-bl m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-donut-blue.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">02 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Source: <a href="https://code.claude.com/docs/en/overview" target="_blank" rel="noopener">code.claude.com/docs/en/overview</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 03 — /effort and xhigh (Feature Highlight, ink)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-highlight dark s-visual" data-screen-label="03 Effort levels">
+    <div class="stage-pad">
+      <div class="col-text">
+        <div class="eyebrow m-rise-sm">Opus 4.7 controls</div>
+        <h2 class="m-rise">Turn the thinking budget up when the problem deserves it.</h2>
+        <ul class="bullets m-rise" data-stagger>
+          <li>Opus 4.7 exposes five effort tiers — <code>low</code>, <code>medium</code>, <code>high</code>, <code>xhigh</code>, <code>max</code></li>
+          <li><b>xhigh</b> is the Claude Code default — best for most coding and agentic work</li>
+          <li>Dial down to <code>low</code>/<code>medium</code> for quick, scoped, latency-sensitive edits</li>
+          <li>Dial up to <code>max</code> for the hardest problems — slower, and can overthink simple ones</li>
+        </ul>
+      </div>
+      <div class="col-visual m-from-right">
+        <div class="pg-frame theme-dark pg-terminal" data-script-id="s03">
+          <div class="pg-titlebar">
+            <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+            <div class="title">claude · effort tiers</div>
+            <div class="meta">zsh</div>
+          </div>
+          <div class="pg-body">
+<span class="pg-line"><span class="cc-banner"><span class="cc-spark">✻</span>opus 4.7 · with xhigh effort<span class="cc-sub">Claude Code default</span></span></span>
+<span class="pg-line"><span class="cc-input">/effort</span></span>
+<span class="pg-line cc-result">low · short, latency-sensitive</span>
+<span class="pg-line cc-result">medium · cost-sensitive</span>
+<span class="pg-line cc-result">high · intelligence-sensitive work</span>
+<span class="pg-line cc-result" style="color:var(--pg-fg-dark)"><span style="color:var(--ds-blue-electric);margin-right:.3em">❯</span>xhigh · best for most work (default)</span>
+<span class="pg-line cc-result">max · hardest problems · session only</span>
+<span class="pg-line cc-status done">Effort: xhigh <span class="cc-meta">(model default on Opus 4.7)</span></span>
+          </div>
+          <div class="pg-controls">
+            <button class="pg-run" type="button"><span class="ico"></span>Run</button>
+            <button class="pg-reset" type="button">Reset</button>
+            <span class="status">idle</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="prop prop-bl m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-disc-glass.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">03 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Source: <a href="https://code.claude.com/docs/en/model-config" target="_blank" rel="noopener">code.claude.com/docs/en/model-config</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 04 — CLAUDE.md (Content+Code)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-content-code" data-screen-label="04 CLAUDE.md">
+    <div class="stage-pad">
+      <div class="col-text m-from-left">
+        <div class="eyebrow">Persistent context</div>
+        <h2>CLAUDE.md — instructions that travel with the repo.</h2>
+        <ul class="bullets" data-stagger>
+          <li>Markdown at the project root, loaded into every session before the first prompt</li>
+          <li>Four scopes load top-down — managed, user, project, local; subdirectory files add on for the areas you touch</li>
+          <li>Keep them lean and layered — bloated context degrades performance</li>
+          <li>Review every few months — prune constraints the model has outgrown</li>
+          <li>Run <code>/init</code> to scaffold one, then be specific: "Use 2-space indentation" beats "Format code properly"</li>
+        </ul>
+      </div>
+      <div class="pg-frame theme-light pg-editor col-code m-from-right" style="height:560px">
+        <span class="corner-tag">/init generates this</span>
+        <div class="pg-titlebar">
+          <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+          <div class="title">CLAUDE.md — orders-service</div>
+          <div class="meta">md</div>
+        </div>
+        <div class="pg-body">
+          <div class="gutter">
+<span class="ln">1</span><span class="ln">2</span><span class="ln">3</span><span class="ln">4</span><span class="ln">5</span><span class="ln">6</span><span class="ln">7</span><span class="ln">8</span><span class="ln">9</span><span class="ln">10</span><span class="ln">11</span>
+          </div>
+          <div class="code">
+<span class="ln"><span class="pg-tk-com"># Orders service · .NET</span></span>
+<span class="ln"></span>
+<span class="ln"><span class="pg-tk-com">## Commands</span></span>
+<span class="ln">- Build: dotnet build</span>
+<span class="ln">- Test:  dotnet test  <span class="pg-tk-com"># before commit</span></span>
+<span class="ln">- Run:   dotnet run --project AppHost</span>
+<span class="ln"></span>
+<span class="ln"><span class="pg-tk-com">## Conventions</span></span>
+<span class="ln">- Endpoints: minimal APIs in src/Api/</span>
+<span class="ln">- EF migrations from the Api project</span>
+<span class="ln">- Money as integer cents, never decimal</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="prop prop-tr m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-hex-blue.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">04 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Source: <a href="https://claude.com/blog/how-claude-code-works-in-large-codebases-best-practices-and-where-to-start" target="_blank" rel="noopener">claude.com/blog/how-claude-code-works-in-large-codebases</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 05 — Auto memory (Content+Code, ink)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-content-code dark" data-screen-label="05 Auto memory">
+    <div class="stage-pad">
+      <div class="col-text m-from-left">
+        <div class="eyebrow">Auto memory</div>
+        <h2>Claude takes notes between sessions.</h2>
+        <ul class="bullets" data-stagger>
+          <li>A per-repo memory directory with a <code>MEMORY.md</code> index</li>
+          <li><code>MEMORY.md</code>'s first 200 lines load every session; topics load on demand</li>
+          <li>Claude keeps what matters — build commands, gotchas, your stated preferences</li>
+          <li>Toggle with <code>/memory</code>, or set <code>autoMemoryEnabled: false</code></li>
+        </ul>
+      </div>
+      <div class="pg-frame theme-dark pg-editor col-code m-from-right" style="height:520px">
+        <div class="pg-titlebar">
+          <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+          <div class="title">MEMORY.md</div>
+          <div class="meta">md</div>
+        </div>
+        <div class="pg-body">
+          <div class="gutter">
+<span class="ln">1</span><span class="ln">2</span><span class="ln">3</span><span class="ln">4</span><span class="ln">5</span><span class="ln">6</span><span class="ln">7</span><span class="ln">8</span><span class="ln">9</span><span class="ln">10</span><span class="ln">11</span><span class="ln">12</span>
+          </div>
+          <div class="code">
+<span class="ln"><span class="pg-tk-com"># Project memory — payments-api</span></span>
+<span class="ln"></span>
+<span class="ln"><span class="pg-tk-com">## Build &amp; test</span></span>
+<span class="ln">- Build: <span class="pg-tk-str">`dotnet build`</span>; test: <span class="pg-tk-str">`dotnet test`</span></span>
+<span class="ln">- Run: <span class="pg-tk-str">`dotnet run --project AppHost`</span> (Aspire)</span>
+<span class="ln"></span>
+<span class="ln"><span class="pg-tk-com">## Gotchas</span></span>
+<span class="ln">- EF migrations: from the API proj, not AppHost</span>
+<span class="ln">- Port clash 17000 → set <span class="pg-tk-str">ASPIRE_DASHBOARD_PORT</span></span>
+<span class="ln">- Secrets: <span class="pg-tk-str">`dotnet user-secrets`</span></span>
+<span class="ln"></span>
+<span class="ln"><span class="pg-tk-com">## Preferences</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="prop prop-tr m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-sphere-clear.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">05 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Source: <a href="https://code.claude.com/docs/en/memory" target="_blank" rel="noopener">code.claude.com/docs/en/memory</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 06 — Warp terminal (Feature Highlight)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-highlight s-visual" data-screen-label="06 Warp terminal">
+    <div class="stage-pad">
+      <div class="col-text">
+        <div class="warp-badge m-rise-sm">
+          <svg class="warp-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <rect x="1.5" y="1.5" width="21" height="21" rx="6.5" fill="none" stroke="#303030" stroke-width="1.6"/>
+            <path d="M7 8.5l4 3.5-4 3.5" fill="none" stroke="#303030" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12.5 15.5h5" fill="none" stroke="#303030" stroke-width="1.9" stroke-linecap="round"/>
+          </svg>
+          <span class="warp-word">Warp</span>
+        </div>
+        <h2 class="m-rise">A modern terminal turns Claude Code into a workbench.</h2>
+        <ul class="bullets m-rise" data-stagger>
+          <li><b>Agent notifications</b> — in-app and desktop alerts when Claude needs your attention</li>
+          <li><b>Code review</b> — send inline review comments to the agent from Warp's panel</li>
+          <li><b>Attach code as context</b> — select lines and send them straight to the agent</li>
+          <li><b>Remote Control</b> — share a Claude Code session with teammates</li>
+        </ul>
+      </div>
+      <div class="col-visual m-from-right">
+        <div class="pg-frame theme-dark pg-terminal" data-script-id="s06" data-autorun="true">
+          <div class="pg-titlebar">
+            <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+            <div class="title">claude · ~/payments</div>
+            <div class="meta">warp</div>
+          </div>
+          <div class="pg-body">
+<span class="pg-line cc-tool">Edit(<span class="cc-args">src/api/webhooks/stripe.ts</span>)</span>
+<span class="pg-line cc-status">Editing… <span class="cc-meta">(esc to interrupt · 2s)</span></span>
+<span class="pg-line"><span class="cc-perm"><span class="cc-q">Do you want to make this edit to stripe.ts?</span><span class="cc-opt sel">1. Yes</span><span class="cc-opt">2. Yes, allow all edits this session</span><span class="cc-opt">3. No, and tell Claude what to do differently (esc)</span></span></span>
+<span class="pg-line cc-result">Agent notification sent <span class="cc-hint">(in-app + desktop)</span></span>
+<span class="pg-line cc-result">Review comment → <span style="color:var(--pg-fg-dark)">"verify the signature first"</span></span>
+<span class="pg-line cc-status done">Approved · edit applied</span>
+          </div>
+          <div class="pg-controls">
+            <button class="pg-run" type="button"><span class="ico"></span>Run</button>
+            <button class="pg-reset" type="button">Reset</button>
+            <span class="status">idle</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Tight single-object prop: crops cleanly from the bottom-left corner at
+         the s-visual 340px rule. (cylinder-blue is a full 1920×1080 scene whose
+         object sits center-right, so a bottom-left crop only showed a smear.) -->
+    <div class="prop prop-bl m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-sphere-blue.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">06 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Source: <a href="https://docs.warp.dev/agent-platform/cli-agents/claude-code" target="_blank" rel="noopener">docs.warp.dev/agent-platform/cli-agents/claude-code</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 07 — Superpowers (Section Divider) — THE AGENTIC SDLC
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-section dark" data-screen-label="07 Section divider">
+    <div class="stage-pad">
+      <div class="content m-rise m-hero">
+        <div class="eyebrow m-rise-sm">The agentic SDLC</div>
+        <h2>Skills that turn good intentions into discipline.</h2>
+      </div>
+    </div>
+    <div class="prop prop-tr m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-a-dark.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">07 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Source: <a href="https://github.com/obra/superpowers" target="_blank" rel="noopener">github.com/obra/superpowers</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 08 — Brainstorming (Content+Code)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-content-code" data-screen-label="08 Brainstorming">
+    <div class="stage-pad">
+      <div class="col-text m-from-left">
+        <div class="eyebrow">Superpowers · skill 1</div>
+        <h2>Brainstorming — design before code.</h2>
+        <ul class="bullets" data-stagger>
+          <li>Hard gate — no code, no scaffolding until a design is presented and approved</li>
+          <li>One question at a time; explores purpose, constraints, success criteria</li>
+          <li>Always proposes 2–3 approaches with trade-offs and a recommendation</li>
+          <li>Artefact: a design spec committed to the repo</li>
+        </ul>
+      </div>
+      <div class="pg-frame theme-dark pg-terminal col-code m-from-right" data-script-id="s08" style="height:580px">
+        <div class="pg-titlebar">
+          <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+          <div class="title">claude · brainstorming</div>
+          <div class="meta">zsh</div>
+        </div>
+        <div class="pg-body">
+<span class="pg-line"><span class="cc-input">/superpowers:brainstorming</span></span>
+<span class="pg-line cc-status">Asking one question… <span class="cc-meta">(esc to interrupt · 1s)</span></span>
+<span class="pg-line cc-result">What problem does this solve, and for whom?</span>
+<span class="pg-line"><span class="cc-input">engineers tracking TODO comments across a repo</span></span>
+<span class="pg-line cc-tool">Task(<span class="cc-args">propose approaches</span>)</span>
+<span class="pg-line cc-result"><span class="cc-add">A) grep + cache</span> — fast, no index — recommended for v1</span>
+<span class="pg-line cc-result">B) AST parse — precise, slower</span>
+<span class="pg-line cc-result">C) LSP hook — live, complex</span>
+<span class="pg-line cc-tool">Write(<span class="cc-args">specs/2026-05-25-todo-tracker-design.md</span>)</span>
+<span class="pg-line cc-status done">Committed. Next: writing-plans</span>
+        </div>
+        <div class="pg-controls">
+          <button class="pg-run" type="button"><span class="ico"></span>Run</button>
+          <button class="pg-reset" type="button">Reset</button>
+          <span class="status">idle</span>
+        </div>
+      </div>
+    </div>
+    <div class="prop prop-tr m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-donut-blue.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">08 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Source: <a href="https://github.com/obra/superpowers/blob/main/skills/brainstorming/SKILL.md" target="_blank" rel="noopener">github.com/obra/superpowers/skills/brainstorming/SKILL.md</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 09 — Writing plans (Content+Code)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-content-code" data-screen-label="09 Writing plans">
+    <div class="stage-pad">
+      <div class="col-text m-from-left">
+        <div class="eyebrow">Superpowers · skill 2</div>
+        <h2>Writing-plans — a step-by-step rhythm.</h2>
+        <ul class="bullets" data-stagger>
+          <li>Built for an engineer with "zero context" — every step is explicit</li>
+          <li>File map first: every file to create or modify, paths and responsibilities</li>
+          <li>Steps are 2–5 minutes each: test, run red, code, run green, commit</li>
+          <li>No "TBD" — every code block, command, and expected output is filled in</li>
+        </ul>
+      </div>
+      <div class="pg-frame theme-light pg-editor col-code m-from-right" style="height:560px">
+        <div class="pg-titlebar">
+          <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+          <div class="title">2026-05-25-todo-tracker.md</div>
+          <div class="meta">md</div>
+        </div>
+        <div class="pg-body">
+          <div class="gutter">
+<span class="ln">1</span><span class="ln">2</span><span class="ln">3</span><span class="ln">4</span><span class="ln">5</span><span class="ln">6</span><span class="ln">7</span><span class="ln">8</span><span class="ln">9</span><span class="ln">10</span><span class="ln">11</span><span class="ln">12</span>
+          </div>
+          <div class="code">
+<span class="ln"><span class="pg-tk-com"># TODO tracker — implementation plan</span></span>
+<span class="ln"><span class="pg-tk-com">**Goal:**</span> list every TODO in a repo.</span>
+<span class="ln"><span class="pg-tk-com">**Architecture:**</span> CLI → walker → matcher</span>
+<span class="ln"></span>
+<span class="ln"><span class="pg-tk-com">## Files</span></span>
+<span class="ln">- src/walker.ts   — yield repo file paths</span>
+<span class="ln">- src/matcher.ts  — extract TODO lines</span>
+<span class="ln"></span>
+<span class="ln"><span class="pg-tk-com">## Steps</span></span>
+<span class="ln cur">- [ ] 1. Failing test: find "// TODO: x"</span>
+<span class="ln">- [ ] 2. Run test → see it FAIL</span>
+<span class="ln">- [ ] 3. Minimal matcher → green → commit</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="prop prop-tr m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-pebble-cyan.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">09 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Source: <a href="https://github.com/obra/superpowers/blob/main/skills/writing-plans/SKILL.md" target="_blank" rel="noopener">github.com/obra/superpowers/skills/writing-plans/SKILL.md</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 10 — TDD (Content+Code)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-content-code" data-screen-label="10 TDD">
+    <div class="stage-pad">
+      <div class="col-text m-from-left">
+        <div class="eyebrow">Superpowers · skill 3</div>
+        <h2>Test-driven development as a non-negotiable.</h2>
+        <ul class="bullets" data-stagger>
+          <li>Iron law — no production code without a failing test first</li>
+          <li>Verify red — a test that passes immediately proves nothing</li>
+          <li>Green means minimal code; refactor only after green is observed twice</li>
+          <li>Bug fix? Write the reproducing test before touching the fix</li>
+        </ul>
+      </div>
+      <div class="pg-frame theme-dark pg-terminal col-code m-from-right" data-script-id="s10" style="height:560px">
+        <div class="pg-titlebar">
+          <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+          <div class="title">claude · red → green → refactor</div>
+          <div class="meta">zsh</div>
+        </div>
+        <div class="pg-body">
+<span class="pg-line cc-result"><span class="cc-del">RED</span> — write one minimal failing test</span>
+<span class="pg-line cc-tool">Bash(<span class="cc-args">npm test</span>)</span>
+<span class="pg-line cc-result"><span class="cc-del">FAIL</span>: expected 'Email required', got undefined</span>
+<span class="pg-line cc-status">Verified RED — fails for the right reason</span>
+<span class="pg-line cc-result"><span class="cc-add">GREEN</span> — simplest code to pass</span>
+<span class="pg-line cc-tool">Bash(<span class="cc-args">npm test</span>)</span>
+<span class="pg-line cc-result"><span class="cc-add">PASS</span> 1 passing</span>
+<span class="pg-line cc-status done">Safe to REFACTOR — stay green</span>
+        </div>
+        <div class="pg-controls">
+          <button class="pg-run" type="button"><span class="ico"></span>Run</button>
+          <button class="pg-reset" type="button">Reset</button>
+          <span class="status">idle</span>
+        </div>
+      </div>
+    </div>
+    <div class="prop prop-tr m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-sphere-clear.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">10 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Source: <a href="https://github.com/obra/superpowers/blob/main/skills/test-driven-development/SKILL.md" target="_blank" rel="noopener">github.com/obra/superpowers/skills/test-driven-development/SKILL.md</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 11 — Verification (Content+Code)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-content-code" data-screen-label="11 Verification">
+    <div class="stage-pad">
+      <div class="col-text m-from-left">
+        <div class="eyebrow">Superpowers · skill 4</div>
+        <h2>Verification before completion — every time.</h2>
+        <ul class="bullets" data-stagger>
+          <li>No completion claims without fresh evidence in the current message</li>
+          <li>Identify the command that proves the claim, run it, read output, then claim</li>
+          <li>Linter passing is not the build passing; "done" is not the diff being correct</li>
+          <li>Red flags: "should work", "probably", "looks correct", "great, perfect"</li>
+        </ul>
+      </div>
+      <div class="pg-frame theme-dark pg-terminal col-code m-from-right" data-script-id="s11" style="height:520px">
+        <div class="pg-titlebar">
+          <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+          <div class="title">claude · evidence before claim</div>
+          <div class="meta">zsh</div>
+        </div>
+        <div class="pg-body">
+<span class="pg-line cc-result">Claim to make: "All tests pass."</span>
+<span class="pg-line cc-status">Gate: run the proving command first</span>
+<span class="pg-line cc-tool">Bash(<span class="cc-args">npm test</span>)</span>
+<span class="pg-line cc-result">Tests: <span class="cc-add">34 passed</span>, 34 total</span>
+<span class="pg-line cc-result">Exit code: 0</span>
+<span class="pg-line cc-status done">Evidence captured → now safe to claim</span>
+<span class="pg-line cc-result"><span class="cc-del">✗ before evidence:</span> "should" · "probably" · "Done!"</span>
+        </div>
+        <div class="pg-controls">
+          <button class="pg-run" type="button"><span class="ico"></span>Run</button>
+          <button class="pg-reset" type="button">Reset</button>
+          <span class="status">idle</span>
+        </div>
+      </div>
+    </div>
+    <div class="prop prop-tr m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-asterisk-black.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">11 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Source: <a href="https://github.com/obra/superpowers/blob/main/skills/verification-before-completion/SKILL.md" target="_blank" rel="noopener">github.com/obra/superpowers/skills/verification-before-completion/SKILL.md</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 12 — Visual planning (Feature Highlight)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-highlight s-visual" data-screen-label="12 Visual planning">
+    <div class="stage-pad">
+      <div class="col-text">
+        <div class="eyebrow m-rise-sm">Visual companion</div>
+        <h2 class="m-rise">Brainstorm with mockups in the browser.</h2>
+        <ul class="bullets m-rise" data-stagger>
+          <li>Companion to <code>brainstorming</code>: a local server renders HTML mockups live</li>
+          <li>Claude writes a fragment to <code>screen_dir</code>; you see it; you click a choice</li>
+          <li>Decide per question — only use the browser when the question is genuinely visual</li>
+          <li>The same trick scales — Claude renders plans, diffs, and dashboards as HTML, not walls of text</li>
+        </ul>
+      </div>
+      <div class="col-visual m-from-right">
+        <div class="pg-frame theme-light pg-browser">
+          <span class="corner-tag">Mockup</span>
+          <div class="pg-titlebar">
+            <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+            <div class="title">Brainstorming · visual companion</div>
+            <div class="meta"></div>
+          </div>
+          <div class="pg-tabs">
+            <div class="tab on"><span class="fav"></span>layout.html</div>
+          </div>
+          <div class="pg-addressbar">
+            <div class="nav">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="url"><span class="scheme">http://</span>localhost:7000</div>
+          </div>
+          <div class="pg-body" style="padding:0">
+            <div class="pg-page vc">
+              <h2>Which layout for the TODO list?</h2>
+              <p class="subtitle">Pick the structure that fits a long, scannable list.</p>
+              <div class="options">
+                <div class="option selected" data-choice="a">
+                  <div class="letter">A</div>
+                  <div class="content">
+                    <h3>Grouped by file</h3>
+                    <p>Collapsible sections, one per source file.</p>
+                    <div class="cc-wire wf-grouped">
+                      <div class="wf-section-hdr"></div>
+                      <div class="wf-row"></div>
+                      <div class="wf-row"></div>
+                      <div class="wf-row"></div>
+                      <div class="wf-spacer"></div>
+                      <div class="wf-section-hdr"></div>
+                      <div class="wf-row"></div>
+                      <div class="wf-row"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="option" data-choice="b">
+                  <div class="letter">B</div>
+                  <div class="content">
+                    <h3>Flat priority list</h3>
+                    <p>All TODOs ranked, newest first.</p>
+                    <div class="cc-wire wf-flat">
+                      <div class="wf-item"><div class="wf-dot p-high"></div><div class="wf-bar" style="width:85%"></div></div>
+                      <div class="wf-item"><div class="wf-dot p-high"></div><div class="wf-bar" style="width:70%"></div></div>
+                      <div class="wf-item"><div class="wf-dot p-mid"></div><div class="wf-bar" style="width:78%"></div></div>
+                      <div class="wf-item"><div class="wf-dot p-mid"></div><div class="wf-bar" style="width:60%"></div></div>
+                      <div class="wf-item"><div class="wf-dot p-low"></div><div class="wf-bar" style="width:90%"></div></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="option" data-choice="c">
+                  <div class="letter">C</div>
+                  <div class="content">
+                    <h3>Kanban board</h3>
+                    <p>Columns by status: open / doing / done.</p>
+                    <div class="cc-wire wf-kanban">
+                      <div class="wf-col">
+                        <div class="wf-col-hdr"></div>
+                        <div class="wf-card"></div>
+                        <div class="wf-card"></div>
+                        <div class="wf-card"></div>
+                      </div>
+                      <div class="wf-col">
+                        <div class="wf-col-hdr"></div>
+                        <div class="wf-card"></div>
+                        <div class="wf-card"></div>
+                      </div>
+                      <div class="wf-col">
+                        <div class="wf-col-hdr"></div>
+                        <div class="wf-card"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Tight single-object prop for the 340px prop-bl crop (cylinder-blue is a
+         16:9 scene that only smeared at this size/position — see slide 06). -->
+    <div class="prop prop-bl m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-donut-blue.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">12 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Sources: <a href="https://github.com/obra/superpowers/blob/main/skills/brainstorming/visual-companion.md" target="_blank" rel="noopener">superpowers · visual-companion.md</a> · <a href="https://claude.com/blog/using-claude-code-the-unreasonable-effectiveness-of-html" target="_blank" rel="noopener">claude.com/blog · effectiveness of HTML</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 13 — Claude Design + Figma MCP (Two-Column Compare)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-compare has-right-frame" data-screen-label="13 Claude Design and Figma MCP">
+    <div class="stage-pad">
+      <div class="head">
+        <div class="eyebrow m-rise-sm">Design ↔ code</div>
+        <h2 class="m-rise">Claude Design builds your brand in, then hands off to code.</h2>
+      </div>
+      <div class="cols">
+        <div class="col m-from-left">
+          <div class="col-eyebrow">Anthropic Labs · Claude Design</div>
+          <div class="pg-frame theme-light pg-browser" style="height:500px">
+            <div class="pg-titlebar">
+              <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+              <div class="title">Claude Design — your-team</div>
+              <div class="meta"></div>
+            </div>
+            <div class="pg-tabs">
+              <div class="tab on"><span class="fav"></span>Brand kit</div>
+            </div>
+            <div class="pg-addressbar">
+              <div class="nav">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+              </div>
+              <div class="url"><svg class="lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span class="scheme">https://</span>claude.ai/design</div>
+            </div>
+            <div class="pg-body" style="padding:0">
+              <div class="pg-page cd">
+                <div class="cd-eyebrow">Generated design system · UI kit</div>
+                <h2>Your brand, built in</h2>
+                <div class="cd-row cd-colors">
+                  <span class="sw" style="background:#1B9CF8"></span>
+                  <span class="sw" style="background:#303030"></span>
+                  <span class="sw" style="background:#FFFFFF;border:1px solid #E6E6E6"></span>
+                  <span class="sw" style="background:#8ACFF5"></span>
+                  <span class="cd-label">Colors</span>
+                </div>
+                <div class="cd-row cd-type">
+                  <span class="cd-type-xl">Aa</span>
+                  <span class="cd-label">Nunito · 400 / 700 / 800</span>
+                </div>
+                <div class="cd-row">
+                  <div class="cd-spacing-scale">
+                    <div class="sp-box"></div>
+                    <div class="sp-box"></div>
+                    <div class="sp-box"></div>
+                    <div class="sp-box"></div>
+                  </div>
+                  <span class="cd-label">Spacing · radius</span>
+                </div>
+                <div class="cd-row cd-components" style="align-items:flex-start; flex-wrap:wrap; gap:10px;">
+                  <div class="cd-comp-row">
+                    <button class="cd-btn">Button</button>
+                    <span class="cd-badge">Badge</span>
+                    <div class="cd-card">
+                      <div class="cd-card-title">Card</div>
+                      <div class="cd-card-body"></div>
+                      <div class="cd-card-body short"></div>
+                    </div>
+                  </div>
+                  <span class="cd-label" style="align-self:center;">Components</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="figma-note">Then the Figma bridge: reference a frame URL for design-informed code, or capture a running UI back into <b>editable Figma frames</b>.</p>
+        </div>
+        <div class="col m-from-right">
+          <div class="col-eyebrow">Set up your design system</div>
+          <ul class="step-strip" data-stagger>
+            <li>
+              <span class="sn">01</span>
+              <span class="st"><b>Create or switch org</b><span>Open Claude Design, pick or create an organization.</span></span>
+            </li>
+            <li>
+              <span class="sn">02</span>
+              <span class="st"><b>Upload brand assets</b><span>Codebases, prototypes, slide decks, logos, type.</span></span>
+            </li>
+            <li>
+              <span class="sn">03</span>
+              <span class="st"><b>Review generated UI kit</b><span>Colors, typography, components, layout patterns.</span></span>
+            </li>
+            <li>
+              <span class="sn">04</span>
+              <span class="st"><b>Publish to your team</b><span>Flip the "Published" toggle on.</span></span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="prop prop-bl m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-sphere-blue.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">13 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Sources: <a href="https://www.anthropic.com/news/claude-design-anthropic-labs" target="_blank" rel="noopener">anthropic.com/news/claude-design-anthropic-labs</a> · <a href="https://support.claude.com/en/articles/14604397-set-up-your-design-system-in-claude-design" target="_blank" rel="noopener">support.claude.com/en/articles/14604397</a> · <a href="https://www.figma.com/blog/introducing-claude-code-to-figma/" target="_blank" rel="noopener">figma.com/blog/introducing-claude-code-to-figma</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 14 — Claude in Chrome (Content+Code)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-content-code" data-screen-label="14 Claude in Chrome">
+    <div class="stage-pad">
+      <div class="col-text m-from-left">
+        <div class="eyebrow">Claude in Chrome</div>
+        <h2>Debug a real browser from the same session.</h2>
+        <ul class="bullets" data-stagger>
+          <li>Connects Claude Code to a Chrome or Edge tab via the Claude in Chrome extension</li>
+          <li>Reads console errors and DOM state — fix the code that caused them</li>
+          <li>Verifies UI against the Figma mock you just generated</li>
+          <li>Treat web pages as untrusted — it pauses on logins and high-stakes actions so a human stays in the loop</li>
+        </ul>
+      </div>
+      <div class="col-code m-from-right">
+        <div class="pg-frame theme-light pg-browser" style="height:600px">
+          <div class="pg-titlebar">
+            <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+            <div class="title">Claude in Chrome (beta)</div>
+            <div class="meta"></div>
+          </div>
+          <div class="pg-tabs">
+            <div class="tab on"><span class="fav"></span>localhost</div>
+          </div>
+          <div class="pg-addressbar">
+            <div class="nav">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="url"><span class="scheme">http://</span>localhost:3000</div>
+          </div>
+          <div class="pg-body" style="padding:0">
+            <div class="pg-page chrome-demo">
+              <div class="cd-form">
+                <h2>Sign in</h2>
+                <div class="field"></div>
+                <div class="field err">Error messages not showing</div>
+                <button class="btn" type="button">Submit</button>
+              </div>
+              <div class="console">
+<span class="c-line"><span class="pg-cl-red">✗</span> Uncaught TypeError: cannot read 'message' of undefined</span>
+<span class="c-line"><span class="pg-cl-dim">  at validateForm (login.js:42)</span></span>
+<span class="c-line"><span class="pg-cl-blue">⏺ Edit(<span class="pg-cl-dim">login.js:42</span>)</span></span>
+<span class="c-line"><span class="pg-cl-dim">⎿ reading console → fixing the handler</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="cmd-note"><code>claude --chrome</code> to launch · <code>/chrome</code> inside a session</p>
+      </div>
+    </div>
+    <div class="prop prop-tr m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-c-glass.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">14 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Sources: <a href="https://code.claude.com/docs/en/chrome" target="_blank" rel="noopener">code.claude.com/docs/en/chrome</a> · <a href="https://claude.com/blog/best-practices-for-computer-and-browser-use-with-claude" target="_blank" rel="noopener">claude.com/blog · computer &amp; browser use</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 15 — Chrome DevTools vs Playwright (Two-Column Compare)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-compare" data-screen-label="15 Chrome DevTools vs Playwright">
+    <div class="stage-pad">
+      <div class="head">
+        <div class="eyebrow m-rise-sm">Browser automation</div>
+        <h2 class="m-rise">Chrome DevTools MCP or Playwright MCP?</h2>
+        <p class="lead m-rise-sm">Two ways to drive a browser for automation — pick by reliability, cost, and how much a human stays in the loop.</p>
+      </div>
+      <div class="cols">
+        <div class="col m-from-left">
+          <div class="col-eyebrow">For inspecting</div>
+          <h3>Chrome DevTools MCP</h3>
+          <ul data-stagger>
+            <li>Drives &amp; inspects Chrome over the DevTools Protocol</li>
+            <li>Lighthouse audits and performance traces</li>
+            <li>Reads console, network, and DOM state</li>
+            <li>Lower token cost; no extension needed</li>
+          </ul>
+        </div>
+        <div class="col m-from-right">
+          <div class="col-eyebrow">For scripting</div>
+          <h3>Playwright MCP</h3>
+          <ul data-stagger>
+            <li>Headless, scripted, deterministic — runs in CI</li>
+            <li>Best for long workflows and test suites</li>
+            <li>Cross-browser: Chrome, Firefox, WebKit</li>
+            <li>Engineered storage state for auth</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="prop prop-tr m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-disc-glass.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">15 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Sources: <a href="https://github.com/ChromeDevTools/chrome-devtools-mcp" target="_blank" rel="noopener">github.com/ChromeDevTools/chrome-devtools-mcp</a> · <a href="https://github.com/microsoft/playwright-mcp" target="_blank" rel="noopener">github.com/microsoft/playwright-mcp</a> · <a href="https://claude.com/blog/best-practices-for-computer-and-browser-use-with-claude" target="_blank" rel="noopener">best practices</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 16 — Aspire / .NET MCP (Content+Code)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-content-code" data-screen-label="16 Aspire MCP">
+    <div class="stage-pad">
+      <div class="col-text m-from-left">
+        <div class="eyebrow">Domain MCP · .NET</div>
+        <h2>The .NET SDK as a first-class tool.</h2>
+        <ul class="bullets" data-stagger>
+          <li>MCP server that wraps <code>dotnet</code> — create, build, test, publish</li>
+          <li>Manages NuGet packages, EF Core migrations, dev certs, workloads, secrets</li>
+          <li>Read-only resources expose installed SDKs, runtimes, templates, frameworks</li>
+          <li>Consolidated typed tools keep the surface small</li>
+        </ul>
+      </div>
+      <div class="pg-frame theme-dark pg-terminal col-code m-from-right" data-script-id="s16" style="height:560px">
+        <div class="pg-titlebar">
+          <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+          <div class="title">claude · dotnet MCP</div>
+          <div class="meta">zsh</div>
+        </div>
+        <div class="pg-body">
+<span class="pg-line"><span class="cc-input">use the dotnet MCP: build and test</span></span>
+<span class="pg-line cc-tool">dotnet_project(<span class="cc-args">Build</span>)</span>
+<span class="pg-line cc-result"><span class="cc-add">Build succeeded</span> · 0 warnings</span>
+<span class="pg-line cc-tool">dotnet_project(<span class="cc-args">Test</span>)</span>
+<span class="pg-line cc-result"><span class="cc-add">Passed!</span> 48 of 48</span>
+<span class="pg-line cc-tool">dotnet_ef(<span class="cc-args">MigrationsAdd AddOrders</span>)</span>
+<span class="pg-line cc-result">Migrations/2026…_AddOrders.cs</span>
+<span class="pg-line cc-status done">One MCP server wraps the dotnet CLI</span>
+        </div>
+        <div class="pg-controls">
+          <button class="pg-run" type="button"><span class="ico"></span>Run</button>
+          <button class="pg-reset" type="button">Reset</button>
+          <span class="status">idle</span>
+        </div>
+      </div>
+    </div>
+    <div class="prop prop-tr m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-hex-blue.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">16 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Source: <a href="https://github.com/jongalloway/dotnet-mcp" target="_blank" rel="noopener">github.com/jongalloway/dotnet-mcp</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 17 — Azure DevOps + gh (Two-Column Compare)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-compare" data-screen-label="17 Azure DevOps and gh">
+    <div class="stage-pad">
+      <div class="head">
+        <div class="eyebrow m-rise-sm">SCM &amp; issues</div>
+        <h2 class="m-rise">Talk to GitHub and Azure DevOps in one agentic loop.</h2>
+      </div>
+      <div class="cols">
+        <div class="col m-from-left">
+          <div class="col-eyebrow">Out of the box</div>
+          <h3>The gh CLI</h3>
+          <ul data-stagger>
+            <li>View, open, comment on PRs and issues</li>
+            <li>Merge, create branches, drive releases</li>
+            <li>Just say "open a PR" — no install if <code>gh</code> is on PATH</li>
+          </ul>
+        </div>
+        <div class="col m-from-right">
+          <div class="col-eyebrow">Plugin install</div>
+          <h3>Azure skills + a wrapper</h3>
+          <ul data-stagger>
+            <li>Microsoft's plugin handles infra: deploy, validate, diagnose</li>
+            <li>For Azure DevOps, write a project skill that shells out to <code>az devops</code></li>
+            <li>Same agent, two SCM hosts, one habit</li>
+          </ul>
+        </div>
+      </div>
+      <p class="compare-note"><span class="pg-prompt-inline">❯</span> <code>gh pr create</code> opens the PR · <code>/plugin install azure@claude-plugins-official</code> adds the Azure skills</p>
+    </div>
+    <div class="prop prop-tr m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-pebble-cyan.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">17 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Source: <a href="https://github.com/microsoft/azure-skills" target="_blank" rel="noopener">github.com/microsoft/azure-skills</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 18 — Git worktrees (Content+Code, ink)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-content-code dark" data-screen-label="18 Git worktrees">
+    <div class="stage-pad">
+      <div class="col-text m-from-left">
+        <div class="eyebrow">Parallel work</div>
+        <h2>Git worktrees — one repo, many sessions.</h2>
+        <ul class="bullets" data-stagger>
+          <li>A worktree is a separate working directory sharing one repo history</li>
+          <li>File-level isolation: edits in one session never touch files in another</li>
+          <li>Each worktree is its own branch + directory</li>
+          <li><code>.worktreeinclude</code> auto-copies local files like <code>.env</code> into new worktrees</li>
+        </ul>
+      </div>
+      <div class="pg-frame theme-dark pg-terminal col-code m-from-right" data-script-id="s18" style="height:520px">
+        <div class="pg-titlebar">
+          <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+          <div class="title">claude · git worktrees</div>
+          <div class="meta">zsh</div>
+        </div>
+        <div class="pg-body">
+<span class="pg-line"><span class="cc-input">claude --worktree feature-auth</span></span>
+<span class="pg-line cc-result">created .claude/worktrees/feature-auth/</span>
+<span class="pg-line cc-result">branch worktree-feature-auth</span>
+<span class="pg-line cc-status done">Isolated session — edits never touch other worktrees</span>
+<span class="pg-line cc-result"># .worktreeinclude copies gitignored files:</span>
+<span class="pg-line cc-result"><span class="cc-add">.env  .env.local  config/secrets.json</span></span>
+<span class="pg-line"><span class="cc-input">claude --worktree</span></span>
+<span class="pg-line cc-result">generated name: bright-running-fox</span>
+        </div>
+        <div class="pg-controls">
+          <button class="pg-run" type="button"><span class="ico"></span>Run</button>
+          <button class="pg-reset" type="button">Reset</button>
+          <span class="status">idle</span>
+        </div>
+      </div>
+    </div>
+    <div class="prop prop-tr m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-square-glass.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">18 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Source: <a href="https://code.claude.com/docs/en/worktrees" target="_blank" rel="noopener">code.claude.com/docs/en/worktrees</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 19 — Team agents (Feature Highlight)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-highlight s-visual" data-screen-label="19 Team agents">
+    <div class="stage-pad">
+      <div class="col-text">
+        <div class="eyebrow m-rise-sm">Multi-agent</div>
+        <h2 class="m-rise">A lead, teammates, and a real mailbox.</h2>
+        <ul class="bullets m-rise" data-stagger>
+          <li>One session leads; teammates spawn as independent sessions with own contexts</li>
+          <li>Communicate directly via <code>SendMessage</code> — not only via the lead</li>
+          <li>Shared task list with claim, dependency, and completion semantics</li>
+          <li>Hosted and secure? Managed Agents keep tools and data inside your perimeter</li>
+        </ul>
+      </div>
+      <div class="col-visual m-from-right">
+        <div class="pg-frame theme-dark pg-terminal" data-script-id="s19">
+          <div class="pg-titlebar">
+            <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+            <div class="title">claude · agent team</div>
+            <div class="meta">zsh</div>
+          </div>
+          <div class="pg-body">
+<span class="pg-line"><span class="cc-input">create an agent team to review PR #142</span></span>
+<span class="pg-line cc-tool">Task(<span class="cc-args">spawn 3 teammates</span>)</span>
+<span class="pg-line cc-result">security · performance · test-coverage</span>
+<span class="pg-line cc-tool">SendMessage(<span class="cc-args">security: check token handling</span>)</span>
+<span class="pg-line cc-result">shared task list: 6 tasks · claim · depends-on</span>
+<span class="pg-line cc-status done">Teammates message each other directly — not only the lead</span>
+          </div>
+          <div class="pg-controls">
+            <button class="pg-run" type="button"><span class="ico"></span>Run</button>
+            <button class="pg-reset" type="button">Reset</button>
+            <span class="status">idle</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Tight single-object prop for the 340px prop-bl crop (plus-blue is a
+         16:9 scene that only smeared at this size/position — see slide 06). -->
+    <div class="prop prop-bl m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-disc-glass.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">19 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Sources: <a href="https://code.claude.com/docs/en/agent-teams" target="_blank" rel="noopener">code.claude.com/docs/en/agent-teams</a> · <a href="https://claude.com/blog/claude-managed-agents-updates" target="_blank" rel="noopener">claude.com/blog · Managed Agents</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 20 — Dynamic workflows (Feature Highlight) — paper
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-highlight s-visual" data-screen-label="20 Workflows">
+    <div class="stage-pad">
+      <div class="col-text">
+        <div class="eyebrow m-rise-sm">Orchestration at scale</div>
+        <h2 class="m-rise">Workflows move the plan into code.</h2>
+        <ul class="bullets m-rise" data-stagger>
+          <li>New in Opus 4.8: Claude writes a script that orchestrates subagents</li>
+          <li>The script holds the loop and results; your context keeps only the answer</li>
+          <li>Bigger than one chat: codebase audits, 500-file migrations, cross-checked research</li>
+          <li>Run <code>/deep-research</code> or say <code>workflow</code></li>
+        </ul>
+      </div>
+      <div class="col-visual m-from-right">
+        <div class="pg-frame theme-dark pg-terminal" data-script-id="s20">
+          <div class="pg-titlebar">
+            <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+            <div class="title">claude · workflow</div>
+            <div class="meta">zsh</div>
+          </div>
+          <div class="pg-body">
+<span class="pg-line"><span class="cc-input">Run a workflow to audit every route for missing auth</span></span>
+<span class="pg-line cc-status">Claude writes the orchestration script <span class="cc-meta">(opus 4.8)</span></span>
+<span class="pg-line cc-tool">Phase 1 · Scan <span class="cc-args">16 agents</span></span>
+<span class="pg-line cc-result">42 routes mapped</span>
+<span class="pg-line cc-tool">Phase 2 · Verify <span class="cc-args">adversarial review</span></span>
+<span class="pg-line cc-status done">Report ready — context holds only the answer</span>
+          </div>
+          <div class="pg-controls">
+            <button class="pg-run" type="button"><span class="ico"></span>Run</button>
+            <button class="pg-reset" type="button">Reset</button>
+            <span class="status">idle</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="prop prop-bl m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-hex-blue.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">20 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Source: <a href="https://code.claude.com/docs/en/workflows" target="_blank" rel="noopener">code.claude.com/docs/en/workflows</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 21 — Issue 429 / superpowers × teams (Content, ink)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-content dark s-visual" data-screen-label="21 Superpowers x teams">
+    <div class="stage-pad">
+      <div class="col-text">
+        <div class="eyebrow m-rise-sm">Superpowers × teams</div>
+        <h2 class="m-rise">Making skills work with team agents.</h2>
+        <ul class="bullets m-rise" data-stagger>
+          <li>Superpowers has no native team-agents support yet — issue #429 is an open request to add it</li>
+          <li>So the lead session runs every <code>superpowers:*</code> skill; teammates do plain implementation only</li>
+          <li>Review subagents verify at phase boundaries — fresh agents can run verification-before-completion</li>
+        </ul>
+      </div>
+      <div class="col-visual m-from-right">
+        <div class="pg-frame theme-light pg-browser">
+          <span class="corner-tag">Mockup</span>
+          <div class="pg-titlebar">
+            <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+            <div class="title">obra/superpowers · #429</div>
+            <div class="meta"></div>
+          </div>
+          <div class="pg-tabs">
+            <div class="tab on"><span class="fav"></span>Issues</div>
+          </div>
+          <div class="pg-addressbar">
+            <div class="nav">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="url"><svg class="lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span class="scheme">https://</span>github.com/obra/superpowers/issues/429</div>
+          </div>
+          <div class="pg-body" style="padding:0">
+            <div class="pg-page gh-issue">
+              <div class="gh-state open">Open</div>
+              <h2>Support for Claude Code Agent Teams (TeammateTool, SendMessage, TaskList)</h2>
+              <p class="gh-meta">#429 · feature request</p>
+              <p>The using-superpowers skill's &lt;SUBAGENT-STOP&gt; block prevents teammates from invoking <code>superpowers:*</code> skills directly.</p>
+              <p class="gh-work">Working pattern: the <b>lead</b> runs every <code>superpowers:*</code> skill; teammates do plain implementation; review subagents verify at phase boundaries.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="prop prop-bl m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-c-glass.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">21 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Source: <a href="https://github.com/obra/superpowers/issues/429" target="_blank" rel="noopener">github.com/obra/superpowers/issues/429</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 22 — Proof point · CodeRabbit (Content, paper) — NEW
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-content" data-screen-label="22 Proof CodeRabbit">
+    <div class="stage-pad">
+      <div class="eyebrow m-rise-sm">Claude Code in the wild</div>
+      <h2 class="m-rise">CodeRabbit plans with Claude before it writes a line of code.</h2>
+      <p class="lead m-rise-sm">Their orchestration layer reviews 2 million pull requests a week across 15,000+ customers.</p>
+      <ul class="bullets m-rise" data-stagger>
+        <li>Opus drives orchestration, Sonnet sequences the plan, Haiku distills context</li>
+        <li>A collaborative PRD locks context and assumptions before Plan Mode writes code</li>
+        <li>"The plan itself becomes a quality gate" — better upfront, pronounced downstream</li>
+        <li>A custom eval harness scores plan quality, scope creep, and token efficiency</li>
+      </ul>
+    </div>
+    <div class="prop prop-tr m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-pebble-cyan.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">22 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Source: <a href="https://claude.com/blog/how-coderabbit-used-claude-to-build-an-agent-orchestration-system" target="_blank" rel="noopener">claude.com/blog · How CodeRabbit built an agent-orchestration system</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 23 — End to end (Section Divider) — paper
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-section" data-screen-label="23 End to end">
+    <div class="stage-pad">
+      <div class="content m-rise m-hero">
+        <div class="eyebrow m-rise-sm">Putting it together</div>
+        <h2>How this very deck got built.</h2>
+      </div>
+    </div>
+    <div class="prop prop-tr m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-sphere-blue.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">23 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Source: <a href="https://code.claude.com/docs/en/agent-teams" target="_blank" rel="noopener">code.claude.com/docs/en/agent-teams</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 24 — E2E setup (Content+Code)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-content-code" data-screen-label="24 E2E setup">
+    <div class="stage-pad">
+      <div class="col-text m-from-left">
+        <div class="eyebrow">E2E scenario · setup</div>
+        <h2>The slides you are watching were built by a team of Claudes.</h2>
+        <ul class="bullets" data-stagger>
+          <li>Goal: an internal tech note, delivered as a browser HTML deck</li>
+          <li>Existing Devspiration design system reused as the source of truth</li>
+          <li>Team-agents flag enabled; superpowers installed; effort at <code>xhigh</code></li>
+          <li>Four roles: Researcher, UI/UX Designer, Frontend Developer, QA</li>
+        </ul>
+      </div>
+      <div class="pg-frame theme-dark pg-terminal col-code m-from-right" data-script-id="s22" style="height:580px">
+        <div class="pg-titlebar">
+          <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+          <div class="title">claude · team setup</div>
+          <div class="meta">zsh</div>
+        </div>
+        <div class="pg-body">
+<span class="pg-line"><span class="cc-input">export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1</span></span>
+<span class="pg-line cc-status">Agent teams enabled <span class="cc-meta">(experimental)</span></span>
+<span class="pg-line"><span class="cc-input">claude --effort xhigh</span></span>
+<span class="pg-line"><span class="cc-banner"><span class="cc-spark">✻</span>Welcome to Claude Code!<span class="cc-sub">opus 4.7 · with xhigh effort</span></span></span>
+<span class="pg-line"><span class="cc-input">create a team: researcher, designer, frontend, qa</span></span>
+<span class="pg-line cc-tool">Task(<span class="cc-args">spawn 4 teammates</span>)</span>
+<span class="pg-line cc-status done">Team lead spawned 4 teammates</span>
+        </div>
+        <div class="pg-controls">
+          <button class="pg-run" type="button"><span class="ico"></span>Run</button>
+          <button class="pg-reset" type="button">Reset</button>
+          <span class="status">idle</span>
+        </div>
+      </div>
+    </div>
+    <div class="prop prop-tr m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-donut-blue.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">24 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Source: <a href="https://code.claude.com/docs/en/agent-teams" target="_blank" rel="noopener">code.claude.com/docs/en/agent-teams</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 25 — E2E execution (Content+Code)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-content-code" data-screen-label="25 E2E execution">
+    <div class="stage-pad">
+      <div class="col-text m-from-left">
+        <div class="eyebrow">E2E scenario · execution</div>
+        <h2>Brainstorm, plan, parallel build, verify.</h2>
+        <ul class="bullets" data-stagger>
+          <li>Lead invoked <code>brainstorming</code> then <code>writing-plans</code> — spec and plan first</li>
+          <li>Researcher and Designer ran in parallel via team agents (Phase 1)</li>
+          <li>Frontend composed researcher briefs into designer archetypes (Phase 2)</li>
+          <li>QA validated URLs, slide count, design rules, viewport (Phase 3)</li>
+        </ul>
+      </div>
+      <div class="pg-flow col-code m-from-right">
+        <div class="steps">
+          <div class="step"><span class="num">01</span><span class="lbl">Brainstorm</span><span class="bar"></span></div>
+          <div class="step"><span class="num">02</span><span class="lbl">Plan</span><span class="bar"></span></div>
+          <div class="step"><span class="num">03</span><span class="lbl">Parallel build</span><span class="bar"></span></div>
+          <div class="step"><span class="num">04</span><span class="lbl">Verify</span><span class="bar"></span></div>
+        </div>
+        <div class="stage">
+          <div class="panel" data-caption="Design approved before any code — a hard gate.">
+            <div class="flow-card">
+              <div class="flow-cmd">/superpowers:brainstorming</div>
+              <p>One question at a time, then 2–3 approaches with a recommendation → <b>spec.md</b> committed.</p>
+            </div>
+          </div>
+          <div class="panel" data-caption="Every step explicit; no TBD.">
+            <div class="flow-card">
+              <div class="flow-cmd">/superpowers:writing-plans</div>
+              <p>File map first, then a numbered TDD checklist → <b>plan.md</b>.</p>
+            </div>
+          </div>
+          <div class="panel" data-caption="Teammates claim tasks and SendMessage each other.">
+            <div class="flow-card">
+              <div class="flow-cmd">team agents · phase 1 → 2</div>
+              <p>Researcher + Designer in parallel; Frontend composes the deck; shared task list.</p>
+            </div>
+          </div>
+          <div class="panel" data-caption="Evidence before 'done'.">
+            <div class="flow-card">
+              <div class="flow-cmd">verification-before-completion</div>
+              <p>QA + a fresh review subagent verify at every phase boundary.</p>
+            </div>
+          </div>
+        </div>
+        <div class="nav">
+          <span class="caption"></span>
+          <div class="ctl">
+            <button class="prev" type="button">← Prev</button>
+            <button class="next primary" type="button">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="prop prop-tr m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-a-light.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">25 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Source: <a href="https://code.claude.com/docs/en/agent-teams" target="_blank" rel="noopener">code.claude.com/docs/en/agent-teams</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 26 — Closing
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-close" data-screen-label="26 Closing">
+    <div class="stage-pad">
+      <div class="eyebrow m-rise-sm">Thank you</div>
+      <h2 class="m-rise m-hero">Now go ship your own scenarios.</h2>
+      <div class="grid" data-stagger>
+        <div class="card m-rise-sm">
+          <img src="../devspiration-design-system/project/assets/icons/icon-book.svg" alt="">
+          <b>Read the docs</b><span>code.claude.com/docs — the reference for every feature shown today.</span>
+        </div>
+        <div class="card m-rise-sm">
+          <img src="../devspiration-design-system/project/assets/icons/icon-document.svg" alt="">
+          <b>Install superpowers</b><span>github.com/obra/superpowers — the skills library used in the talk.</span>
+        </div>
+        <div class="card m-rise-sm">
+          <img src="../devspiration-design-system/project/assets/icons/icon-flag.svg" alt="">
+          <b>Try team agents</b><span>code.claude.com/docs/en/agent-teams — the multi-agent docs.</span>
+        </div>
+        <div class="card m-rise-sm">
+          <img src="../devspiration-design-system/project/assets/icons/icon-lightning.svg" alt="">
+          <b>Ship a deck</b><span>Open presentation/index.html and replace the content.</span>
+        </div>
+      </div>
+    </div>
+    <div class="prop prop-tr m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-c-glass.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">26 / 26</span>
+    <footer class="src m-fade-in m-quick">
+      Source: aggregated — see <a href="https://code.claude.com/docs/en/overview" target="_blank" rel="noopener">code.claude.com/docs</a>
+    </footer>
+  </section>
+
+</deck-stage>
+
+<script src="../devspiration-design-system/project/slides/deck-stage.js"></script>
+<script src="../devspiration-design-system/project/slides/wire-motion.js"></script>
+<script src="../devspiration-design-system/project/playground.js"></script>
+
+<script>
+  /* ───────── Per-slide terminal scripts + auto-run wiring ─────────
+     Each pg-terminal that should type out on slide-enter carries a beat
+     array (playground.js shape). We attach the array as `el.__script`
+     BEFORE playground.js boot() wires it (boot runs on DOMContentLoaded;
+     this inline script runs synchronously during parse, so it lands
+     first). Every script LEADS with a {type:'clear'} beat so a run/replay
+     reproduces — never duplicates — the statically-authored resting body.
+
+     Resting state: each terminal's full final content is authored
+     statically in its .pg-body, so the deck is legible with no JS
+     (print / thumbnail / reduced-motion safe). */
+
+  // Slide 06 — Warp. Grounded in docs.warp.dev/agent-platform/cli-agents/claude-code.
+  const S06 = [
+    { type:'clear' },
+    { type:'out', cls:'cc-tool', html:'Edit(<span class="cc-args">src/api/webhooks/stripe.ts</span>)' },
+    { type:'out', cls:'cc-status', html:'Editing… <span class="cc-meta">(esc to interrupt · 2s)</span>' },
+    { type:'pause', ms:500 },
+    { type:'raw', html:'<span class="cc-perm"><span class="cc-q">Do you want to make this edit to stripe.ts?</span><span class="cc-opt sel">1. Yes</span><span class="cc-opt">2. Yes, allow all edits this session</span><span class="cc-opt">3. No, and tell Claude what to do differently (esc)</span></span>' },
+    { type:'pause', ms:400 },
+    { type:'out', cls:'cc-result', html:'Agent notification sent <span class="cc-hint">(in-app + desktop)</span>' },
+    { type:'out', cls:'cc-result', html:'Review comment → <span style="color:var(--pg-fg-dark)">"verify the signature first"</span>' },
+    { type:'out', cls:'cc-status done', html:'Approved · edit applied' },
+  ];
+
+  // Slide 02 — What Claude Code is. Source: code.claude.com/docs/en/overview.
+  const S02 = [
+    { type:'clear' },
+    { type:'raw', html:'<span class="cc-banner"><span class="cc-spark">✻</span>Welcome to Claude Code!<span class="cc-sub">cwd: ~/your-project · opus 4.7 · with xhigh effort</span></span>' },
+    { type:'pause', ms:400 },
+    { type:'raw', html:'<span class="cc-input">fix the failing auth test and run the suite</span>' },
+    { type:'pause', ms:800 },
+    { type:'out', cls:'cc-tool', html:'Read(<span class="cc-args">src/auth/session.ts</span>)' },
+    { type:'out', cls:'cc-result', html:'Read 120 lines' },
+    { type:'out', cls:'cc-tool', html:'Edit(<span class="cc-args">src/auth/session.ts</span>)' },
+    { type:'out', cls:'cc-result', html:'Applied edit <span class="cc-add">+3</span> <span class="cc-del">-1</span>' },
+    { type:'out', cls:'cc-tool', html:'Bash(<span class="cc-args">npm test</span>)' },
+    { type:'out', cls:'cc-result', html:'<span class="cc-add">PASS</span> tests/auth.test.ts <span class="cc-hint">(12 tests)</span>' },
+    { type:'out', cls:'cc-status done', html:'Done · read → edit → ran the verifying command' },
+  ];
+
+  // Slide 03 — Effort levels. Source: code.claude.com/docs/en/model-config.
+  const S03 = [
+    { type:'clear' },
+    { type:'raw', html:'<span class="cc-banner"><span class="cc-spark">✻</span>opus 4.7 · with xhigh effort<span class="cc-sub">Claude Code default</span></span>' },
+    { type:'pause', ms:300 },
+    { type:'raw', html:'<span class="cc-input">/effort</span>' },
+    { type:'pause', ms:350 },
+    { type:'out', cls:'cc-result', html:'low · short, latency-sensitive' },
+    { type:'out', cls:'cc-result', html:'medium · cost-sensitive' },
+    { type:'out', cls:'cc-result', html:'high · intelligence-sensitive work' },
+    { type:'out', cls:'cc-result', html:'<span style="color:var(--pg-fg-dark)"><span style="color:var(--ds-blue-electric);margin-right:.3em">❯</span>xhigh · best for most work (default)</span>' },
+    { type:'out', cls:'cc-result', html:'max · hardest problems · session only' },
+    { type:'out', cls:'cc-status done', html:'Effort: xhigh <span class="cc-meta">(model default on Opus 4.7)</span>' },
+  ];
+
+  // Slide 08 — Brainstorming. Source: superpowers/skills/brainstorming/SKILL.md.
+  const S08 = [
+    { type:'clear' },
+    { type:'raw', html:'<span class="cc-input">/superpowers:brainstorming</span>' },
+    { type:'out', cls:'cc-status', html:'Asking one question… <span class="cc-meta">(esc to interrupt · 1s)</span>' },
+    { type:'out', cls:'cc-result', html:'What problem does this solve, and for whom?' },
+    { type:'pause', ms:400 },
+    { type:'raw', html:'<span class="cc-input">engineers tracking TODO comments across a repo</span>' },
+    { type:'pause', ms:400 },
+    { type:'out', cls:'cc-tool', html:'Task(<span class="cc-args">propose approaches</span>)' },
+    { type:'out', cls:'cc-result', html:'<span class="cc-add">A) grep + cache</span> — fast, no index — recommended for v1' },
+    { type:'out', cls:'cc-result', html:'B) AST parse — precise, slower' },
+    { type:'out', cls:'cc-result', html:'C) LSP hook — live, complex' },
+    { type:'out', cls:'cc-tool', html:'Write(<span class="cc-args">specs/2026-05-25-todo-tracker-design.md</span>)' },
+    { type:'out', cls:'cc-status done', html:'Committed. Next: writing-plans' },
+  ];
+
+  // Slide 10 — TDD. Source: superpowers/skills/test-driven-development/SKILL.md.
+  const S10 = [
+    { type:'clear' },
+    { type:'out', cls:'cc-result', html:'<span class="cc-del">RED</span> — write one minimal failing test' },
+    { type:'out', cls:'cc-tool', html:'Bash(<span class="cc-args">npm test</span>)' },
+    { type:'pause', ms:450 },
+    { type:'out', cls:'cc-result', html:'<span class="cc-del">FAIL</span>: expected \'Email required\', got undefined' },
+    { type:'out', cls:'cc-status', html:'Verified RED — fails for the right reason' },
+    { type:'pause', ms:450 },
+    { type:'out', cls:'cc-result', html:'<span class="cc-add">GREEN</span> — simplest code to pass' },
+    { type:'out', cls:'cc-tool', html:'Bash(<span class="cc-args">npm test</span>)' },
+    { type:'pause', ms:450 },
+    { type:'out', cls:'cc-result', html:'<span class="cc-add">PASS</span> 1 passing' },
+    { type:'out', cls:'cc-status done', html:'Safe to REFACTOR — stay green' },
+  ];
+
+  // Slide 11 — Verification before completion. Source: superpowers/skills/verification-before-completion/SKILL.md.
+  const S11 = [
+    { type:'clear' },
+    { type:'out', cls:'cc-result', html:'Claim to make: "All tests pass."' },
+    { type:'out', cls:'cc-status', html:'Gate: run the proving command first' },
+    { type:'out', cls:'cc-tool', html:'Bash(<span class="cc-args">npm test</span>)' },
+    { type:'pause', ms:550 },
+    { type:'out', cls:'cc-result', html:'Tests: <span class="cc-add">34 passed</span>, 34 total' },
+    { type:'out', cls:'cc-result', html:'Exit code: 0' },
+    { type:'out', cls:'cc-status done', html:'Evidence captured → now safe to claim' },
+    { type:'out', cls:'cc-result', html:'<span class="cc-del">✗ before evidence:</span> "should" · "probably" · "Done!"' },
+  ];
+
+  // Slide 16 — .NET MCP. Source: github.com/jongalloway/dotnet-mcp (real PascalCase ops).
+  const S16 = [
+    { type:'clear' },
+    { type:'raw', html:'<span class="cc-input">use the dotnet MCP: build and test</span>' },
+    { type:'out', cls:'cc-tool', html:'dotnet_project(<span class="cc-args">Build</span>)' },
+    { type:'pause', ms:400 },
+    { type:'out', cls:'cc-result', html:'<span class="cc-add">Build succeeded</span> · 0 warnings' },
+    { type:'out', cls:'cc-tool', html:'dotnet_project(<span class="cc-args">Test</span>)' },
+    { type:'pause', ms:400 },
+    { type:'out', cls:'cc-result', html:'<span class="cc-add">Passed!</span> 48 of 48' },
+    { type:'out', cls:'cc-tool', html:'dotnet_ef(<span class="cc-args">MigrationsAdd AddOrders</span>)' },
+    { type:'pause', ms:350 },
+    { type:'out', cls:'cc-result', html:'Migrations/2026…_AddOrders.cs' },
+    { type:'out', cls:'cc-status done', html:'One MCP server wraps the dotnet CLI' },
+  ];
+
+  // Slide 17 — Azure + gh. Source: github.com/microsoft/azure-skills (+ gh built-in).
+  const S17 = [
+    { type:'clear' },
+    { type:'cmd', text:'open a PR for this branch' },
+    { type:'pause', ms:400 },
+    { type:'pip', color:'yellow', text:'gh pr create', cls:'pg-cl-dim' },
+    { type:'out', html:'  <span class="pg-cl-blue">https://github.com/acme/app/pull/142</span>', delay:60 },
+    { type:'pip', color:'green', text:'gh is on PATH — no install needed', cls:'pg-cmd' },
+    { type:'pause', ms:400 },
+    { type:'cmd', text:'/plugin install azure@claude-plugins-official' },
+    { type:'pause', ms:350 },
+    { type:'pip', color:'green', text:'Azure skills installed', cls:'pg-cmd' },
+    { type:'out', text:'  azure-deploy · azure-validate · azure-diagnostics', cls:'pg-cl-dim', delay:60 },
+  ];
+
+  // Slide 18 — Git worktrees. Source: code.claude.com/docs/en/worktrees.
+  const S18 = [
+    { type:'clear' },
+    { type:'raw', html:'<span class="cc-input">claude --worktree feature-auth</span>' },
+    { type:'pause', ms:400 },
+    { type:'out', cls:'cc-result', html:'created .claude/worktrees/feature-auth/' },
+    { type:'out', cls:'cc-result', html:'branch worktree-feature-auth' },
+    { type:'out', cls:'cc-status done', html:'Isolated session — edits never touch other worktrees' },
+    { type:'out', cls:'cc-result', html:'# .worktreeinclude copies gitignored files:' },
+    { type:'out', cls:'cc-result', html:'<span class="cc-add">.env  .env.local  config/secrets.json</span>' },
+    { type:'pause', ms:300 },
+    { type:'raw', html:'<span class="cc-input">claude --worktree</span>' },
+    { type:'out', cls:'cc-result', html:'generated name: bright-running-fox' },
+  ];
+
+  // Slide 19 — Team agents. Source: code.claude.com/docs/en/agent-teams.
+  const S19 = [
+    { type:'clear' },
+    { type:'raw', html:'<span class="cc-input">create an agent team to review PR #142</span>' },
+    { type:'out', cls:'cc-tool', html:'Task(<span class="cc-args">spawn 3 teammates</span>)' },
+    { type:'out', cls:'cc-result', html:'security · performance · test-coverage' },
+    { type:'pause', ms:300 },
+    { type:'out', cls:'cc-tool', html:'SendMessage(<span class="cc-args">security: check token handling</span>)' },
+    { type:'out', cls:'cc-result', html:'shared task list: 6 tasks · claim · depends-on' },
+    { type:'out', cls:'cc-status done', html:'Teammates message each other directly — not only the lead' },
+  ];
+
+  // Slide 20 — Dynamic workflows. Source: code.claude.com/docs/en/workflows.
+  const S20 = [
+    { type:'clear' },
+    { type:'raw', html:'<span class="cc-input">Run a workflow to audit every route for missing auth</span>' },
+    { type:'out', cls:'cc-status', html:'Claude writes the orchestration script <span class="cc-meta">(opus 4.8)</span>' },
+    { type:'pause', ms:350 },
+    { type:'out', cls:'cc-tool',   html:'Phase 1 · Scan <span class="cc-args">16 agents</span>' },
+    { type:'out', cls:'cc-result', html:'42 routes mapped' },
+    { type:'out', cls:'cc-tool',   html:'Phase 2 · Verify <span class="cc-args">adversarial review</span>' },
+    { type:'out', cls:'cc-status done', html:'Report ready — context holds only the answer' },
+  ];
+
+  // Slide 22 — E2E setup. Source: code.claude.com/docs/en/agent-teams (REAL commands; no fictional npx).
+  const S22 = [
+    { type:'clear' },
+    { type:'raw', html:'<span class="cc-input">export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1</span>' },
+    { type:'out', cls:'cc-status', html:'Agent teams enabled <span class="cc-meta">(experimental)</span>' },
+    { type:'pause', ms:300 },
+    { type:'raw', html:'<span class="cc-input">claude --effort xhigh</span>' },
+    { type:'raw', html:'<span class="cc-banner"><span class="cc-spark">✻</span>Welcome to Claude Code!<span class="cc-sub">opus 4.7 · with xhigh effort</span></span>' },
+    { type:'pause', ms:350 },
+    { type:'raw', html:'<span class="cc-input">create a team: researcher, designer, frontend, qa</span>' },
+    { type:'out', cls:'cc-tool', html:'Task(<span class="cc-args">spawn 4 teammates</span>)' },
+    { type:'out', cls:'cc-status done', html:'Team lead spawned 4 teammates' },
+  ];
+
+  // Map each terminal's data-script-id (authored on the element) to its array.
+  const TERMINAL_SCRIPTS = {
+    's02': S02,
+    's03': S03,
+    's06': S06,
+    's08': S08,
+    's10': S10,
+    's11': S11,
+    's16': S16,
+    's17': S17,
+    's18': S18,
+    's19': S19,
+    's20': S20,
+    's22': S22,
+  };
+
+  // Attach scripts before boot() wires the terminals.
+  document.querySelectorAll('.pg-terminal[data-script-id]').forEach((el) => {
+    const arr = TERMINAL_SCRIPTS[el.dataset.scriptId];
+    if (arr) el.__script = arr;
+  });
+
+  // Auto-run a slide's terminal when it becomes active; reset the one we left.
+  const stage = document.querySelector('deck-stage');
+  stage?.addEventListener('slidechange', (e) => {
+    const { slide, previousSlide } = e.detail;
+    previousSlide?.querySelectorAll('.pg-terminal').forEach((t) => t.reset && t.reset());
+    if (!slide) return;
+    // Honor reduced-motion: skip the JS-driven type-out, leaving the static
+    // resting body + the manual Run button. (The type-out is not a CSS
+    // transition, so prefers-reduced-motion would not otherwise disable it.)
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      slide.querySelectorAll('.pg-terminal[data-autorun="true"]')
+           .forEach((t) => t.run && t.run());
+    }));
+  });
+
+  /* ───────── Fullscreen toggle (F) ─────────
+     deck-stage.js owns ←/→, Home/End, 1-9, R but has no fullscreen key, and
+     it's a shared design-system file — so the toggle lives here, scoped to
+     this deck. Press F to enter/exit the Fullscreen API on the whole page;
+     it hides browser chrome like F11 but is scriptable and OS-independent.
+     Esc exits natively. deck-stage ignores 'f' (leaves it unhandled, no
+     preventDefault), so both window listeners coexist. */
+  window.addEventListener('keydown', (e) => {
+    // Don't steal the key while typing, or as part of a modifier combo.
+    const t = e.target;
+    if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key !== 'f' && e.key !== 'F') return;
+    e.preventDefault();
+    const el = document.documentElement;
+    const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+    if (!fsEl) {
+      (el.requestFullscreen || el.webkitRequestFullscreen)?.call(el);
+    } else {
+      (document.exitFullscreen || document.webkitExitFullscreen)?.call(document);
+    }
+  });
+</script>
+
+</body>
+</html>

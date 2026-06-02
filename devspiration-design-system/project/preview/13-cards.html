@@ -1,0 +1,26 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Cards</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 20px; background: var(--ds-mist); font-family: var(--ds-font-sans); color: var(--ds-ink); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .card { background: #fff; border-radius: 16px; padding: 18px; border: 1px solid var(--ds-line); box-shadow: 0 4px 12px rgba(48,48,48,.06); }
+  .card.dark { background: var(--ds-ink); color: #fff; border-color: rgba(255,255,255,.08); box-shadow: none; }
+  .eyebrow { font-weight: 700; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ds-blue); }
+  .title { font-weight: 700; font-size: 18px; margin: 6px 0 4px; letter-spacing: -0.01em; }
+  .body { font-size: 13px; color: var(--ds-ink-2); line-height: 1.5; }
+  .card.dark .body { color: rgba(255,255,255,.7); }
+</style>
+</head><body>
+<div class="grid">
+  <div class="card">
+    <div class="eyebrow">01 · Brand</div>
+    <div class="title">Visual foundations</div>
+    <div class="body">White surface, 16px radius, hairline border. The default card.</div>
+  </div>
+  <div class="card dark">
+    <div class="eyebrow">02 · Motion</div>
+    <div class="title">Dark surface</div>
+    <div class="body">Ink fill, no shadow, inner 1px glow. Used on dark slides.</div>
+  </div>
+</div>
+</body></html>
