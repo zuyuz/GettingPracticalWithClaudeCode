@@ -100,6 +100,70 @@
       appendLine(body, beat.html, beat.cls || '');
       return sleep(beat.delay ?? 80);
     }
+    // Typed-out user prompt — types char-by-char into a Claude-Code
+    // `> ` input box with a live caret. (cc-input ::before draws the arrow.)
+    if (beat.type === 'input') {
+      const line = document.createElement('span');
+      line.className = 'pg-line';
+      const box = document.createElement('span');
+      box.className = 'cc-input cc-input-live';
+      const txt = document.createElement('span');
+      box.appendChild(txt);
+      const caret = document.createElement('span');
+      caret.className = 'pg-caret';
+      box.appendChild(caret);
+      line.appendChild(box);
+      body.appendChild(line);
+      body.scrollTop = body.scrollHeight;
+      await typeInto(txt, beat.text || '', { cps: beat.cps || 46 });
+      await sleep(beat.delay ?? 260);
+      caret.remove();
+      return;
+    }
+    // Claude Code "thinking" spinner — rotating ✻, cycling verb, a live
+    // elapsed timer and a climbing token count with an interrupt hint.
+    // Transient by default: removes itself when the agent starts acting.
+    if (beat.type === 'think') {
+      const verbs = beat.verbs || [
+        'Thinking', 'Pondering', 'Cogitating', 'Reticulating',
+        'Considering', 'Deliberating', 'Reasoning', 'Untangling', 'Synthesizing',
+      ];
+      const line = document.createElement('span');
+      line.className = 'pg-line cc-think';
+      line.innerHTML =
+        '<span class="cc-think-spark">✻</span>' +
+        '<span class="cc-think-label"></span>' +
+        '<span class="cc-think-meta"></span>';
+      body.appendChild(line);
+      body.scrollTop = body.scrollHeight;
+      const label = line.querySelector('.cc-think-label');
+      const meta = line.querySelector('.cc-think-meta');
+      const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+      const t0 = now();
+      const base = beat.tokens ?? 0;
+      let vi = 0;
+      label.textContent = verbs[0] + '…';
+      const vIv = setInterval(() => {
+        vi = (vi + 1) % verbs.length;
+        label.textContent = verbs[vi] + '…';
+      }, 460);
+      const tIv = setInterval(() => {
+        const s = (now() - t0) / 1000;
+        const tok = Math.round(base + s * 1850);
+        meta.textContent = '(' + Math.max(1, Math.round(s)) + 's · ↑ ' + fmtTokens(tok) + ' tokens · esc to interrupt)';
+      }, 90);
+      meta.textContent = '(1s · ↑ ' + fmtTokens(base) + ' tokens · esc to interrupt)';
+      await sleep(beat.ms ?? 1500);
+      clearInterval(vIv);
+      clearInterval(tIv);
+      line.remove();
+      return;
+    }
+  }
+
+  // Format a token count Claude-Code-style: 1234 → "1.2k".
+  function fmtTokens(n) {
+    return n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : String(n);
   }
 
   function escapeHtml(s) {
@@ -172,6 +236,7 @@
     async function run() {
       if (el.__running) return;
       el.__running = true;
+      el.classList.add('is-running');
       const token = ++el.__token;
       runBtn?.classList.add('running');
       runBtn?.setAttribute('disabled', '');
@@ -184,12 +249,14 @@
       runBtn?.removeAttribute('disabled');
       if (status) status.textContent = 'idle';
       el.__running = false;
+      el.classList.remove('is-running');
       el.dispatchEvent(new CustomEvent('pg-terminal-finished', { bubbles: true }));
     }
 
     function doReset() {
       el.__token++;
       el.__running = false;
+      el.classList.remove('is-running');
       body.innerHTML = initialHTML;
       runBtn?.classList.remove('running');
       runBtn?.removeAttribute('disabled');

@@ -950,6 +950,197 @@
       padding: 1px 6px; border-radius: 5px;
       background: var(--ds-mist); color: var(--ds-ink);
     }
+
+    /* ═══════════════════════════════════════════════════════════════
+       ENHANCEMENTS — Claude-Code-flavored interactivity
+       Added on top of the imported deck. Everything below is chrome or
+       animation only; the statically-authored resting body of every
+       terminal is untouched, so print / PDF / reduced-motion stay clean.
+       ═══════════════════════════════════════════════════════════════ */
+
+    /* ── "Thinking" spinner line (injected by the think beat) ── */
+    .slide .cc-think { display: block; color: var(--pg-fg-dim-dark); }
+    .slide .cc-think .cc-think-spark {
+      display: inline-block; color: var(--ds-blue-electric);
+      margin-right: .5em; font-weight: 700; transform-origin: 50% 50%;
+    }
+    .slide .cc-think .cc-think-label { color: var(--pg-fg-dark); font-weight: 600; }
+    .slide .cc-think .cc-think-meta  { color: var(--pg-fg-dim-dark); margin-left: .5em; font-style: italic; }
+
+    /* ── Live typed-input caret box ── */
+    .slide .cc-input.cc-input-live { border-color: var(--ds-blue-electric); }
+
+    /* ── Motion: only when the user allows it ── */
+    @media (prefers-reduced-motion: no-preference) {
+      .slide .cc-think .cc-think-spark { animation: cc-spin 1.15s linear infinite; }
+      /* Lines stream in while the agent is "running" — scoped to .is-running
+         so the static resting body (print / no-JS) never animates. */
+      .slide .pg-frame.is-running .pg-body > .pg-line {
+        animation: cc-line .26s cubic-bezier(.16,1,.3,1) both;
+      }
+      /* The most-recent tool call's dot pulses until the next line lands. */
+      .slide .pg-frame.is-running .pg-body > .pg-line:last-child.cc-tool::before {
+        animation: cc-dot 1s ease-in-out infinite;
+      }
+    }
+    @keyframes cc-spin { to { transform: rotate(360deg); } }
+    @keyframes cc-line { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+    @keyframes cc-dot  { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+
+    /* ── Context budget meter (injected into each .pg-controls) ── */
+    .slide .cc-ctx {
+      display: inline-flex; align-items: center; gap: 10px;
+      margin-left: auto;
+      font-family: var(--ds-font-mono); font-size: 16px;
+      color: var(--pg-fg-dim-dark);
+      letter-spacing: .01em;
+    }
+    .slide .pg-frame.theme-light .cc-ctx { color: var(--ds-ink-2); }
+    .slide .cc-ctx .cc-ctx-label { opacity: .8; }
+    .slide .cc-ctx .cc-ctx-track {
+      width: 96px; height: 7px; border-radius: 999px;
+      background: rgba(255,255,255,.14); overflow: hidden;
+    }
+    .slide .pg-frame.theme-light .cc-ctx .cc-ctx-track { background: var(--ds-line); }
+    .slide .cc-ctx .cc-ctx-fill {
+      display: block; height: 100%; width: 100%;
+      border-radius: 999px; background: var(--ds-blue);
+      transition: background 240ms ease;
+    }
+    .slide .cc-ctx.warn .cc-ctx-fill { background: #E0A53B; }
+    .slide .cc-ctx .cc-ctx-pct { min-width: 3.2em; text-align: right; font-variant-numeric: tabular-nums; }
+    /* When a terminal has the meter, the status text no longer needs the
+       auto-margin push — keep it left of the meter. */
+    .slide .pg-controls .status { margin-left: 0; }
+
+    /* ═══ Slide progress bar + chapter rail (page-level, fixed) ═══ */
+    .deck-progress {
+      position: fixed; left: 0; right: 0; bottom: 0;
+      z-index: 2147481000; pointer-events: none; user-select: none;
+    }
+    .deck-progress .deck-progress-bar {
+      position: absolute; left: 0; right: 0; bottom: 0; height: 4px;
+      background: rgba(127,127,127,.18);
+    }
+    .deck-progress .deck-progress-fill {
+      display: block; height: 100%; width: 0%;
+      background: var(--ds-blue);
+      transition: width 420ms cubic-bezier(.16,1,.3,1);
+    }
+    .deck-progress .deck-tick {
+      position: absolute; bottom: 0; width: 2px; height: 4px;
+      background: var(--ds-paper); opacity: .85;
+    }
+    .deck-progress .deck-chapter {
+      position: absolute; right: 22px; bottom: 14px;
+      display: flex; align-items: center; gap: 9px;
+      font-family: var(--ds-font-mono); font-size: 13px;
+      color: var(--ds-ink-2);
+      background: rgba(255,255,255,.78);
+      -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+      padding: 5px 12px; border-radius: 999px;
+      box-shadow: 0 1px 3px rgba(20,20,20,.12);
+      transition: opacity 300ms ease;
+    }
+    .deck-progress .deck-chapter .deck-chapter-name { color: var(--ds-ink); font-weight: 700; }
+    .deck-progress .deck-chapter .deck-chapter-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--ds-blue);
+    }
+    .deck-progress .deck-chapter .deck-chapter-idx { color: var(--ds-ink-3); }
+
+    /* ═══ Keyboard-shortcut help overlay (press ?) ═══ */
+    .deck-help {
+      position: fixed; inset: 0; z-index: 2147483600;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(20,20,20,.55);
+      -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 220ms ease;
+    }
+    .deck-help[data-open] { opacity: 1; pointer-events: auto; }
+    .deck-help .deck-help-card {
+      width: 560px; max-width: calc(100vw - 64px);
+      background: var(--ds-ink); color: var(--ds-paper);
+      border-radius: 22px; padding: 40px 44px;
+      box-shadow: 0 40px 120px -30px rgba(0,0,0,.7);
+      transform: translateY(10px) scale(.98);
+      transition: transform 260ms cubic-bezier(.16,1,.3,1);
+      font-family: var(--ds-font-sans);
+    }
+    .deck-help[data-open] .deck-help-card { transform: none; }
+    .deck-help .deck-help-eyebrow {
+      font-weight: 700; font-size: 13px; letter-spacing: .16em;
+      text-transform: uppercase; color: var(--ds-blue);
+      display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+    }
+    .deck-help .deck-help-eyebrow .spark { font-size: 16px; }
+    .deck-help h3 {
+      font-family: var(--ds-font-display); font-weight: 800;
+      font-size: 30px; letter-spacing: -0.02em; margin: 0 0 24px; color: var(--ds-paper);
+    }
+    .deck-help dl { display: grid; grid-template-columns: auto 1fr; gap: 14px 20px; margin: 0; align-items: center; }
+    .deck-help dt { display: flex; gap: 6px; }
+    .deck-help dd { margin: 0; font-size: 16px; color: rgba(255,255,255,.82); }
+    .deck-help kbd {
+      font-family: var(--ds-font-mono); font-size: 13px; font-weight: 600;
+      min-width: 26px; text-align: center;
+      padding: 4px 9px; border-radius: 7px;
+      background: rgba(255,255,255,.1); color: var(--ds-paper);
+      border: 1px solid rgba(255,255,255,.16);
+    }
+    .deck-help .deck-help-foot {
+      margin-top: 26px; padding-top: 18px;
+      border-top: 1px solid rgba(255,255,255,.12);
+      font-size: 14px; color: rgba(255,255,255,.6); line-height: 1.5;
+    }
+    .deck-help .deck-help-foot b { color: var(--ds-paper); font-weight: 700; }
+
+    /* ═══ Tiny resting hint — "? shortcuts" — fades after first nav ═══ */
+    .deck-hint {
+      position: fixed; left: 22px; bottom: 14px; z-index: 2147481000;
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--ds-font-mono); font-size: 13px; color: var(--ds-ink-3);
+      background: rgba(255,255,255,.78);
+      -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+      padding: 5px 11px; border-radius: 999px;
+      box-shadow: 0 1px 3px rgba(20,20,20,.10);
+      transition: opacity 400ms ease; pointer-events: none;
+    }
+    .deck-hint kbd {
+      font-family: var(--ds-font-mono); font-weight: 700; font-size: 12px;
+      padding: 1px 7px; border-radius: 5px;
+      background: var(--ds-ink); color: var(--ds-paper);
+    }
+    .deck-hint[data-gone] { opacity: 0; }
+
+    /* Keep the page-level chrome out of print / PDF export. */
+    @media print {
+      .deck-progress, .deck-help, .deck-hint, .cc-ctx { display: none !important; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       THUMBNAIL-RAIL CLONES — keep the left-rail thumbnails legible.
+       deck-stage renders each rail thumbnail as a STATIC deep-clone of
+       the slide inside a nested shadow root that adopts a snapshot of
+       this page's CSS. Two things render wrong there (but are correct on
+       the live stage), which left every thumbnail blank/white:
+         1) entrance elements (.m-*) never receive [data-deck-active], so
+            motion.css holds them at their opacity:0 pre-state.
+         2) the slide background lives on `deck-stage > section`, a
+            combinator that can't match the parent-less clone — so the
+            section is transparent and the white frame shows through.
+       `:host` matches nothing in the live document, but in the adopted
+       copy it resolves to each thumbnail's shadow host — so these rules
+       touch only the clones and never disturb the live deck's motion. */
+    :host .slide      { background: var(--ds-paper); color: var(--ds-ink); font-family: var(--ds-font-sans); }
+    :host .slide.dark { background: var(--ds-ink);   color: var(--ds-paper); }
+    :host [class*="m-"] {
+      opacity: 1 !important;
+      transform: none !important;
+      filter: none !important;
+      clip-path: none !important;
+    }
+    :host .m-line > span { transform: none !important; }
   </style>
 </head>
 <body>
@@ -2468,10 +2659,36 @@
     's22': S22,
   };
 
+  // ───────── Enhance every script with Claude-Code flavor ─────────
+  // (a) any statically-authored `> ` prompt (raw cc-input) becomes a
+  //     char-by-char *typed* input; (b) a "thinking" spinner is injected
+  //     just before the agent's first tool call. Done as a transform so all
+  //     12 terminals gain the behavior without hand-editing each script —
+  //     and the authored resting body is never touched (print stays clean).
+  const _stripper = document.createElement('div');
+  function stripTags(h) { _stripper.innerHTML = h; return (_stripper.textContent || '').trim(); }
+  function enhanceScript(arr) {
+    const out = [];
+    let thought = false;
+    for (const b of arr) {
+      if (b.type === 'raw' && /class="cc-input"/.test(b.html || '')) {
+        const m = (b.html || '').match(/class="cc-input"[^>]*>([\s\S]*?)<\/span>/);
+        out.push({ type: 'input', text: m ? stripTags(m[1]) : '' });
+        continue;
+      }
+      if (!thought && /cc-tool/.test(b.cls || '')) {
+        out.push({ type: 'think', ms: 1450 });
+        thought = true;
+      }
+      out.push(b);
+    }
+    return out;
+  }
+
   // Attach scripts before boot() wires the terminals.
   document.querySelectorAll('.pg-terminal[data-script-id]').forEach((el) => {
     const arr = TERMINAL_SCRIPTS[el.dataset.scriptId];
-    if (arr) el.__script = arr;
+    if (arr) el.__script = enhanceScript(arr);
   });
 
   // Auto-run a slide's terminal when it becomes active; reset the one we left.
@@ -2512,6 +2729,140 @@
       (document.exitFullscreen || document.webkitExitFullscreen)?.call(document);
     }
   });
+
+  /* ═══════════════════════════════════════════════════════════════
+     PRESENTATION CHROME — context meter · progress + chapters · help
+     All page-level (outside the scaled deck canvas) and print-hidden.
+     ═══════════════════════════════════════════════════════════════ */
+  (function chrome() {
+    const deck = document.querySelector('deck-stage');
+    if (!deck) return;
+    const pad2 = (n) => String(n).padStart(2, '0');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ── (1) Context budget meter inside every terminal's controls bar.
+    document.querySelectorAll('.pg-terminal .pg-controls').forEach((ctrls) => {
+      const frame = ctrls.closest('.pg-frame');
+      if (!frame || frame.querySelector('.cc-ctx')) return;
+      const ctx = document.createElement('span');
+      ctx.className = 'cc-ctx';
+      ctx.innerHTML =
+        '<span class="cc-ctx-label">context</span>' +
+        '<span class="cc-ctx-track"><span class="cc-ctx-fill"></span></span>' +
+        '<span class="cc-ctx-pct">100%</span>';
+      ctrls.appendChild(ctx);
+      const fill = ctx.querySelector('.cc-ctx-fill');
+      const pct = ctx.querySelector('.cc-ctx-pct');
+      const FROM = 100, TO = 56, DUR = 4200;
+      let raf = 0, t0 = 0;
+      const set = (v) => { fill.style.width = v + '%'; pct.textContent = Math.round(v) + '%'; ctx.classList.toggle('warn', v < 72); };
+      const restore = () => { cancelAnimationFrame(raf); raf = 0; t0 = 0; set(100); };
+      const drain = (t) => {
+        if (!t0) t0 = t;
+        const k = Math.min(1, (t - t0) / DUR);
+        set(FROM + (TO - FROM) * k);
+        if (k < 1) raf = requestAnimationFrame(drain);
+      };
+      new MutationObserver(() => {
+        if (frame.classList.contains('is-running')) {
+          if (reduce) { set(TO); return; }
+          cancelAnimationFrame(raf); t0 = 0; raf = requestAnimationFrame(drain);
+        } else restore();
+      }).observe(frame, { attributes: true, attributeFilter: ['class'] });
+    });
+
+    // ── (2) Slide progress bar + chapter rail.
+    const CHAPTERS = [
+      { start: 0,  name: 'Intro' },
+      { start: 1,  name: 'Foundations' },
+      { start: 6,  name: 'The agentic SDLC' },
+      { start: 22, name: 'End to end' },
+    ];
+    const progress = document.createElement('div');
+    progress.className = 'deck-progress';
+    progress.setAttribute('aria-hidden', 'true');
+    progress.innerHTML =
+      '<div class="deck-progress-bar"><span class="deck-progress-fill"></span></div>' +
+      '<div class="deck-chapter"><span class="deck-chapter-dot"></span>' +
+      '<span class="deck-chapter-name"></span><span class="deck-chapter-idx"></span></div>';
+    document.body.appendChild(progress);
+    const bar = progress.querySelector('.deck-progress-bar');
+    const fillEl = progress.querySelector('.deck-progress-fill');
+    const nameEl = progress.querySelector('.deck-chapter-name');
+    const idxEl = progress.querySelector('.deck-chapter-idx');
+    let ticksBuilt = false;
+    const buildTicks = (total) => {
+      if (ticksBuilt) return; ticksBuilt = true;
+      CHAPTERS.forEach((c) => {
+        if (c.start === 0) return;
+        const t = document.createElement('span');
+        t.className = 'deck-tick';
+        t.style.left = (c.start / total * 100) + '%';
+        bar.appendChild(t);
+      });
+    };
+    const chapterFor = (i) => { let c = CHAPTERS[0]; CHAPTERS.forEach((ch) => { if (i >= ch.start) c = ch; }); return c; };
+
+    // ── (3) Keyboard-shortcut help overlay + resting hint.
+    const help = document.createElement('div');
+    help.className = 'deck-help';
+    help.innerHTML =
+      '<div class="deck-help-card" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">' +
+        '<div class="deck-help-eyebrow"><span class="spark">✻</span>Keyboard</div>' +
+        '<h3>Driving the deck</h3>' +
+        '<dl>' +
+          '<dt><kbd>→</kbd><kbd>Space</kbd></dt><dd>Next slide</dd>' +
+          '<dt><kbd>←</kbd></dt><dd>Previous slide</dd>' +
+          '<dt><kbd>1</kbd>–<kbd>9</kbd></dt><dd>Jump to slide</dd>' +
+          '<dt><kbd>Home</kbd><kbd>End</kbd></dt><dd>First / last slide</dd>' +
+          '<dt><kbd>R</kbd></dt><dd>Reset to the start</dd>' +
+          '<dt><kbd>F</kbd></dt><dd>Toggle fullscreen</dd>' +
+          '<dt><kbd>?</kbd></dt><dd>Show / hide this help</dd>' +
+          '<dt><kbd>Esc</kbd></dt><dd>Close help · exit fullscreen</dd>' +
+        '</dl>' +
+        '<div class="deck-help-foot">The live terminals type out on slide-enter. Hit <b>Run</b> to replay ' +
+        'a session or <b>Reset</b> to restore it — watch the <b>context</b> meter drain as the agent works.</div>' +
+      '</div>';
+    document.body.appendChild(help);
+    const toggleHelp = (force) => help.toggleAttribute('data-open', force != null ? force : !help.hasAttribute('data-open'));
+    help.addEventListener('click', (e) => { if (e.target === help) toggleHelp(false); });
+
+    const hint = document.createElement('div');
+    hint.className = 'deck-hint';
+    hint.innerHTML = 'press <kbd>?</kbd> for shortcuts';
+    document.body.appendChild(hint);
+    const dismissHint = () => hint.setAttribute('data-gone', '');
+    setTimeout(dismissHint, 7000);
+
+    window.addEventListener('keydown', (e) => {
+      const t = e.target;
+      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === '?') { e.preventDefault(); toggleHelp(); }
+      else if (e.key === 'Escape' && help.hasAttribute('data-open')) { e.preventDefault(); toggleHelp(false); }
+    }, true);
+
+    // ── Wire to the deck's lifecycle.
+    deck.addEventListener('slidechange', (e) => {
+      const { index, total, reason } = e.detail;
+      buildTicks(total);
+      fillEl.style.width = ((index + 1) / total * 100) + '%';
+      const ch = chapterFor(index);
+      nameEl.textContent = ch.name;
+      idxEl.textContent = pad2(index + 1) + ' / ' + pad2(total);
+      if (reason && reason !== 'init') dismissHint();
+    });
+
+    // Paint slide-1 state now — the deck's init `slidechange` can fire
+    // before this listener attaches, so seed it from the known opening slide.
+    (function seed() {
+      const total = document.querySelectorAll('deck-stage > section').length || 26;
+      buildTicks(total);
+      fillEl.style.width = (1 / total * 100) + '%';
+      nameEl.textContent = chapterFor(0).name;
+      idxEl.textContent = pad2(1) + ' / ' + pad2(total);
+    })();
+  })();
 </script>
 
 </body>
