@@ -56,6 +56,10 @@
     .s-highlight.s-effort h2{font-size:58px;margin:14px 0 24px;}
     .s-highlight.s-effort .bullets{gap:16px;}
     .s-highlight.s-effort .bullets li{font-size:26px;line-height:1.34;}
+    /* Slide 12 — five compact bullets (skill authoring) clear the footer */
+    .s-content-code.s-skills h2{margin:12px 0 26px;}
+    .s-content-code.s-skills .bullets{gap:15px;}
+    .s-content-code.s-skills .bullets li{font-size:26px;line-height:1.33;}
     /* Slide 02 — slightly tighter body so the full session (… → opened PR → Done
        summary) fits the taller frame without clipping its conclusion at rest */
     .slide .pg-terminal[data-script-id="s02"] .pg-body{font-size:22px;line-height:1.5;}
@@ -1771,16 +1775,17 @@
   <!-- ════════════════════════════════════════════════════════════
        SLIDE — Writing your own skills (Content+Code, paper)
        ════════════════════════════════════════════════════════════ -->
-  <section class="slide s-content-code" data-screen-label="12 Writing skills">
+  <section class="slide s-content-code s-skills" data-screen-label="12 Writing skills">
     <div class="stage-pad">
       <div class="col-text m-from-left">
         <div class="eyebrow">Author your own</div>
         <h2>Write your own skill — a folder and a SKILL.md.</h2>
         <ul class="bullets" data-stagger>
-          <li>A skill is a folder with a <code>SKILL.md</code> — YAML frontmatter plus Markdown steps — in <code>.claude/skills/</code> for this repo, or your home folder for every project</li>
-          <li>Write one when you keep pasting the same checklist, or a <code>CLAUDE.md</code> section has grown into a procedure rather than a fact</li>
-          <li>The <code>description</code> is the trigger — say what it does <b>and when</b> to use it; Claude loads it automatically, or you run <code>/skill-name</code></li>
-          <li>Keep it lean — under ~500 lines — and push detail into reference files that load on demand, then refine it on real tasks</li>
+          <li>A skill is a folder with a <code>SKILL.md</code> — YAML frontmatter plus Markdown steps — in <code>.claude/skills/</code> (repo) or <code>~/.claude</code> (everywhere)</li>
+          <li>Reach for one when you keep re-pasting a checklist, or a <code>CLAUDE.md</code> section has become a procedure rather than a fact</li>
+          <li>Skip the boilerplate — Anthropic's verified <code>/skill-creator</code> scaffolds the folder and SKILL.md, then helps you eval, improve, and benchmark it</li>
+          <li>The <code>description</code> is the trigger — say what it does <b>and when</b> to use it; Claude auto-loads it, or you run <code>/skill-name</code></li>
+          <li>Keep it lean — under ~500 lines — and push detail into reference files that load on demand</li>
         </ul>
       </div>
       <div class="pg-frame theme-light pg-editor col-code m-from-right" style="height:600px">
@@ -1819,7 +1824,7 @@
     <span class="wm m-fade-in m-quick">devspiration</span>
     <span class="pg m-fade-in m-quick">12 / 31</span>
     <footer class="src m-fade-in m-quick">
-      Sources: <a href="https://code.claude.com/docs/en/skills" target="_blank" rel="noopener">code.claude.com/docs/en/skills</a> · <a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices" target="_blank" rel="noopener">docs · skill authoring best practices</a>
+      Sources: <a href="https://code.claude.com/docs/en/skills" target="_blank" rel="noopener">code.claude.com/docs/en/skills</a> · <a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices" target="_blank" rel="noopener">docs · authoring best practices</a> · <a href="https://claude.com/plugins/skill-creator" target="_blank" rel="noopener">plugins · skill-creator</a>
     </footer>
   </section>
 
