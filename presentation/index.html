@@ -93,6 +93,35 @@
     .ref-group li a{font:600 14px/1.35 'Nunito',sans-serif;color:#303030;text-decoration:none;border-bottom:1px solid transparent;transition:color .14s ease;}
     .ref-group li a:hover{color:var(--ds-blue-electric,#0023FF);border-bottom-color:currentColor;}
 
+    /* Slide 14 — ways to build UI (3-up cards) */
+    .s-compare.ui-options .stage-pad{row-gap:42px;}
+    .ui-options .head .lead{font:500 26px/1.4 'Nunito',sans-serif;color:var(--ds-ink-2);margin:14px 0 0;max-width:1200px;}
+    .ui-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:start;align-self:center;}
+    .ui-card{display:flex;flex-direction:column;gap:16px;min-height:340px;background:#fff;border:1px solid var(--ds-line);border-radius:20px;padding:32px 30px;box-shadow:0 2px 14px rgba(20,20,20,.05);}
+    .ui-card-accent{border-color:#1B9CF8;box-shadow:0 12px 30px rgba(27,156,248,.16);}
+    .ui-card .ui-tag{font:800 13px/1.3 'Nunito',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#1B9CF8;}
+    .ui-card h3{font:800 30px/1.08 'Nunito',sans-serif;letter-spacing:-.01em;color:var(--ds-ink);margin:0;}
+    .ui-card p{font:500 19px/1.46 'Nunito',sans-serif;color:var(--ds-ink-2);margin:4px 0 0;text-wrap:pretty;}
+    .ui-swatches{display:flex;gap:8px;}
+    .ui-swatches .sw{width:30px;height:30px;border-radius:8px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.04);}
+    .ui-aesthetics,.ui-tokens{display:flex;flex-wrap:wrap;gap:8px;}
+    .ui-chip{font:700 14px/1 'Nunito',sans-serif;color:var(--ds-ink);background:var(--ds-mist);border:1px solid var(--ds-line);border-radius:999px;padding:8px 14px;}
+    .ui-token{font:700 14px/1 'JetBrains Mono',monospace;color:var(--ds-blue-electric);background:rgba(27,156,248,.08);border-radius:7px;padding:8px 11px;}
+
+    /* Bullet markers — designed "node" (rounded square + soft halo) so every
+       point reads as deliberately highlighted, on-brand and zero-reflow. */
+    .s-content .bullets li::before,
+    .s-content-code .bullets li::before,
+    .s-highlight .bullets li::before{
+      border-radius:4px;
+      box-shadow:0 0 0 4px rgba(27,156,248,.14);
+    }
+    .dark.s-content .bullets li::before,
+    .dark.s-content-code .bullets li::before,
+    .dark.s-highlight .bullets li::before{
+      box-shadow:0 0 0 4px rgba(138,207,245,.18);
+    }
+
     /* ───────── Deck-level stage rules ───────── */
     deck-stage {
       --slide-width: 1920px;
@@ -1285,7 +1314,7 @@
 <span class="pg-line"><span class="cc-input">fix AUTH-214: checkout returns 500 on empty cart, then open a PR</span></span>
 <span class="pg-line cc-tool">Read(<span class="cc-args">CLAUDE.md</span>)</span>
 <span class="pg-line cc-tool">Edit(<span class="cc-args">src/Api/Orders/CheckoutEndpoint.cs</span>)</span>
-<span class="pg-line cc-result">Applied edit <span class="cc-add">+6</span> <span class="cc-del">-2</span></span>
+<span class="pg-line cc-result">Updated CheckoutEndpoint.cs <span class="cc-add">+6</span> <span class="cc-del">-2</span></span>
 <span class="pg-line cc-tool">Bash(<span class="cc-args">dotnet test</span>)</span>
 <span class="pg-line cc-result"><span class="cc-add">Passed!</span> 48 of 48</span>
 <span class="pg-line cc-tool">azure-devops(<span class="cc-args">work-item AUTH-214 → Done</span>)</span>
@@ -1851,94 +1880,97 @@
   </section>
 
   <!-- ════════════════════════════════════════════════════════════
-       SLIDE 13 — Claude Design + Figma MCP (Two-Column Compare)
+       SLIDE 13 — Effectiveness of HTML (Feature Highlight) — paper
        ════════════════════════════════════════════════════════════ -->
-  <section class="slide s-compare has-right-frame" data-screen-label="13 Claude Design and Figma MCP">
+  <section class="slide s-highlight s-visual" data-screen-label="13 Effectiveness of HTML">
+    <div class="stage-pad">
+      <div class="col-text">
+        <div class="eyebrow m-rise-sm">Effectiveness of HTML</div>
+        <h2 class="m-rise">Ask for HTML, not Markdown — and stay in the loop.</h2>
+        <ul class="bullets m-rise" data-stagger>
+          <li>HTML carries what Markdown can't — tables, SVG diagrams, spatial layout, and live interactions</li>
+          <li>Render plans, PR reviews with color-coded diffs, dashboards, and mockups — then open them in the browser</li>
+          <li>Two-way by default: sliders and knobs to explore, <code>copy as JSON</code> or <code>diff</code> to bridge back to text</li>
+          <li>How to start: just say <b>“make an HTML file”</b>, view it, then ask for comparisons or export buttons</li>
+        </ul>
+      </div>
+      <div class="col-visual m-from-right">
+        <div class="pg-frame theme-dark pg-terminal" data-script-id="s13html" data-autorun="true" style="height:680px">
+          <div class="pg-titlebar">
+            <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+            <div class="title">claude · html artifacts</div>
+            <div class="meta">zsh</div>
+          </div>
+          <div class="pg-body">
+<span class="pg-line"><span class="cc-input">turn the checkout refactor plan into an HTML file I can open</span></span>
+<span class="pg-line cc-tool">Write(<span class="cc-args">plan.html</span>)</span>
+<span class="pg-line cc-result"><span class="cc-add">84 lines</span> · tables, a data-flow SVG, annotated diffs</span>
+<span class="pg-line cc-tool">Bash(<span class="cc-args">open plan.html</span>)</span>
+<span class="pg-line cc-result">opened in your browser</span>
+<span class="pg-line"><span class="cc-input">add a slider to compare 3 rollout options</span></span>
+<span class="pg-line cc-tool">Edit(<span class="cc-args">plan.html</span>)</span>
+<span class="pg-line cc-result">added a range slider + a “copy as Markdown” button</span>
+<span class="pg-line cc-status done">Skim it, click, tweak — you stay in the loop</span>
+          </div>
+          <div class="pg-controls">
+            <button class="pg-run" type="button"><span class="ico"></span>Run</button>
+            <button class="pg-reset" type="button">Reset</button>
+            <span class="status">idle</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="prop prop-bl m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-hex-blue.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">13 / 30</span>
+    <footer class="src m-fade-in m-quick">
+      Source: <a href="https://claude.com/blog/using-claude-code-the-unreasonable-effectiveness-of-html" target="_blank" rel="noopener">claude.com/blog · the unreasonable effectiveness of HTML</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 14 — UI options: Claude Design · frontend-design · design system
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-compare ui-options" data-screen-label="14 Ways to build UI">
     <div class="stage-pad">
       <div class="head">
-        <div class="eyebrow m-rise-sm">Design ↔ code</div>
-        <h2 class="m-rise">Claude Design builds your brand in, then hands off to code.</h2>
+        <div class="eyebrow m-rise-sm">Designing the front end</div>
+        <h2 class="m-rise">More than one way to a polished UI.</h2>
+        <p class="lead m-rise-sm">Three routes from intent to interface — choose by how much brand you already have.</p>
       </div>
-      <div class="cols">
-        <div class="col m-from-left">
-          <div class="col-eyebrow">Anthropic Labs · Claude Design</div>
-          <div class="pg-frame theme-light pg-browser" style="height:500px">
-            <div class="pg-titlebar">
-              <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
-              <div class="title">Claude Design — your-team</div>
-              <div class="meta"></div>
-            </div>
-            <div class="pg-tabs">
-              <div class="tab on"><span class="fav"></span>Brand kit</div>
-            </div>
-            <div class="pg-addressbar">
-              <div class="nav">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-              </div>
-              <div class="url"><svg class="lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span class="scheme">https://</span>claude.ai/design</div>
-            </div>
-            <div class="pg-body" style="padding:0">
-              <div class="pg-page cd">
-                <div class="cd-eyebrow">Generated design system · UI kit</div>
-                <h2>Your brand, built in</h2>
-                <div class="cd-row cd-colors">
-                  <span class="sw" style="background:#1B9CF8"></span>
-                  <span class="sw" style="background:#303030"></span>
-                  <span class="sw" style="background:#FFFFFF;border:1px solid #E6E6E6"></span>
-                  <span class="sw" style="background:#8ACFF5"></span>
-                  <span class="cd-label">Colors</span>
-                </div>
-                <div class="cd-row cd-type">
-                  <span class="cd-type-xl">Aa</span>
-                  <span class="cd-label">Nunito · 400 / 700 / 800</span>
-                </div>
-                <div class="cd-row">
-                  <div class="cd-spacing-scale">
-                    <div class="sp-box"></div>
-                    <div class="sp-box"></div>
-                    <div class="sp-box"></div>
-                    <div class="sp-box"></div>
-                  </div>
-                  <span class="cd-label">Spacing · radius</span>
-                </div>
-                <div class="cd-row cd-components" style="align-items:flex-start; flex-wrap:wrap; gap:10px;">
-                  <div class="cd-comp-row">
-                    <button class="cd-btn">Button</button>
-                    <span class="cd-badge">Badge</span>
-                    <div class="cd-card">
-                      <div class="cd-card-title">Card</div>
-                      <div class="cd-card-body"></div>
-                      <div class="cd-card-body short"></div>
-                    </div>
-                  </div>
-                  <span class="cd-label" style="align-self:center;">Components</span>
-                </div>
-              </div>
-            </div>
+      <div class="ui-grid m-rise" data-stagger>
+        <div class="ui-card">
+          <div class="ui-tag">Anthropic Labs · research preview</div>
+          <h3>Claude Design</h3>
+          <div class="ui-swatches" aria-hidden="true">
+            <span class="sw" style="background:#1B9CF8"></span>
+            <span class="sw" style="background:#303030"></span>
+            <span class="sw" style="background:#FFFFFF;border:1px solid #E6E6E6"></span>
+            <span class="sw" style="background:#8ACFF5"></span>
           </div>
-          <p class="figma-note">Then the Figma bridge: reference a frame URL for design-informed code, or capture a running UI back into <b>editable Figma frames</b>.</p>
+          <p>Reads your codebase and assets, extracts a reusable design system, then designs on a canvas you refine by chatting.</p>
         </div>
-        <div class="col m-from-right">
-          <div class="col-eyebrow">Set up your design system</div>
-          <ul class="step-strip" data-stagger>
-            <li>
-              <span class="sn">01</span>
-              <span class="st"><b>Create or switch org</b><span>Open Claude Design, pick or create an organization.</span></span>
-            </li>
-            <li>
-              <span class="sn">02</span>
-              <span class="st"><b>Upload brand assets</b><span>Codebases, prototypes, slide decks, logos, type.</span></span>
-            </li>
-            <li>
-              <span class="sn">03</span>
-              <span class="st"><b>Review generated UI kit</b><span>Colors, typography, components, layout patterns.</span></span>
-            </li>
-            <li>
-              <span class="sn">04</span>
-              <span class="st"><b>Publish to your team</b><span>Flip the "Published" toggle on.</span></span>
-            </li>
-          </ul>
+        <div class="ui-card ui-card-accent">
+          <div class="ui-tag">Claude skill · /plugin</div>
+          <h3>frontend-design skill</h3>
+          <div class="ui-aesthetics" aria-hidden="true">
+            <span class="ui-chip">editorial</span>
+            <span class="ui-chip">brutalist</span>
+            <span class="ui-chip">retro-futuristic</span>
+          </div>
+          <p>Builds distinctive, production-grade interfaces — it commits to a bold aesthetic and dodges generic “AI-slop” defaults.</p>
+        </div>
+        <div class="ui-card">
+          <div class="ui-tag">Your tokens · source of truth</div>
+          <h3>An existing design system</h3>
+          <div class="ui-tokens" aria-hidden="true">
+            <span class="ui-token">--color</span>
+            <span class="ui-token">--space</span>
+            <span class="ui-token">--motion</span>
+          </div>
+          <p>Point Claude at a token + motion system and it composes to spec — exactly how these slides were built.</p>
         </div>
       </div>
     </div>
@@ -1946,9 +1978,9 @@
       <img src="../devspiration-design-system/project/assets/brand-objects/3d-sphere-blue.png" alt="">
     </div>
     <span class="wm m-fade-in m-quick">devspiration</span>
-    <span class="pg m-fade-in m-quick">13 / 29</span>
+    <span class="pg m-fade-in m-quick">14 / 30</span>
     <footer class="src m-fade-in m-quick">
-      Sources: <a href="https://www.anthropic.com/news/claude-design-anthropic-labs" target="_blank" rel="noopener">anthropic.com/news/claude-design-anthropic-labs</a> · <a href="https://support.claude.com/en/articles/14604397-set-up-your-design-system-in-claude-design" target="_blank" rel="noopener">support.claude.com/en/articles/14604397</a> · <a href="https://www.figma.com/blog/introducing-claude-code-to-figma/" target="_blank" rel="noopener">figma.com/blog/introducing-claude-code-to-figma</a>
+      Sources: <a href="https://www.anthropic.com/news/claude-design-anthropic-labs" target="_blank" rel="noopener">anthropic.com/news · Claude Design</a> · <a href="https://claude.com/plugins/frontend-design" target="_blank" rel="noopener">claude.com/plugins/frontend-design</a> · <a href="https://code.claude.com/docs/en/skills" target="_blank" rel="noopener">code.claude.com/docs/en/skills</a>
     </footer>
   </section>
 
@@ -2079,7 +2111,7 @@
           <li>Claude Code speaks <b>LSP</b> — the same protocol your IDE uses; add a server per language and it navigates by meaning, not text</li>
           <li>The official <code>csharp-lsp</code> plugin wraps a Roslyn server: go-to-definition, find-references, hover types, live diagnostics</li>
           <li>Finds every caller in milliseconds instead of grepping the whole solution — fewer tokens, fewer wrong guesses on refactors</li>
-          <li>Install once: <code>/plugin install csharp-lsp@claude-plugins-official</code></li>
+          <li>Anthropic-verified plugin — add the Roslyn-based <code>csharp-ls</code> server once, then every session navigates by symbol</li>
         </ul>
       </div>
       <div class="pg-frame theme-dark pg-terminal col-code m-from-right" data-script-id="s16" style="height:560px">
@@ -2313,7 +2345,7 @@
         <ul class="bullets m-rise" data-stagger>
           <li>Skills supply the <b>gates</b> — brainstorm before code, TDD, verification before completion</li>
           <li>Workflows supply the <b>engine</b> — a script orchestrates subagents, holding the loop + results</li>
-          <li>Compose them: a workflow runs each phase as a <code>superpowers:*</code> skill — a 500-file migration keeps the discipline</li>
+          <li>The working pattern — a workflow whose phases each invoke a <code>superpowers:*</code> skill, so a 500-file migration keeps the discipline</li>
           <li>The lead owns the skills; subagents do the work; reviewers verify at phase boundaries</li>
         </ul>
       </div>
@@ -2438,8 +2470,8 @@
       <div class="use-grid m-rise" data-stagger>
         <div class="use-card">
           <div class="who">Security Eng · Anthropic</div>
-          <div class="stat">10–15m → ~5m</div>
-          <p>Paste a stack trace; Claude locates the bug and proposes the fix.</p>
+          <div class="stat">3× faster</div>
+          <p>Paste a stack trace; Claude locates the bug and proposes the fix — resolved roughly three times as quickly.</p>
         </div>
         <div class="use-card">
           <div class="who">Inference · Anthropic</div>
@@ -2447,9 +2479,9 @@
           <p>Describe the behaviour; Claude writes the test in the codebase's native language — even Rust.</p>
         </div>
         <div class="use-card">
-          <div class="who">Data Infra · Anthropic</div>
-          <div class="stat">Day-one onboarding</div>
-          <p>New hires navigate a massive codebase by asking Claude to read CLAUDE.md and map dependencies.</p>
+          <div class="who">Infrastructure · Anthropic</div>
+          <div class="stat">Reads CLAUDE.md</div>
+          <p>Claude reads CLAUDE.md to explain pipeline dependencies across a large codebase.</p>
         </div>
         <div class="use-card">
           <div class="who">Ramp</div>
@@ -2463,8 +2495,8 @@
         </div>
         <div class="use-card">
           <div class="who">Product Design · Anthropic</div>
-          <div class="stat">2–3× faster</div>
-          <p>Visual and state-management changes designers wouldn't normally make themselves.</p>
+          <div class="stat">Ships its own UI</div>
+          <p>Designers make visual and state-management changes in code they wouldn't normally touch themselves.</p>
         </div>
       </div>
     </div>
@@ -2690,6 +2722,8 @@
             <li><a href="https://github.com/ChromeDevTools/chrome-devtools-mcp" target="_blank" rel="noopener">github · chrome-devtools-mcp</a></li>
             <li><a href="https://github.com/microsoft/playwright-mcp" target="_blank" rel="noopener">github · playwright-mcp</a></li>
             <li><a href="https://www.anthropic.com/news/claude-design-anthropic-labs" target="_blank" rel="noopener">news · Claude Design</a></li>
+            <li><a href="https://claude.com/plugins/frontend-design" target="_blank" rel="noopener">plugins · frontend-design</a></li>
+            <li><a href="https://claude.com/blog/using-claude-code-the-unreasonable-effectiveness-of-html" target="_blank" rel="noopener">blog · effectiveness of HTML</a></li>
             <li><a href="https://www.figma.com/blog/introducing-claude-code-to-figma/" target="_blank" rel="noopener">figma · Claude Code bridge</a></li>
           </ul>
         </div>
@@ -2742,7 +2776,7 @@
     { type:'pause', ms:800 },
     { type:'out', cls:'cc-tool', html:'Read(<span class="cc-args">CLAUDE.md</span>)' },
     { type:'out', cls:'cc-tool', html:'Edit(<span class="cc-args">src/Api/Orders/CheckoutEndpoint.cs</span>)' },
-    { type:'out', cls:'cc-result', html:'Applied edit <span class="cc-add">+6</span> <span class="cc-del">-2</span>' },
+    { type:'out', cls:'cc-result', html:'Updated CheckoutEndpoint.cs <span class="cc-add">+6</span> <span class="cc-del">-2</span>' },
     { type:'out', cls:'cc-tool', html:'Bash(<span class="cc-args">dotnet test</span>)' },
     { type:'out', cls:'cc-result', html:'<span class="cc-add">Passed!</span> 48 of 48' },
     { type:'out', cls:'cc-tool', html:'azure-devops(<span class="cc-args">work-item AUTH-214 → Done</span>)' },
@@ -2915,9 +2949,27 @@
     { type:'out', cls:'cc-status done', html:'Team lead spawned 4 teammates' },
   ];
 
+  // Slide 13 — Effectiveness of HTML. Source: claude.com/blog/using-claude-code-the-unreasonable-effectiveness-of-html.
+  const S13HTML = [
+    { type:'clear' },
+    { type:'raw', html:'<span class="cc-input">turn the checkout refactor plan into an HTML file I can open</span>' },
+    { type:'pause', ms:500 },
+    { type:'out', cls:'cc-tool', html:'Write(<span class="cc-args">plan.html</span>)' },
+    { type:'out', cls:'cc-result', html:'<span class="cc-add">84 lines</span> · tables, a data-flow SVG, annotated diffs' },
+    { type:'out', cls:'cc-tool', html:'Bash(<span class="cc-args">open plan.html</span>)' },
+    { type:'out', cls:'cc-result', html:'opened in your browser' },
+    { type:'pause', ms:450 },
+    { type:'raw', html:'<span class="cc-input">add a slider to compare 3 rollout options</span>' },
+    { type:'pause', ms:400 },
+    { type:'out', cls:'cc-tool', html:'Edit(<span class="cc-args">plan.html</span>)' },
+    { type:'out', cls:'cc-result', html:'added a range slider + a “copy as Markdown” button' },
+    { type:'out', cls:'cc-status done', html:'Skim it, click, tweak — you stay in the loop' },
+  ];
+
   // Map each terminal's data-script-id (authored on the element) to its array.
   const TERMINAL_SCRIPTS = {
     's02': S02,
+    's13html': S13HTML,
     's03': S03,
     's08': S08,
     's10': S10,
@@ -3007,6 +3059,26 @@
     }
   });
 
+  /* ───────── Slide-rail toggle (L) ─────────
+     Hide/show the left thumbnail rail for presenting. deck-stage owns the
+     rail and already listens for a '__deck_rail_visible' window message (its
+     own Tweaks panel drives the same channel), animating a soft slide — so we
+     post that message rather than fork the shared controller. State seeds from
+     and persists to the rail's own localStorage key, staying in sync with it. */
+  (function railToggle() {
+    let visible = true;
+    try { visible = localStorage.getItem('deck-stage.railVisible') !== '0'; } catch (e) {}
+    window.addEventListener('keydown', (e) => {
+      const t = e.target;
+      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key !== 'l' && e.key !== 'L') return;
+      e.preventDefault();
+      visible = !visible;
+      window.postMessage({ type: '__deck_rail_visible', on: visible }, '*');
+    });
+  })();
+
   /* ═══════════════════════════════════════════════════════════════
      PRESENTATION CHROME — context meter · progress + chapters · help
      All page-level (outside the scaled deck canvas) and print-hidden.
@@ -3016,6 +3088,19 @@
     if (!deck) return;
     const pad2 = (n) => String(n).padStart(2, '0');
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ── (0) Page markers (.pg) renumber themselves from slide order, so
+    // inserting or reordering slides never desyncs the "NN / NN" badges
+    // (they used to be hardcoded). Runs once; the rail clones the corrected
+    // DOM lazily on scroll, so thumbnails stay right too.
+    (function renumberPages() {
+      const secs = document.querySelectorAll('deck-stage > section');
+      const total = pad2(secs.length);
+      secs.forEach((s, i) => {
+        const pg = s.querySelector('.pg');
+        if (pg) pg.textContent = pad2(i + 1) + ' / ' + total;
+      });
+    })();
 
     // ── (1) Context budget meter inside every terminal's controls bar.
     document.querySelectorAll('.pg-terminal .pg-controls').forEach((ctrls) => {
@@ -3054,7 +3139,7 @@
       { start: 0,  name: 'Intro' },
       { start: 1,  name: 'Foundations' },
       { start: 6,  name: 'The agentic SDLC' },
-      { start: 24, name: 'End to end' },
+      { start: 25, name: 'End to end' },
     ];
     const progress = document.createElement('div');
     progress.className = 'deck-progress';
@@ -3095,6 +3180,7 @@
           '<dt><kbd>Home</kbd><kbd>End</kbd></dt><dd>First / last slide</dd>' +
           '<dt><kbd>R</kbd></dt><dd>Reset to the start</dd>' +
           '<dt><kbd>F</kbd></dt><dd>Toggle fullscreen</dd>' +
+          '<dt><kbd>L</kbd></dt><dd>Hide / show the slide list</dd>' +
           '<dt><kbd>?</kbd></dt><dd>Show / hide this help</dd>' +
           '<dt><kbd>Esc</kbd></dt><dd>Close help · exit fullscreen</dd>' +
         '</dl>' +
@@ -3134,7 +3220,7 @@
     // Paint slide-1 state now — the deck's init `slidechange` can fire
     // before this listener attaches, so seed it from the known opening slide.
     (function seed() {
-      const total = document.querySelectorAll('deck-stage > section').length || 29;
+      const total = document.querySelectorAll('deck-stage > section').length || 30;
       buildTicks(total);
       fillEl.style.width = (1 / total * 100) + '%';
       nameEl.textContent = chapterFor(0).name;
