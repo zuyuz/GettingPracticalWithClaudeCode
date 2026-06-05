@@ -1769,6 +1769,61 @@
   </section>
 
   <!-- ════════════════════════════════════════════════════════════
+       SLIDE — Writing your own skills (Content+Code, paper)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-content-code" data-screen-label="12 Writing skills">
+    <div class="stage-pad">
+      <div class="col-text m-from-left">
+        <div class="eyebrow">Author your own</div>
+        <h2>Write your own skill — a folder and a SKILL.md.</h2>
+        <ul class="bullets" data-stagger>
+          <li>A skill is a folder with a <code>SKILL.md</code> — YAML frontmatter plus Markdown steps — in <code>.claude/skills/</code> for this repo, or your home folder for every project</li>
+          <li>Write one when you keep pasting the same checklist, or a <code>CLAUDE.md</code> section has grown into a procedure rather than a fact</li>
+          <li>The <code>description</code> is the trigger — say what it does <b>and when</b> to use it; Claude loads it automatically, or you run <code>/skill-name</code></li>
+          <li>Keep it lean — under ~500 lines — and push detail into reference files that load on demand, then refine it on real tasks</li>
+        </ul>
+      </div>
+      <div class="pg-frame theme-light pg-editor col-code m-from-right" style="height:600px">
+        <span class="corner-tag">.claude/skills/pr-description/</span>
+        <div class="pg-titlebar">
+          <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+          <div class="title">SKILL.md</div>
+          <div class="meta">md</div>
+        </div>
+        <div class="pg-body">
+          <div class="gutter">
+<span class="ln">1</span><span class="ln">2</span><span class="ln">3</span><span class="ln">4</span><span class="ln">5</span><span class="ln">6</span><span class="ln">7</span><span class="ln">8</span><span class="ln">9</span><span class="ln">10</span><span class="ln">11</span><span class="ln">12</span><span class="ln">13</span><span class="ln">14</span>
+          </div>
+          <div class="code">
+<span class="ln"><span class="pg-tk-com">---</span></span>
+<span class="ln"><b>name:</b> pr-description</span>
+<span class="ln"><b>description:</b> Draft a PR body from</span>
+<span class="ln">  the diff. <b>Use when</b> opening a PR.</span>
+<span class="ln"><span class="pg-tk-com">---</span></span>
+<span class="ln"></span>
+<span class="ln"><span class="pg-tk-com"># PR description</span></span>
+<span class="ln"></span>
+<span class="ln"><span class="pg-tk-com">## Steps</span></span>
+<span class="ln">1. <span class="pg-tk-str">git diff main...HEAD</span> — read it</span>
+<span class="ln">2. Lead with intent, then changes</span>
+<span class="ln">3. List test evidence; flag risks</span>
+<span class="ln"></span>
+<span class="ln"><span class="pg-tk-com"># detail → references/style.md</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="prop prop-tr m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-pebble-cyan.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">12 / 31</span>
+    <footer class="src m-fade-in m-quick">
+      Sources: <a href="https://code.claude.com/docs/en/skills" target="_blank" rel="noopener">code.claude.com/docs/en/skills</a> · <a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices" target="_blank" rel="noopener">docs · skill authoring best practices</a>
+    </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
        SLIDE 12 — Visual planning (Feature Highlight)
        ════════════════════════════════════════════════════════════ -->
   <section class="slide s-highlight s-visual" data-screen-label="12 Visual planning">
@@ -3139,7 +3194,7 @@
       { start: 0,  name: 'Intro' },
       { start: 1,  name: 'Foundations' },
       { start: 6,  name: 'The agentic SDLC' },
-      { start: 25, name: 'End to end' },
+      { start: 26, name: 'End to end' },
     ];
     const progress = document.createElement('div');
     progress.className = 'deck-progress';
@@ -3220,7 +3275,7 @@
     // Paint slide-1 state now — the deck's init `slidechange` can fire
     // before this listener attaches, so seed it from the known opening slide.
     (function seed() {
-      const total = document.querySelectorAll('deck-stage > section').length || 30;
+      const total = document.querySelectorAll('deck-stage > section').length || 31;
       buildTicks(total);
       fillEl.style.width = (1 / total * 100) + '%';
       nameEl.textContent = chapterFor(0).name;
