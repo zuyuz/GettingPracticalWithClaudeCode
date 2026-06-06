@@ -111,6 +111,15 @@
     .ui-aesthetics,.ui-tokens{display:flex;flex-wrap:wrap;gap:8px;}
     .ui-chip{font:700 14px/1 'Nunito',sans-serif;color:var(--ds-ink);background:var(--ds-mist);border:1px solid var(--ds-line);border-radius:999px;padding:8px 14px;}
     .ui-token{font:700 14px/1 'JetBrains Mono',monospace;color:var(--ds-blue-electric);background:rgba(27,156,248,.08);border-radius:7px;padding:8px 11px;}
+    /* Claude Design card: a mini "extracted design system" on a canvas —
+       swatches + type specimen + a rendered component + tokens (not just colours). */
+    .ui-ds{position:relative;display:flex;flex-direction:column;gap:12px;padding:16px 16px 14px;border:1px dashed var(--ds-line);border-radius:14px;background-color:rgba(27,156,248,.025);background-image:radial-gradient(circle at 1px 1px,rgba(20,20,20,.06) 1px,transparent 1.4px);background-size:15px 15px;}
+    .ui-ds::after{content:'canvas';position:absolute;top:9px;right:11px;font:800 10px/1 'Nunito',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#b4b4b4;}
+    .ui-ds-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+    .ui-ds .sw{width:26px;height:26px;border-radius:7px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.05);}
+    .ui-ds-aa{margin-left:4px;font:800 26px/1 'Nunito',sans-serif;letter-spacing:-.02em;color:var(--ds-ink);}
+    .ui-ds-btn{display:inline-flex;align-items:center;padding:7px 15px;border-radius:9px;background:#1B9CF8;color:#fff;font:700 14px/1 'Nunito',sans-serif;box-shadow:0 2px 7px rgba(27,156,248,.32);}
+    .ui-ds-tok{font:700 13px/1 'JetBrains Mono',monospace;color:#1B9CF8;background:rgba(27,156,248,.09);border-radius:6px;padding:7px 9px;}
 
     /* Bullet markers — designed "node" (rounded square + soft halo) so every
        point reads as deliberately highlighted, on-brand and zero-reflow. */
@@ -344,6 +353,21 @@
       background: var(--ds-blue);
     }
     .s-compare .prop img { width: 460px; }
+
+    /* ── Three-up variant: three browser approaches side by side. Tighter
+       gutters + a smaller type ramp so three columns read cleanly. ── */
+    .s-compare.three-up .cols { grid-template-columns: repeat(3, 1fr); column-gap: 56px; }
+    .s-compare.three-up .col + .col { padding-left: 56px; margin-left: -56px; }
+    .s-compare.three-up .col-eyebrow { font-size: 16px; margin-bottom: 8px; }
+    .s-compare.three-up .col h3 { font-size: 30px; margin: 0 0 18px; }
+    .s-compare.three-up .col ul { gap: 14px; }
+    .s-compare.three-up .col li { font-size: 23px; line-height: 1.32; padding-left: 24px; }
+    .s-compare.three-up .col li::before { top: 0.5em; width: 9px; height: 9px; }
+    .s-compare.three-up .col li code {
+      font-family: var(--ds-font-mono); font-size: 0.86em; font-weight: 700;
+      color: var(--ds-blue-electric); background: rgba(27,156,248,.08);
+      border-radius: 6px; padding: 2px 7px;
+    }
 
     /* ───────── Archetype 6: Feature Highlight (s-highlight) ───────── */
     .s-highlight .stage-pad { display: flex; flex-direction: column; justify-content: center; }
@@ -945,6 +969,54 @@
     .slide .pg-page.cd .cd-card .cd-card-body.short { width: 55%; }
 
     /* ═══════════════════════════════════════════════════════════════
+       SLIDE — Effectiveness of HTML. A slim terminal companion sits
+       beside the rendered plan.html so the "open it" moment shows the
+       payoff. Narrower text rail; visual splits into terminal + browser.
+       ═══════════════════════════════════════════════════════════════ */
+    .s-effhtml .stage-pad { grid-template-columns: minmax(0, 540px) 1fr; column-gap: 56px; }
+    .s-effhtml .col-visual { display: flex; flex-direction: row; gap: 22px; align-items: stretch; min-width: 0; }
+    .s-effhtml .col-visual .pg-terminal { flex: 0 0 348px; height: 600px; }
+    .s-effhtml .col-visual .pg-browser  { flex: 1 1 auto; min-width: 0; height: 600px; }
+    .s-effhtml .col-visual .pg-terminal .pg-body { font-size: 15px; line-height: 1.55; padding: 18px 18px; }
+    .s-effhtml .col-visual .pg-terminal .cc-ctx { display: none; }   /* too wide for the slim terminal's controls bar */
+    /* The narrowed text rail needs a smaller type ramp so the title + 4 bullets
+       clear the slide vertically (the full s-highlight ramp overflows here). */
+    .s-effhtml .col-text h2 { font-size: 46px; line-height: 1.08; margin: 12px 0 24px; }
+    .s-effhtml .bullets { gap: 16px; }
+    .s-effhtml .bullets li { font-size: 23px; line-height: 1.34; padding-left: 28px; }
+    .s-effhtml .bullets li::before { top: 0.52em; width: 11px; height: 11px; }
+
+    /* Rendered plan.html surface (.plan) — carries what Markdown can't:
+       a data-flow SVG, a phase table, a colour-coded diff, a live slider. */
+    .slide .pg-page.plan { padding: 15px 22px; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+    .slide .pg-page.plan .plan-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+    .slide .pg-page.plan .plan-eyebrow { font: 800 12px/1 'Nunito', sans-serif; letter-spacing: .16em; text-transform: uppercase; color: #1B9CF8; margin-bottom: 4px; }
+    .slide .pg-page.plan h2 { font-family: var(--ds-font-display); font-weight: 800; font-size: 24px; letter-spacing: -.02em; line-height: 1; margin: 0; color: var(--ds-ink); }
+    .slide .pg-page.plan .plan-meta { font: 700 14px/1 'Nunito', sans-serif; color: var(--ds-ink-2); white-space: nowrap; }
+    .slide .pg-page.plan .plan-flow svg { display: block; width: 100%; height: auto; }
+    .slide .pg-page.plan table { width: 100%; border-collapse: collapse; font: 600 16px/1.2 'Nunito', sans-serif; color: var(--ds-ink); }
+    .slide .pg-page.plan thead th { text-align: left; font: 800 12px/1 'Nunito', sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--ds-ink-2); padding: 0 0 8px; border-bottom: 2px solid var(--ds-line); }
+    .slide .pg-page.plan thead th:last-child, .slide .pg-page.plan tbody td:last-child { text-align: right; }
+    .slide .pg-page.plan tbody td { padding: 9px 0; border-bottom: 1px solid var(--ds-line); }
+    .slide .pg-page.plan tbody tr:last-child td { border-bottom: 0; }
+    .slide .pg-page.plan .risk { display: inline-block; padding: 3px 12px; border-radius: 999px; font: 800 12px/1 'Nunito', sans-serif; }
+    .slide .pg-page.plan .risk.low  { color: #137a43; background: rgba(31,157,87,.13); }
+    .slide .pg-page.plan .risk.med  { color: #9a6400; background: rgba(245,158,11,.16); }
+    .slide .pg-page.plan .risk.high { color: #b3372f; background: rgba(214,69,61,.13); }
+    .slide .pg-page.plan .plan-diff { background: var(--ds-mist); border: 1px solid var(--ds-line); border-radius: 10px; padding: 11px 13px; display: flex; flex-direction: column; gap: 2px; font-family: var(--ds-font-mono); font-size: 14px; line-height: 1.5; overflow-x: hidden; }
+    .slide .pg-page.plan .plan-diff .d { white-space: pre; border-radius: 4px; padding: 0 4px; overflow: hidden; text-overflow: ellipsis; }
+    .slide .pg-page.plan .plan-diff .add { color: #137a43; background: rgba(31,157,87,.11); }
+    .slide .pg-page.plan .plan-diff .del { color: #b3372f; background: rgba(214,69,61,.10); }
+    .slide .pg-page.plan .plan-diff .ctx { color: var(--ds-ink-2); }
+    .slide .pg-page.plan .plan-controls { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: auto; padding-top: 2px; }
+    .slide .pg-page.plan .plan-slider { display: flex; align-items: center; gap: 10px; font: 700 15px/1 'Nunito', sans-serif; color: var(--ds-ink); }
+    .slide .pg-page.plan .plan-slider b { color: #1B9CF8; min-width: 40px; }
+    .slide .pg-page.plan .plan-slider input[type=range] { -webkit-appearance: none; appearance: none; width: 150px; height: 5px; border-radius: 5px; background: linear-gradient(90deg, #1B9CF8 10%, var(--ds-line) 10%); cursor: pointer; }
+    .slide .pg-page.plan .plan-slider input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 17px; height: 17px; border-radius: 50%; background: #1B9CF8; box-shadow: 0 1px 4px rgba(27,156,248,.55); }
+    .slide .pg-page.plan .plan-slider input[type=range]::-moz-range-thumb { width: 17px; height: 17px; border: none; border-radius: 50%; background: #1B9CF8; }
+    .slide .pg-page.plan .plan-copy { font: 700 14px/1 'Nunito', sans-serif; color: #fff; background: #1B9CF8; border: none; border-radius: 9px; padding: 9px 16px; cursor: pointer; box-shadow: 0 2px 7px rgba(27,156,248,.3); }
+
+    /* ═══════════════════════════════════════════════════════════════
        SLIDE 13 — compact 4-step "set up your design system" strip.
        A labelled vertical step list (not a pg-flow — keeps it static and
        dense enough for the s-compare right column). Brand tokens only.
@@ -1301,8 +1373,6 @@
         <ul class="bullets m-rise" style="gap:18px;" data-stagger>
           <li>Reads your C#/Blazor code, edits across projects, runs <code>dotnet build</code> &amp; <code>dotnet test</code></li>
           <li data-comment-anchor="222e8b1de3-li">Connects to external tools via MCP — Azure DevOps, Microsoft Learn, Playwright, your own services</li>
-          <li data-comment-anchor="3611d7a75d-li">Commits &amp; opens PRs via <code>gh</code> and <code>az&nbsp;devops</code>; runs in GitHub Actions or Azure Pipelines</li>
-          <li data-comment-anchor="d58b6d9595-li">The same <code>CLAUDE.md</code> travels with the repo — skills keep it current; pin the fix when Claude repeats a mistake</li>
         </ul>
       </div>
       <div class="col-visual m-from-right" data-comment-anchor="520372ebc0-div">
@@ -1403,11 +1473,11 @@
         <div class="eyebrow">Persistent context</div>
         <h2>CLAUDE.md — instructions that travel with the repo.</h2>
         <ul class="bullets" data-stagger>
-          <li>Markdown at the repo root, loaded into every session before the first prompt</li>
-          <li>Document the non-obvious: build gotchas, repo etiquette, “money is integer cents” — not “write clean code”</li>
-          <li>Emphasis sticks — <code>IMPORTANT</code>, <code>YOU MUST</code>, <code>NEVER</code> are followed more reliably</li>
-          <li>Keep it lean and layered — bloated context degrades performance; prune what the model has outgrown</li>
-          <li>Tune it like a prompt: <code>/init</code> to scaffold, then be specific — “2-space indents” beats “format properly”</li>
+          <li><code>/init</code> writes the first CLAUDE.md by reading your repo — you don't hand-author it</li>
+          <li>It captures only the non-obvious: build gotchas, repo etiquette, “money is integer cents” — not “write clean code”</li>
+          <li>Claude keeps it current — auto memory, a <code>Stop</code> hook that proposes edits, <code>/memory</code> to review; you prune, not transcribe</li>
+          <li>Deep, area-specific knowledge lives in skills and path-scoped rules, loaded on demand</li>
+          <li>Emphasis still sticks — <code>IMPORTANT</code>, <code>YOU MUST</code>, <code>NEVER</code> are followed more reliably</li>
         </ul>
       </div>
       <div class="pg-frame theme-light pg-editor col-code m-from-right" style="height:680px" data-cmd-editor>
@@ -1538,7 +1608,6 @@
               <div class="cmd-row"><span class="k">/context</span><span class="d">Token usage for this session</span></div>
               <div class="cmd-row"><span class="k">/goal</span><span class="d">Set a finish line, then run to it</span></div>
               <div class="cmd-row"><span class="k">/rewind</span><span class="d">Jump back to a checkpoint</span></div>
-              <div class="cmd-row"><span class="k">/review</span><span class="d">Review the diff before you push</span></div>
             </div>
           </div>
         </div>
@@ -1782,6 +1851,7 @@
         <ul class="bullets" data-stagger>
           <li>A skill is a folder with a <code>SKILL.md</code> — YAML frontmatter plus Markdown steps — in <code>.claude/skills/</code> (repo) or <code>~/.claude</code> (everywhere)</li>
           <li>Reach for one when you keep re-pasting a checklist, or a <code>CLAUDE.md</code> section has become a procedure rather than a fact</li>
+          <li>First, don't reinvent it — browse the marketplaces with <code>/plugin</code> (Anthropic's official catalog plus community ones) and list what already ships</li>
           <li>Skip the boilerplate — Anthropic's verified <code>/skill-creator</code> scaffolds the folder and SKILL.md, then helps you eval, improve, and benchmark it</li>
           <li>The <code>description</code> is the trigger — say what it does <b>and when</b> to use it; Claude auto-loads it, or you run <code>/skill-name</code></li>
           <li>Keep it lean — under ~500 lines — and push detail into reference files that load on demand</li>
@@ -1941,7 +2011,7 @@
   <!-- ════════════════════════════════════════════════════════════
        SLIDE 13 — Effectiveness of HTML (Feature Highlight) — paper
        ════════════════════════════════════════════════════════════ -->
-  <section class="slide s-highlight s-visual" data-screen-label="13 Effectiveness of HTML">
+  <section class="slide s-highlight s-visual s-effhtml" data-screen-label="13 Effectiveness of HTML">
     <div class="stage-pad">
       <div class="col-text">
         <div class="eyebrow m-rise-sm">Effectiveness of HTML</div>
@@ -1953,28 +2023,90 @@
           <li>How to start: just say <b>“make an HTML file”</b>, view it, then ask for comparisons or export buttons</li>
         </ul>
       </div>
-      <div class="col-visual m-from-right">
-        <div class="pg-frame theme-dark pg-terminal" data-script-id="s13html" data-autorun="true" style="height:680px">
+      <div class="col-visual">
+        <div class="pg-frame theme-dark pg-terminal m-from-right" data-script-id="s13html" data-autorun="true">
           <div class="pg-titlebar">
             <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
-            <div class="title">claude · html artifacts</div>
+            <div class="title">claude</div>
             <div class="meta">zsh</div>
           </div>
           <div class="pg-body">
-<span class="pg-line"><span class="cc-input">turn the checkout refactor plan into an HTML file I can open</span></span>
+<span class="pg-line"><span class="cc-input">render the refactor plan as HTML</span></span>
 <span class="pg-line cc-tool">Write(<span class="cc-args">plan.html</span>)</span>
-<span class="pg-line cc-result"><span class="cc-add">84 lines</span> · tables, a data-flow SVG, annotated diffs</span>
+<span class="pg-line cc-result"><span class="cc-add">84 lines</span> · table · SVG · diffs</span>
 <span class="pg-line cc-tool">Bash(<span class="cc-args">open plan.html</span>)</span>
-<span class="pg-line cc-result">opened in your browser</span>
-<span class="pg-line"><span class="cc-input">add a slider to compare 3 rollout options</span></span>
+<span class="pg-line cc-result">opened in your browser →</span>
+<span class="pg-line"><span class="cc-input">add a rollout slider</span></span>
 <span class="pg-line cc-tool">Edit(<span class="cc-args">plan.html</span>)</span>
-<span class="pg-line cc-result">added a range slider + a “copy as Markdown” button</span>
-<span class="pg-line cc-status done">Skim it, click, tweak — you stay in the loop</span>
+<span class="pg-line cc-result">+ slider · “copy as Markdown”</span>
+<span class="pg-line cc-status done">skim · click · tweak</span>
           </div>
           <div class="pg-controls">
             <button class="pg-run" type="button"><span class="ico"></span>Run</button>
             <button class="pg-reset" type="button">Reset</button>
             <span class="status">idle</span>
+          </div>
+        </div>
+        <div class="pg-frame theme-light pg-browser m-from-right">
+          <span class="corner-tag">rendered</span>
+          <div class="pg-titlebar">
+            <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+            <div class="title">plan.html</div>
+            <div class="meta"></div>
+          </div>
+          <div class="pg-tabs">
+            <div class="tab on"><span class="fav"></span>plan.html</div>
+          </div>
+          <div class="pg-addressbar">
+            <div class="nav">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="url"><span class="scheme">file://</span>~/orders/plan.html</div>
+          </div>
+          <div class="pg-body" style="padding:0">
+            <div class="pg-page plan">
+              <div class="plan-head">
+                <div>
+                  <div class="plan-eyebrow">Refactor plan</div>
+                  <h2>Checkout refactor</h2>
+                </div>
+                <div class="plan-meta">4 phases · 3 files · ~2h</div>
+              </div>
+              <div class="plan-flow">
+                <svg viewBox="0 0 680 56" role="img" aria-label="Cart to Pricing to Checkout to PR">
+                  <defs><marker id="planAh" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1B9CF8"/></marker></defs>
+                  <g font-family="Nunito, sans-serif" font-size="16" font-weight="700" fill="#303030" text-anchor="middle">
+                    <rect x="1" y="9" width="132" height="38" rx="9" fill="#fff" stroke="#E6E6E6"/><text x="67" y="33">Cart</text>
+                    <rect x="183" y="9" width="132" height="38" rx="9" fill="#fff" stroke="#E6E6E6"/><text x="249" y="33">Pricing</text>
+                    <rect x="365" y="9" width="132" height="38" rx="9" fill="#fff" stroke="#E6E6E6"/><text x="431" y="33">Checkout</text>
+                    <rect x="547" y="9" width="132" height="38" rx="9" fill="#1B9CF8" stroke="#1B9CF8"/><text x="613" y="33" fill="#fff">PR</text>
+                  </g>
+                  <g stroke="#1B9CF8" stroke-width="2" fill="none" marker-end="url(#planAh)">
+                    <line x1="135" y1="28" x2="178" y2="28"/>
+                    <line x1="317" y1="28" x2="360" y2="28"/>
+                    <line x1="499" y1="28" x2="542" y2="28"/>
+                  </g>
+                </svg>
+              </div>
+              <table>
+                <thead><tr><th>Phase</th><th>Scope</th><th>Risk</th></tr></thead>
+                <tbody>
+                  <tr><td>1 · Extract</td><td>DiscountService</td><td><span class="risk low">low</span></td></tr>
+                  <tr><td>2 · Wire</td><td>CheckoutEndpoint</td><td><span class="risk med">medium</span></td></tr>
+                  <tr><td>3 · Migrate</td><td>EF · money in cents</td><td><span class="risk high">high</span></td></tr>
+                </tbody>
+              </table>
+              <div class="plan-diff">
+                <span class="d del">- var total = cart.Sum(i =&gt; i.Price);</span>
+                <span class="d add">+ var total = DiscountService.Apply(cart, coupon);</span>
+                <span class="d ctx">  return Results.Ok(total);</span>
+              </div>
+              <div class="plan-controls">
+                <label class="plan-slider">Rollout <b>10%</b><input type="range" min="0" max="100" value="10" aria-label="Rollout percentage"></label>
+                <button class="plan-copy" type="button">copy as Markdown</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -2003,13 +2135,21 @@
         <div class="ui-card">
           <div class="ui-tag">Anthropic Labs · research preview</div>
           <h3>Claude Design</h3>
-          <div class="ui-swatches" aria-hidden="true">
-            <span class="sw" style="background:#1B9CF8"></span>
-            <span class="sw" style="background:#303030"></span>
-            <span class="sw" style="background:#FFFFFF;border:1px solid #E6E6E6"></span>
-            <span class="sw" style="background:#8ACFF5"></span>
+          <div class="ui-ds" aria-hidden="true">
+            <div class="ui-ds-row">
+              <span class="sw" style="background:#1B9CF8"></span>
+              <span class="sw" style="background:#303030"></span>
+              <span class="sw" style="background:#FFFFFF;border:1px solid #E6E6E6"></span>
+              <span class="sw" style="background:#8ACFF5"></span>
+              <span class="ui-ds-aa">Aa</span>
+            </div>
+            <div class="ui-ds-row">
+              <span class="ui-ds-btn">Button</span>
+              <span class="ui-ds-tok">--radius</span>
+              <span class="ui-ds-tok">--space-4</span>
+            </div>
           </div>
-          <p>Reads your codebase and assets, extracts a reusable design system, then designs on a canvas you refine by chatting.</p>
+          <p>Reads your codebase and assets, extracts a reusable system — color, type, components, tokens — then designs on a canvas you refine by chatting.</p>
         </div>
         <div class="ui-card ui-card-accent">
           <div class="ui-tag">Claude skill · /plugin</div>
@@ -2044,90 +2184,42 @@
   </section>
 
   <!-- ════════════════════════════════════════════════════════════
-       SLIDE 14 — Claude in Chrome (Content+Code)
+       SLIDE — Three ways to put Claude in a browser (Three-Column
+       Compare). Absorbs the former dedicated "Claude in Chrome" slide.
        ════════════════════════════════════════════════════════════ -->
-  <section class="slide s-content-code" data-screen-label="14 Claude in Chrome">
-    <div class="stage-pad">
-      <div class="col-text m-from-left">
-        <div class="eyebrow">Claude in Chrome</div>
-        <h2>Debug a real browser from the same session.</h2>
-        <ul class="bullets" data-stagger>
-          <li>Connects Claude Code to a Chrome or Edge tab via the Claude in Chrome extension</li>
-          <li>Reads console errors and DOM state — fix the code that caused them</li>
-          <li data-comment-anchor="b19f5b081e-li">Verifies the running UI against the Claude Design mock you just generated</li>
-          <li>Treat web pages as untrusted — it pauses on logins and high-stakes actions so a human stays in the loop</li>
-        </ul>
-      </div>
-      <div class="col-code m-from-right">
-        <div class="pg-frame theme-light pg-browser" style="height:600px">
-          <div class="pg-titlebar">
-            <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
-            <div class="title">Claude in Chrome (beta)</div>
-            <div class="meta"></div>
-          </div>
-          <div class="pg-tabs">
-            <div class="tab on"><span class="fav"></span>localhost</div>
-          </div>
-          <div class="pg-addressbar">
-            <div class="nav">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-            <div class="url"><span class="scheme">http://</span>localhost:3000</div>
-          </div>
-          <div class="pg-body" style="padding:0">
-            <div class="pg-page chrome-demo">
-              <div class="cd-form">
-                <h2>Sign in</h2>
-                <div class="field"></div>
-                <div class="field err">Error messages not showing</div>
-                <button class="btn" type="button">Submit</button>
-              </div>
-              <div class="console">
-<span class="c-line"><span class="pg-cl-red">✗</span> Uncaught TypeError: cannot read 'message' of undefined</span>
-<span class="c-line"><span class="pg-cl-dim">  at validateForm (login.js:42)</span></span>
-<span class="c-line"><span class="pg-cl-blue">⏺ Edit(<span class="pg-cl-dim">login.js:42</span>)</span></span>
-<span class="c-line"><span class="pg-cl-dim">⎿ reading console → fixing the handler</span></span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <p class="cmd-note"><code>claude --chrome</code> to launch · <code>/chrome</code> inside a session</p>
-      </div>
-    </div>
-    <div class="prop prop-tr m-rise-prop">
-      <img src="../devspiration-design-system/project/assets/brand-objects/3d-c-glass.png" alt="">
-    </div>
-    <span class="wm m-fade-in m-quick">devspiration</span>
-    <span class="pg m-fade-in m-quick">14 / 29</span>
-    <footer class="src m-fade-in m-quick">
-      Sources: <a href="https://code.claude.com/docs/en/chrome" target="_blank" rel="noopener">code.claude.com/docs/en/chrome</a> · <a href="https://claude.com/blog/best-practices-for-computer-and-browser-use-with-claude" target="_blank" rel="noopener">claude.com/blog · computer &amp; browser use</a>
-    </footer>
-  </section>
-
-  <!-- ════════════════════════════════════════════════════════════
-       SLIDE 15 — Chrome DevTools vs Playwright (Two-Column Compare)
-       ════════════════════════════════════════════════════════════ -->
-  <section class="slide s-compare" data-screen-label="15 Chrome DevTools vs Playwright">
+  <section class="slide s-compare three-up" data-screen-label="15 Browser ways">
     <div class="stage-pad">
       <div class="head">
-        <div class="eyebrow m-rise-sm">Browser automation</div>
-        <h2 class="m-rise">Chrome DevTools MCP or Playwright MCP?</h2>
-        <p class="lead m-rise-sm">Two ways to drive a browser for automation — pick by reliability, cost, and how much a human stays in the loop.</p>
+        <div class="eyebrow m-rise-sm">In the browser</div>
+        <h2 class="m-rise">Three ways to put Claude in a browser.</h2>
+        <p class="lead m-rise-sm">Drive your own signed-in tab, inspect a live page, or automate in CI — pick by how much a human stays in the loop.</p>
         <div class="cmp-spectrum m-rise-sm" aria-hidden="true">
-          <span class="cmp-end">Inspect a live page</span>
+          <span class="cmp-end">Human in the loop</span>
           <div class="cmp-track">
-            <span class="cmp-pin" style="left:16%">Chrome DevTools MCP</span>
-            <span class="dot" style="left:16%;background:#1B9CF8"></span>
-            <span class="cmp-pin" style="left:84%">Playwright MCP</span>
-            <span class="dot" style="left:84%;background:#0023FF"></span>
+            <span class="cmp-pin" style="left:14%">Claude in Chrome</span>
+            <span class="dot" style="left:14%;background:#8ACFF5"></span>
+            <span class="cmp-pin" style="left:50%">Chrome DevTools MCP</span>
+            <span class="dot" style="left:50%;background:#1B9CF8"></span>
+            <span class="cmp-pin" style="left:86%">Playwright MCP</span>
+            <span class="dot" style="left:86%;background:#0023FF"></span>
           </div>
-          <span class="cmp-end">Automate in CI</span>
+          <span class="cmp-end">Headless in CI</span>
         </div>
       </div>
-      <div class="cols" data-comment-anchor="dac4f01f15-div">
+      <div class="cols">
         <div class="col m-from-left">
-          <div class="col-eyebrow">For inspecting</div>
+          <div class="col-eyebrow">Your real tab</div>
+          <h3>Claude in Chrome</h3>
+          <ul data-stagger>
+            <li>Drives your signed-in Chrome or Edge tab via the extension</li>
+            <li>Reads the console &amp; DOM, then fixes the code that broke</li>
+            <li>Verifies the running UI against your design mock</li>
+            <li>Untrusted by default — pauses on logins &amp; high-stakes actions</li>
+            <li><code>claude --chrome</code> · <code>/chrome</code> in a session</li>
+          </ul>
+        </div>
+        <div class="col m-rise">
+          <div class="col-eyebrow">Inspect live</div>
           <h3>Chrome DevTools MCP</h3>
           <ul data-stagger>
             <li>Drives &amp; inspects Chrome over the DevTools Protocol</li>
@@ -2137,7 +2229,7 @@
           </ul>
         </div>
         <div class="col m-from-right">
-          <div class="col-eyebrow">For scripting</div>
+          <div class="col-eyebrow">Automate in CI</div>
           <h3>Playwright MCP</h3>
           <ul data-stagger>
             <li>Headless, scripted, deterministic — runs in CI</li>
@@ -2154,7 +2246,7 @@
     <span class="wm m-fade-in m-quick">devspiration</span>
     <span class="pg m-fade-in m-quick">15 / 29</span>
     <footer class="src m-fade-in m-quick">
-      Sources: <a href="https://github.com/ChromeDevTools/chrome-devtools-mcp" target="_blank" rel="noopener">github.com/ChromeDevTools/chrome-devtools-mcp</a> · <a href="https://github.com/microsoft/playwright-mcp" target="_blank" rel="noopener">github.com/microsoft/playwright-mcp</a> · <a href="https://claude.com/blog/best-practices-for-computer-and-browser-use-with-claude" target="_blank" rel="noopener">best practices</a>
+      Sources: <a href="https://code.claude.com/docs/en/chrome" target="_blank" rel="noopener">docs · chrome</a> · <a href="https://github.com/ChromeDevTools/chrome-devtools-mcp" target="_blank" rel="noopener">chrome-devtools-mcp</a> · <a href="https://github.com/microsoft/playwright-mcp" target="_blank" rel="noopener">playwright-mcp</a> · <a href="https://claude.com/blog/best-practices-for-computer-and-browser-use-with-claude" target="_blank" rel="noopener">browser use</a>
     </footer>
   </section>
 
@@ -2256,10 +2348,10 @@
         <div class="eyebrow">Parallel work</div>
         <h2>Git worktrees — one repo, many sessions.</h2>
         <ul class="bullets" data-stagger>
-          <li>A worktree is a separate working directory sharing one repo history</li>
-          <li>File-level isolation: edits in one session never touch files in another</li>
-          <li>Each worktree is its own branch + directory</li>
+          <li>A worktree is a separate working directory + branch sharing one repo history — edits in one session never touch another</li>
           <li><code>.worktreeinclude</code> auto-copies local files like <code>.env</code> into new worktrees</li>
+          <li>Monorepo: scope context with per-directory <code>CLAUDE.md</code> — root rules plus one file per package — and start Claude in the package you're touching</li>
+          <li><code>worktree.sparsePaths</code> checks out only the directories a task needs; <code>symlinkDirectories</code> shares one <code>node_modules</code></li>
         </ul>
       </div>
       <div class="pg-frame theme-dark pg-terminal col-code m-from-right" data-script-id="s18" style="height:520px">
@@ -2291,7 +2383,7 @@
     <span class="wm m-fade-in m-quick">devspiration</span>
     <span class="pg m-fade-in m-quick">18 / 29</span>
     <footer class="src m-fade-in m-quick">
-      Source: <a href="https://code.claude.com/docs/en/worktrees" target="_blank" rel="noopener">code.claude.com/docs/en/worktrees</a>
+      Sources: <a href="https://code.claude.com/docs/en/worktrees" target="_blank" rel="noopener">docs · worktrees</a> · <a href="https://code.claude.com/docs/en/large-codebases" target="_blank" rel="noopener">docs · large-codebases</a>
     </footer>
   </section>
 
@@ -2405,7 +2497,7 @@
           <li>Skills supply the <b>gates</b> — brainstorm before code, TDD, verification before completion</li>
           <li>Workflows supply the <b>engine</b> — a script orchestrates subagents, holding the loop + results</li>
           <li>The working pattern — a workflow whose phases each invoke a <code>superpowers:*</code> skill, so a 500-file migration keeps the discipline</li>
-          <li>The lead owns the skills; subagents do the work; reviewers verify at phase boundaries</li>
+          <li>Same rule with team agents — no native superpowers support yet (issue #429), so the lead runs every skill, teammates implement, reviewers verify</li>
         </ul>
       </div>
       <div class="col-visual m-from-right">
@@ -2436,91 +2528,13 @@
     <span class="wm m-fade-in m-quick">devspiration</span>
     <span class="pg m-fade-in m-quick">21 / 29</span>
     <footer class="src m-fade-in m-quick">
-      Sources: <a href="https://code.claude.com/docs/en/workflows" target="_blank" rel="noopener">code.claude.com/docs/en/workflows</a> · <a href="https://github.com/obra/superpowers" target="_blank" rel="noopener">github.com/obra/superpowers</a>
+      Sources: <a href="https://code.claude.com/docs/en/workflows" target="_blank" rel="noopener">code.claude.com/docs/en/workflows</a> · <a href="https://github.com/obra/superpowers" target="_blank" rel="noopener">github.com/obra/superpowers</a> · <a href="https://github.com/obra/superpowers/issues/429" target="_blank" rel="noopener">issue #429</a>
     </footer>
   </section>
 
   <!-- ════════════════════════════════════════════════════════════
-       SLIDE 22 — Issue 429 / superpowers × teams (Content, ink)
-       ════════════════════════════════════════════════════════════ -->
-  <section class="slide s-content dark s-visual" data-screen-label="22 Superpowers x teams">
-    <div class="stage-pad">
-      <div class="col-text">
-        <div class="eyebrow m-rise-sm">Superpowers × teams</div>
-        <h2 class="m-rise">Making skills work with team agents.</h2>
-        <ul class="bullets m-rise" data-stagger>
-          <li>Superpowers has no native team-agents support yet — issue #429 is an open request to add it</li>
-          <li>So the lead session runs every <code>superpowers:*</code> skill; teammates do plain implementation only</li>
-          <li>Review subagents verify at phase boundaries — fresh agents can run verification-before-completion</li>
-        </ul>
-      </div>
-      <div class="col-visual m-from-right">
-        <div class="pg-frame theme-light pg-browser">
-          <span class="corner-tag">Mockup</span>
-          <div class="pg-titlebar">
-            <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
-            <div class="title">obra/superpowers · #429</div>
-            <div class="meta"></div>
-          </div>
-          <div class="pg-tabs">
-            <div class="tab on"><span class="fav"></span>Issues</div>
-          </div>
-          <div class="pg-addressbar">
-            <div class="nav">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-            <div class="url"><svg class="lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span class="scheme">https://</span>github.com/obra/superpowers/issues/429</div>
-          </div>
-          <div class="pg-body" style="padding:0">
-            <div class="pg-page gh-issue">
-              <div class="gh-state open">Open</div>
-              <h2>Support for Claude Code Agent Teams (TeammateTool, SendMessage, TaskList)</h2>
-              <p class="gh-meta">#429 · feature request</p>
-              <p>Skills like <code>subagent-driven-development</code> only know the <code>Task</code> tool — no awareness yet of <code>Teammate</code>, <code>SendMessage</code>, or <code>TaskList</code>.</p>
-              <p class="gh-work">Working pattern: the <b>lead</b> runs every <code>superpowers:*</code> skill; teammates do plain implementation; review subagents verify at phase boundaries.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="prop prop-bl m-rise-prop">
-      <img src="../devspiration-design-system/project/assets/brand-objects/3d-c-glass.png" alt="">
-    </div>
-    <span class="wm m-fade-in m-quick">devspiration</span>
-    <span class="pg m-fade-in m-quick">22 / 29</span>
-    <footer class="src m-fade-in m-quick">
-      Source: <a href="https://github.com/obra/superpowers/issues/429" target="_blank" rel="noopener">github.com/obra/superpowers/issues/429</a>
-    </footer>
-  </section>
-
-  <!-- ════════════════════════════════════════════════════════════
-       SLIDE 22 — Proof point · CodeRabbit (Content, paper) — NEW
-       ════════════════════════════════════════════════════════════ -->
-  <section class="slide s-content" data-screen-label="23 Proof CodeRabbit">
-    <div class="stage-pad" data-comment-anchor="9e618d2ae7-div">
-      <div class="eyebrow m-rise-sm">Claude Code in the wild</div>
-      <h2 class="m-rise">CodeRabbit plans with Claude before it writes a line of code.</h2>
-      <p class="lead m-rise-sm">Their orchestration layer reviews 2 million pull requests a week across 15,000+ customers.</p>
-      <ul class="bullets m-rise" data-stagger>
-        <li>Opus drives orchestration, Sonnet sequences the plan, Haiku distills context</li>
-        <li>A collaborative PRD locks context and assumptions before Plan Mode writes code</li>
-        <li>"The plan itself becomes a quality gate" — better upfront, pronounced downstream</li>
-        <li>A custom eval harness scores plan quality, scope creep, and token efficiency</li>
-      </ul>
-    </div>
-    <div class="prop prop-tr m-rise-prop">
-      <img src="../devspiration-design-system/project/assets/brand-objects/3d-pebble-cyan.png" alt="">
-    </div>
-    <span class="wm m-fade-in m-quick">devspiration</span>
-    <span class="pg m-fade-in m-quick">23 / 29</span>
-    <footer class="src m-fade-in m-quick">
-      Source: <a href="https://claude.com/blog/how-coderabbit-used-claude-to-build-an-agent-orchestration-system" target="_blank" rel="noopener">claude.com/blog · How CodeRabbit built an agent-orchestration system</a>
-    </footer>
-  </section>
-
-  <!-- ════════════════════════════════════════════════════════════
-       SLIDE 24 — How real teams use Claude Code (Content, paper)
+       SLIDE — How real teams use Claude Code (Content, paper).
+       CodeRabbit folded in as a card; its dedicated proof slide retired.
        ════════════════════════════════════════════════════════════ -->
   <section class="slide s-content" data-screen-label="24 In the wild">
     <div class="stage-pad">
@@ -2538,9 +2552,9 @@
           <p>Describe the behaviour; Claude writes the test in the codebase's native language — even Rust.</p>
         </div>
         <div class="use-card">
-          <div class="who">Infrastructure · Anthropic</div>
-          <div class="stat">Reads CLAUDE.md</div>
-          <p>Claude reads CLAUDE.md to explain pipeline dependencies across a large codebase.</p>
+          <div class="who">CodeRabbit</div>
+          <div class="stat">2M PRs / week</div>
+          <p>Plans with Claude before writing a line of code — Opus orchestrates, Sonnet plans, Haiku distills; the plan itself becomes a quality gate. 15,000+ customers.</p>
         </div>
         <div class="use-card">
           <div class="who">Ramp</div>
@@ -2565,7 +2579,7 @@
     <span class="wm m-fade-in m-quick">devspiration</span>
     <span class="pg m-fade-in m-quick">24 / 29</span>
     <footer class="src m-fade-in m-quick">
-      Sources: <a href="https://claude.com/blog/how-anthropic-teams-use-claude-code" target="_blank" rel="noopener">claude.com/blog · Anthropic teams</a> · <a href="https://claude.com/customers/ramp" target="_blank" rel="noopener">claude.com/customers/ramp</a> · <a href="https://github.com/DataDog/datadog-agent/tree/main/.claude/skills" target="_blank" rel="noopener">github · datadog-agent skills</a>
+      Sources: <a href="https://claude.com/blog/how-coderabbit-used-claude-to-build-an-agent-orchestration-system" target="_blank" rel="noopener">blog · CodeRabbit</a> · <a href="https://claude.com/blog/how-anthropic-teams-use-claude-code" target="_blank" rel="noopener">Anthropic teams</a> · <a href="https://claude.com/customers/ramp" target="_blank" rel="noopener">Ramp</a> · <a href="https://github.com/DataDog/datadog-agent/tree/main/.claude/skills" target="_blank" rel="noopener">datadog-agent skills</a>
     </footer>
   </section>
 
@@ -3018,18 +3032,18 @@
   // Slide 13 — Effectiveness of HTML. Source: claude.com/blog/using-claude-code-the-unreasonable-effectiveness-of-html.
   const S13HTML = [
     { type:'clear' },
-    { type:'raw', html:'<span class="cc-input">turn the checkout refactor plan into an HTML file I can open</span>' },
+    { type:'raw', html:'<span class="cc-input">render the refactor plan as HTML</span>' },
     { type:'pause', ms:500 },
     { type:'out', cls:'cc-tool', html:'Write(<span class="cc-args">plan.html</span>)' },
-    { type:'out', cls:'cc-result', html:'<span class="cc-add">84 lines</span> · tables, a data-flow SVG, annotated diffs' },
+    { type:'out', cls:'cc-result', html:'<span class="cc-add">84 lines</span> · table · SVG · diffs' },
     { type:'out', cls:'cc-tool', html:'Bash(<span class="cc-args">open plan.html</span>)' },
-    { type:'out', cls:'cc-result', html:'opened in your browser' },
+    { type:'out', cls:'cc-result', html:'opened in your browser →' },
     { type:'pause', ms:450 },
-    { type:'raw', html:'<span class="cc-input">add a slider to compare 3 rollout options</span>' },
+    { type:'raw', html:'<span class="cc-input">add a rollout slider</span>' },
     { type:'pause', ms:400 },
     { type:'out', cls:'cc-tool', html:'Edit(<span class="cc-args">plan.html</span>)' },
-    { type:'out', cls:'cc-result', html:'added a range slider + a “copy as Markdown” button' },
-    { type:'out', cls:'cc-status done', html:'Skim it, click, tweak — you stay in the loop' },
+    { type:'out', cls:'cc-result', html:'+ slider · “copy as Markdown”' },
+    { type:'out', cls:'cc-status done', html:'skim · click · tweak' },
   ];
 
   // Map each terminal's data-script-id (authored on the element) to its array.
@@ -3205,7 +3219,7 @@
       { start: 0,  name: 'Intro' },
       { start: 1,  name: 'Foundations' },
       { start: 6,  name: 'The agentic SDLC' },
-      { start: 26, name: 'End to end' },
+      { start: 23, name: 'End to end' },
     ];
     const progress = document.createElement('div');
     progress.className = 'deck-progress';
@@ -3286,7 +3300,7 @@
     // Paint slide-1 state now — the deck's init `slidechange` can fire
     // before this listener attaches, so seed it from the known opening slide.
     (function seed() {
-      const total = document.querySelectorAll('deck-stage > section').length || 31;
+      const total = document.querySelectorAll('deck-stage > section').length || 28;
       buildTicks(total);
       fillEl.style.width = (1 / total * 100) + '%';
       nameEl.textContent = chapterFor(0).name;
@@ -3334,6 +3348,24 @@
         if (!row || !list.contains(row)) return;
         list.querySelectorAll('.cmd-row').forEach((r) => r.classList.toggle('on', r === row));
       });
+    });
+  })();
+
+  /* ───────── Slide — Effectiveness of HTML: live rollout slider ─────────
+     The rendered plan.html mock carries a working range input; dragging it
+     updates the track fill + the percentage, proving "two-way by default". */
+  (function planSlider() {
+    document.querySelectorAll('.pg-page.plan .plan-slider').forEach((wrap) => {
+      const r = wrap.querySelector('input[type=range]');
+      const b = wrap.querySelector('b');
+      if (!r) return;
+      const upd = () => {
+        const v = +r.value;
+        if (b) b.textContent = v + '%';
+        r.style.background = 'linear-gradient(90deg, #1B9CF8 ' + v + '%, var(--ds-line) ' + v + '%)';
+      };
+      r.addEventListener('input', upd);
+      upd();
     });
   })();
 </script>
