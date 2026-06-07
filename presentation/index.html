@@ -1372,7 +1372,7 @@
         <p class="lead m-rise-sm" style="margin-bottom:26px;">One engine across terminal, IDEs, Desktop, and browser.</p>
         <ul class="bullets m-rise" style="gap:18px;" data-stagger>
           <li>Reads your C#/Blazor code, edits across projects, runs <code>dotnet build</code> &amp; <code>dotnet test</code></li>
-          <li data-comment-anchor="222e8b1de3-li">Connects to external tools via MCP — Azure DevOps, Microsoft Learn, Playwright, your own services</li>
+          <li data-comment-anchor="222e8b1de3-li">Connects to external tools via MCP — Azure DevOps, Microsoft Learn, Playwright, your own services; the same protocol the Claude apps package as <b>Connectors</b></li>
         </ul>
       </div>
       <div class="col-visual m-from-right" data-comment-anchor="520372ebc0-div">
@@ -2208,7 +2208,7 @@
       </div>
       <div class="cols">
         <div class="col m-from-left">
-          <div class="col-eyebrow">Your real tab</div>
+          <div class="col-eyebrow">Extension · your real tab</div>
           <h3>Claude in Chrome</h3>
           <ul data-stagger>
             <li>Drives your signed-in Chrome or Edge tab via the extension</li>
@@ -2219,7 +2219,7 @@
           </ul>
         </div>
         <div class="col m-rise">
-          <div class="col-eyebrow">Inspect live</div>
+          <div class="col-eyebrow">MCP server · inspect live</div>
           <h3>Chrome DevTools MCP</h3>
           <ul data-stagger>
             <li>Drives &amp; inspects Chrome over the DevTools Protocol</li>
@@ -2229,7 +2229,7 @@
           </ul>
         </div>
         <div class="col m-from-right">
-          <div class="col-eyebrow">Automate in CI</div>
+          <div class="col-eyebrow">MCP server · automate in CI</div>
           <h3>Playwright MCP</h3>
           <ul data-stagger>
             <li>Headless, scripted, deterministic — runs in CI</li>
@@ -2239,6 +2239,7 @@
           </ul>
         </div>
       </div>
+      <p class="compare-note">Two are MCP servers you add in Claude Code; Claude in Chrome is the browser extension that also registers as a <b>Connector</b> — the Claude apps' productized surface over remote MCP, pre-built or your own.</p>
     </div>
     <div class="prop prop-tr m-rise-prop">
       <img src="../devspiration-design-system/project/assets/brand-objects/3d-disc-glass.png" alt="">
@@ -2246,7 +2247,7 @@
     <span class="wm m-fade-in m-quick">devspiration</span>
     <span class="pg m-fade-in m-quick">15 / 29</span>
     <footer class="src m-fade-in m-quick">
-      Sources: <a href="https://code.claude.com/docs/en/chrome" target="_blank" rel="noopener">docs · chrome</a> · <a href="https://github.com/ChromeDevTools/chrome-devtools-mcp" target="_blank" rel="noopener">chrome-devtools-mcp</a> · <a href="https://github.com/microsoft/playwright-mcp" target="_blank" rel="noopener">playwright-mcp</a> · <a href="https://claude.com/blog/best-practices-for-computer-and-browser-use-with-claude" target="_blank" rel="noopener">browser use</a>
+      Sources: <a href="https://code.claude.com/docs/en/chrome" target="_blank" rel="noopener">docs · chrome</a> · <a href="https://github.com/ChromeDevTools/chrome-devtools-mcp" target="_blank" rel="noopener">chrome-devtools-mcp</a> · <a href="https://github.com/microsoft/playwright-mcp" target="_blank" rel="noopener">playwright-mcp</a> · <a href="https://support.claude.com/en/articles/11176164-pre-built-connectors-using-remote-mcp" target="_blank" rel="noopener">connectors</a> · <a href="https://support.claude.com/en/articles/11175166-getting-started-with-custom-connectors-using-remote-mcp" target="_blank" rel="noopener">custom connectors</a>
     </footer>
   </section>
 
