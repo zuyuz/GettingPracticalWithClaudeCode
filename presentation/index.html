@@ -1756,7 +1756,7 @@
         <ul class="bullets" data-stagger>
           <li>Iron law — no production code without a failing test first</li>
           <li>Verify red — a test that passes immediately proves nothing</li>
-          <li>Same loop, any layer: xUnit/NUnit units, <b>bUnit</b> for Blazor components, <b>Testcontainers</b> + <b>Aspire</b> for integration &amp; E2E</li>
+          <li>Same loop, any layer: xUnit/NUnit units, <b>bUnit</b> for Blazor components, <b>Aspire</b>'s testing host for integration &amp; E2E</li>
           <li>Bug fix? Write the reproducing test before touching the fix</li>
         </ul>
       </div>
@@ -1774,7 +1774,7 @@
 <span class="pg-line cc-result"><span class="cc-add">GREEN</span> — minimal DiscountService.Apply()</span>
 <span class="pg-line cc-tool">Bash(<span class="cc-args">dotnet test</span>)</span>
 <span class="pg-line cc-result"><span class="cc-add">Passed!</span> 1 of 1</span>
-<span class="pg-line cc-status done">Same loop scales: xUnit · bUnit · Testcontainers · Aspire</span>
+<span class="pg-line cc-status done">Same loop scales: xUnit · NUnit · bUnit · Aspire</span>
         </div>
         <div class="pg-controls">
           <button class="pg-run" type="button"><span class="ico"></span>Run</button>
@@ -2214,7 +2214,7 @@
             <li>Drives your signed-in Chrome or Edge tab via the extension</li>
             <li>Reads the console &amp; DOM, then fixes the code that broke</li>
             <li>Verifies the running UI against your design mock</li>
-            <li>Untrusted by default — pauses on logins &amp; high-stakes actions</li>
+            <li>Pauses on logins and CAPTCHAs; you control which sites it can touch</li>
             <li><code>claude --chrome</code> · <code>/chrome</code> in a session</li>
           </ul>
         </div>
@@ -2570,7 +2570,7 @@
         <div class="use-card">
           <div class="who">Product Design · Anthropic</div>
           <div class="stat">Ships its own UI</div>
-          <p>Designers make visual and state-management changes in code they wouldn't normally touch themselves.</p>
+          <p>Designers feed Figma files to Claude Code and ship UI changes in code they wouldn't normally touch themselves.</p>
         </div>
       </div>
     </div>
@@ -2781,7 +2781,7 @@
           <ul>
             <li><a href="https://code.claude.com/docs/en/overview" target="_blank" rel="noopener">docs · overview</a></li>
             <li><a href="https://code.claude.com/docs/en/model-config" target="_blank" rel="noopener">docs · model-config</a></li>
-            <li><a href="https://www.anthropic.com/engineering/april-23-postmortem" target="_blank" rel="noopener">engineering · effort postmortem</a></li>
+            <li><a href="https://www.anthropic.com/engineering/april-23-postmortem" target="_blank" rel="noopener">engineering · Claude Code quality postmortem</a></li>
             <li><a href="https://code.claude.com/docs/en/memory" target="_blank" rel="noopener">docs · memory</a></li>
             <li><a href="https://code.claude.com/docs/en/commands" target="_blank" rel="noopener">docs · commands</a></li>
           </ul>
@@ -2912,7 +2912,7 @@
     { type:'out', cls:'cc-tool', html:'Bash(<span class="cc-args">dotnet test</span>)' },
     { type:'pause', ms:450 },
     { type:'out', cls:'cc-result', html:'<span class="cc-add">Passed!</span> 1 of 1' },
-    { type:'out', cls:'cc-status done', html:'Same loop scales: xUnit · bUnit · Testcontainers · Aspire' },
+    { type:'out', cls:'cc-status done', html:'Same loop scales: xUnit · NUnit · bUnit · Aspire' },
   ];
 
   // Slide 11 — Verification before completion. Source: superpowers/skills/verification-before-completion/SKILL.md.
