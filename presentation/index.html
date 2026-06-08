@@ -2663,7 +2663,7 @@
           <li>Lead invoked <code>brainstorming</code> then <code>writing-plans</code> — spec and plan before any code</li>
           <li>Built in parallel: Researcher gathered sources, Designer pulled the brand via <b>Claude Design</b>, Frontend composed the deck</li>
           <li>Polished with the <code>frontend-design</code> skill; every claim fixed to a live source via web + ARS <code>ars-citation-check</code></li>
-          <li>The gate before each push — render all 31 slides with <b>Chrome DevTools MCP</b>, zero console errors — then ship to <b>GitHub Pages</b></li>
+          <li>The gate before each push — render every slide with <b>Chrome DevTools MCP</b>, zero console errors — then ship to <b>GitHub Pages</b></li>
         </ul>
       </div>
       <div class="pg-flow col-code m-from-right" data-comment-anchor="c2abf2e6a7-div">
@@ -2765,67 +2765,6 @@
     <span class="pg m-fade-in m-quick">28 / 29</span>
     <footer class="src m-fade-in m-quick">
       Source: aggregated — see <a href="https://code.claude.com/docs/en/overview" target="_blank" rel="noopener">code.claude.com/docs</a>
-    </footer>
-  </section>
-
-  <!-- ════════════════════════════════════════════════════════════
-       SLIDE — Sources & further reading (Content, paper)
-       ════════════════════════════════════════════════════════════ -->
-  <section class="slide s-content" data-screen-label="29 Sources">
-    <div class="stage-pad">
-      <div class="eyebrow m-rise-sm">Keep the list current</div>
-      <h2 class="m-rise">Sources &amp; further reading.</h2>
-      <div class="ref-cols m-rise" data-stagger>
-        <div class="ref-group">
-          <h3>Foundations</h3>
-          <ul>
-            <li><a href="https://code.claude.com/docs/en/overview" target="_blank" rel="noopener">docs · overview</a></li>
-            <li><a href="https://code.claude.com/docs/en/model-config" target="_blank" rel="noopener">docs · model-config</a></li>
-            <li><a href="https://www.anthropic.com/engineering/april-23-postmortem" target="_blank" rel="noopener">engineering · Claude Code quality postmortem</a></li>
-            <li><a href="https://code.claude.com/docs/en/memory" target="_blank" rel="noopener">docs · memory</a></li>
-            <li><a href="https://code.claude.com/docs/en/commands" target="_blank" rel="noopener">docs · commands</a></li>
-          </ul>
-        </div>
-        <div class="ref-group">
-          <h3>The agentic SDLC</h3>
-          <ul>
-            <li><a href="https://github.com/obra/superpowers" target="_blank" rel="noopener">github · obra/superpowers</a></li>
-            <li><a href="https://code.claude.com/docs/en/workflows" target="_blank" rel="noopener">docs · workflows</a></li>
-            <li><a href="https://code.claude.com/docs/en/agent-teams" target="_blank" rel="noopener">docs · agent-teams</a></li>
-            <li><a href="https://claude.com/plugins/csharp-lsp" target="_blank" rel="noopener">plugins · csharp-lsp</a></li>
-            <li><a href="https://github.com/microsoft/azure-skills" target="_blank" rel="noopener">github · microsoft/azure-skills</a></li>
-          </ul>
-        </div>
-        <div class="ref-group">
-          <h3>Browser &amp; design</h3>
-          <ul>
-            <li><a href="https://code.claude.com/docs/en/chrome" target="_blank" rel="noopener">docs · chrome</a></li>
-            <li><a href="https://github.com/ChromeDevTools/chrome-devtools-mcp" target="_blank" rel="noopener">github · chrome-devtools-mcp</a></li>
-            <li><a href="https://github.com/microsoft/playwright-mcp" target="_blank" rel="noopener">github · playwright-mcp</a></li>
-            <li><a href="https://www.anthropic.com/news/claude-design-anthropic-labs" target="_blank" rel="noopener">news · Claude Design</a></li>
-            <li><a href="https://claude.com/plugins/frontend-design" target="_blank" rel="noopener">plugins · frontend-design</a></li>
-            <li><a href="https://claude.com/blog/using-claude-code-the-unreasonable-effectiveness-of-html" target="_blank" rel="noopener">blog · effectiveness of HTML</a></li>
-            <li><a href="https://www.figma.com/blog/introducing-claude-code-to-figma/" target="_blank" rel="noopener">figma · Claude Code bridge</a></li>
-          </ul>
-        </div>
-        <div class="ref-group">
-          <h3>In the wild &amp; .NET</h3>
-          <ul>
-            <li><a href="https://claude.com/blog/how-coderabbit-used-claude-to-build-an-agent-orchestration-system" target="_blank" rel="noopener">blog · CodeRabbit</a></li>
-            <li><a href="https://claude.com/blog/how-anthropic-teams-use-claude-code" target="_blank" rel="noopener">blog · Anthropic teams</a></li>
-            <li><a href="https://aspire.dev/testing/overview/" target="_blank" rel="noopener">aspire.dev · testing</a></li>
-            <li><a href="https://claude.com/customers" target="_blank" rel="noopener">claude.com/customers</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <div class="prop prop-tr m-rise-prop">
-      <img src="../devspiration-design-system/project/assets/brand-objects/3d-sphere-clear.png" alt="">
-    </div>
-    <span class="wm m-fade-in m-quick">devspiration</span>
-    <span class="pg m-fade-in m-quick">29 / 29</span>
-    <footer class="src m-fade-in m-quick">
-      Compiled from official Claude Code docs, the Anthropic blog &amp; engineering posts, and obra/superpowers.
     </footer>
   </section>
 
@@ -3160,6 +3099,169 @@
     });
   })();
 
+  /* ───────── Presenter notes (N) ─────────
+     Press N to open the notes in a SEPARATE browser window — never inside the
+     deck. When you screen-share the deck window on Teams, the audience sees the
+     slides only; the notes ride in their own window on the presenter's screen.
+     The popup is built on demand (a user gesture, so it isn't popup-blocked),
+     focus is handed back to the deck so ← / → keep driving, and the popup tracks
+     the deck live via its 'slidechange' event. Press N again to close it.
+     The note body is keyed by each slide's data-screen-label with the leading
+     number stripped (the deck renumbers by order, so the number isn't stable);
+     the source line is echoed live from the slide's own <footer class="src">,
+     so citations are never duplicated and can't drift. */
+  (function presenterNotes() {
+    const NOTES = {
+      'Title': `This is a working tour, not a feature pitch.\nClaude Code is the agentic coding tool that runs in your terminal.\nFour stops — foundations, workflow tooling, orchestration, and one real end-to-end build to close.`,
+      'What is Claude Code': `This is one engine, not four tools.\nA single Claude Code that reads your codebase, edits files, and runs the commands itself — across many files.\nIt's in the terminal, your IDEs, Desktop, and the browser, so you learn it once.\nAnd through MCP it connects to external tools and data over one open standard.`,
+      'Effort levels': `On Opus 4.8, high is the default everywhere.\nBut the docs say to start at xhigh for coding and agentic work.\nSo raise effort before you assume the model is underpowered.\nStep down only when your own evals show a lower level holds.\nAnd ultracode is the Claude Code menu mode that runs xhigh with multi-agent permission — not a separate API level.`,
+      'CLAUDE.md': `This is the fix for "Claude forgot our conventions again."\nRun /init once and it drafts CLAUDE.md from your project — so you refine rather than author.\nKeep it to the non-obvious — the build gotcha, the convention that differs from the default.\nWrapping a line in IMPORTANT or YOU MUST improves adherence.\nAnd check it into git, so the whole team contributes.`,
+      'Auto memory': `This is the fix for "Claude forgot what I told it last week."\nAuto memory keeps a per-repo directory.\nIts MEMORY.md index loads at the start of every session — carrying build commands, gotchas, and preferences across.\nThe number that matters: only the first 200 lines load automatically, deeper topics on demand — so keep the index lean.\nYou drive it by asking Claude to remember, and audit or toggle it with /memory.`,
+      'Useful commands': `These are the day-to-day commands you'll actually type.\nFor this Rider and IntelliJ room, /ide manages IDE integrations and shows their status.\nAnd the one worth highlighting — /goal sets a condition, and Claude keeps working across turns until it's met, instead of stopping after a single reply.`,
+      'Section divider': `Now we pivot from setup to how the team actually works.\nThe superpowers plugin ships skills that force the rituals teams drop under deadline pressure.\nThe next four slides walk one skill each — brainstorming, writing-plans, TDD, and a verification gate.\nThe discipline lives in the tooling, not in willpower.`,
+      'Brainstorming': `This is the design discipline most teams skip.\nThe skill writes no code and scaffolds nothing until you approve a design — then it commits that design doc to git.\nIt asks one question at a time, and always returns 2–3 approaches with a recommendation — so the trade-offs are on the table first.\nAnd that committed design is what writing-plans consumes next.`,
+      'Writing plans': `This is the discipline that makes a plan executable by a fresh agent with almost no context.\nIt bans "TBD" and demands the actual file, command, and code block in every step.\nThe rhythm is 2–5 minutes per step — write the failing test, run it red, write the code, run it green, commit.\nIt's the same red-green-commit loop our dotnet test work already runs on.`,
+      'TDD': `One rule, enforced before any agent writes code: no production code without a failing test first.\nThe step people skip is watching it go red — because a test that passes on arrival proves nothing.\nFor our stack, the same loop carries up into Aspire's testing host.\nThere, DistributedApplicationTestingBuilder spins up the AppHost and its resources for closed-box integration testing.`,
+      'Verification': `This is the gate in front of every other skill: no completion claim without fresh evidence.\nClaude can't say tests pass unless it ran the proving command this turn and read the exit code.\nFor us, that's dotnet test — not a clean Roslyn pass.\nSkipping that step is lying, not verifying.\nAnd /goal turns the condition into a spec a separate small, fast model checks after every turn, before the session can stop.`,
+      'Writing skills': `Here's the moment: a CLAUDE.md section has quietly become a procedure, or you keep re-pasting the same checklist.\nThat's the signal to pull it into a folder with a SKILL.md.\nThe description field is what Claude reads to decide when to fire it — so write what it does, plus when to use it.\nAnd /skill-creator scaffolds and benchmarks it.\nKeep SKILL.md under about 500 lines, and push the rest into reference files loaded on demand.`,
+      'Visual planning': `Here's a real problem: when brainstorming hits a genuinely visual question, a paragraph of text is a poor way to choose between two layouts.\nBut a question about a UI isn't automatically visual.\nOpen the browser only when the user would understand it better by seeing it than reading it.\nAnd that bridges to the wider pattern — rendering plans and reports as HTML.`,
+      'Effectiveness of HTML': `Here's a one-line habit: end a prompt for a plan, a PR review, or a flag editor with "make an HTML file."\nThen Claude renders a real table or SVG instead of an ASCII diagram in Markdown.\nAnd these artifacts are two-way — a flag editor with sliders plus a "copy as JSON" button exports the changed keys straight back into your code.`,
+      'Ways to build UI': `This is a decision tree, not a feature tour — the slide gives you three routes, by how much brand you already own.\nWith nothing yet, Claude Design — an Anthropic Labs research preview — reads your codebase and assets and builds a reusable system you refine on a canvas.\nIn the middle, the frontend-design skill builds distinctive, production-grade UI and dodges generic AI-slop defaults.\nAnd if you already have tokens and a motion system, you point Claude at what exists.\nThat's how these slides were built — against our own design system.`,
+      'Browser ways': `This is a spectrum, by how much you stay in the loop.\nClaude in Chrome drives your signed-in tab in a visible window and pauses for logins and CAPTCHAs.\nPlaywright MCP runs headless, with no human watching.\nChrome DevTools MCP is the only one of the three that hands you Lighthouse audits and performance traces — and it needs no extension.\nTwo of the three are MCP servers you add to Claude Code.`,
+      'C# LSP': `This is the moment Claude stops text-scanning your .cs files and starts reading code the way the compiler does.\nThe csharp-lsp plugin runs the Roslyn-based csharp-ls server.\nSo go-to-definition and find references resolve real symbols, not grep hits.\nAnd it's Anthropic-verified — a low-risk add for the team.`,
+      'Azure DevOps and gh': `This is for the team that lives in both worlds — open-source on GitHub, client and internal work in Azure DevOps — one agent talking to both.\nThe Azure DevOps MCP server is Microsoft's own @azure-devops/mcp package, and it runs locally, so nothing leaves the network.\nIt reaches work items, pull requests, and builds.\nAnd on the GitHub side, gh gives the agent gh pr create.\nThe takeaway: the same open-a-PR habit, regardless of host.`,
+      'Git worktrees': `This is for anyone used to stashing changes to switch branches.\nA worktree is a separate working directory with its own branch that shares the repo history.\nSo two sessions or subagents edit in parallel, without touching each other's files.\n.worktreeinclude copies gitignored local files like .env into each new worktree, so a fresh session is runnable.\nAnd for the monorepo: per-directory CLAUDE.md, and start Claude in the package you're touching, so it loads that package's instructions.`,
+      'Team agents': `This is how a team of agents divides labour.\nA lead session coordinates, while teammates run as separate Claude Code instances, each with its own context.\nThey message each other directly through the mailbox, rather than via the lead.\nThere's a shared task list with dependency- and file-locked claiming — so a blocked task stays unclaimable, and two teammates never grab the same work.\nAnd Managed Agents keep tool execution and repositories inside your boundary.\nWe hit this exact pattern building this deck.`,
+      'Workflows': `This is the step up from agent teams.\nInstead of orchestrating turn by turn, Claude writes a JavaScript script that drives the agents.\nThe loop and intermediate results live in script variables — only the final answer returns to your context.\nThe scale: dozens of agents per run, capped at 1,000 total.\nThat's why this fits a 500-file migration or a codebase-wide auth audit — not a single chat.\nThe on-ramp is /deep-research, or the ultracode keyword.`,
+      'Superpowers x workflows': `Here's the obvious objection: a skill keeps one task honest — but how do you hold brainstorm-before-code and red-green-refactor TDD across a 500-file migration?\nThe workflow script holds the loop and phases, while each skill gates its stage.\nThe discipline lives in the orchestration, not your memory.\nOne caveat: issue #429 is open because superpowers has no native Agent Teams support yet.\nThat's why on this deck the lead runs every skill, while teammates implement and reviewers verify.`,
+      'In the wild': `Let's kill the assumption that Claude Code is only for greenfield JavaScript demos.\nThese are production teams at scale — Anthropic's Inference team has Claude write the test in the codebase's own language, right down to Rust.\nSo a .NET shop should expect the same on C#.\nThe number: CodeRabbit's 2 million PRs a week — where the plan agreed up front becomes the quality gate before any code.\nAnd that planning-as-a-gate habit is what we carry into our own workflow next.`,
+      'End to end': `Let's slow down and flip from features to story.\nEvery tool we just covered actually built the deck on screen.\nThe next few slides walk that real pipeline.\nAnd they end on the agent-teams setup that split research, design, and QA across separate Claude Code teammates.`,
+      'E2E setup': `This deck is the worked example.\nA team of Claude Code instances built the first cut — one as lead, coordinating teammates in parallel.\nThen the lead refined it from there.\nAnd one standing rule survived the whole build: render every slide in a real Chrome or Edge window, and check every cited source live before each push.`,
+      'E2E execution': `This is the payoff: the deck on screen was built with the loop it shows.\nLeft to right, here's the parallel seam — Researcher, Designer, and Frontend ran at once off one spec. Exactly what agent teams are for.\nAnd the verify gate before every push: every slide opened in the browser, the console read for errors — none allowed through.`,
+    };
+
+    const stripNum = (s) => (s || '').replace(/^\s*\d+\s*/, '').trim();
+    const deck = document.querySelector('deck-stage');
+    if (!deck) return;
+
+    const sectionCount = () => deck.querySelectorAll(':scope > section').length;
+    const activeSlide = () =>
+      deck.querySelector('section[data-deck-active]') ||
+      deck.querySelector('section');
+
+    // Self-contained document for the popup. Note: it may contain </style>,
+    // </body> etc. safely — inside a <script> the HTML parser only stops at the
+    // literal </script, which never appears here. Fonts load from Google Fonts
+    // when online and fall back to system-ui offline.
+    const DOC = `<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>Presenter notes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=JetBrains+Mono&display=swap">
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: #303030; color: #FFFFFF;
+    font-family: "Nunito", system-ui, sans-serif;
+    display: flex; flex-direction: column;
+    padding: 48px 52px 40px;
+  }
+  #pn-head {
+    font-weight: 700; font-size: 20px;
+    letter-spacing: .14em; text-transform: uppercase;
+    color: #8ACFF5; margin: 0 0 22px;
+    padding-bottom: 16px; position: relative; flex: none;
+  }
+  #pn-head::after {
+    content: ''; position: absolute; left: 0; bottom: 0;
+    width: 64px; height: 3px; border-radius: 2px; background: #1B9CF8;
+  }
+  #pn-body {
+    font-weight: 400; font-size: 26px; line-height: 1.42;
+    color: #FFFFFF; text-wrap: pretty; white-space: pre-line;
+    overflow-y: auto; min-height: 0; flex: 1 1 auto;
+  }
+  #pn-body.is-empty { color: rgba(255,255,255,.5); font-style: italic; }
+  #pn-src {
+    margin-top: 28px; padding-top: 22px; flex: none;
+    border-top: 1px solid rgba(255,255,255,.16);
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 16px; line-height: 1.5; color: rgba(255,255,255,.6);
+  }
+  #pn-src a {
+    color: #8ACFF5; text-decoration: none;
+    border-bottom: 1px solid rgba(138,207,245,.3);
+  }
+</style></head><body>
+  <div id="pn-head"></div>
+  <div id="pn-body"></div>
+  <div id="pn-src"></div>
+</body></html>`;
+
+    let notesWin = null;
+
+    const pushNotes = (slide, info) => {
+      if (!notesWin || notesWin.closed || !slide) return;
+      const doc = notesWin.document;
+      const head = doc.getElementById('pn-head');
+      const body = doc.getElementById('pn-body');
+      const src = doc.getElementById('pn-src');
+      if (!head || !body || !src) return; // popup not ready / was reloaded
+
+      const raw = slide.getAttribute('data-screen-label') || '';
+      const m = raw.match(/^\s*(\d+)\s*(.*)$/);
+      const num = m ? m[1] : '';
+      const name = (m ? m[2] : raw).trim();
+      const total = (info && info.total) || sectionCount();
+      head.textContent =
+        (num ? num + ' / ' + total + ' · ' : '') + (name || 'Slide');
+
+      const note = NOTES[stripNum(raw)];
+      body.textContent = note || 'No notes for this slide.';
+      body.classList.toggle('is-empty', !note);
+
+      const foot = slide.querySelector('footer.src');
+      src.innerHTML = foot ? foot.innerHTML : '';
+      src.style.display = foot ? '' : 'none';
+
+      doc.title = (num ? num + ' · ' : '') + (name || 'Presenter notes');
+    };
+
+    const openWin = () => {
+      notesWin = window.open('', 'deck-presenter-notes', 'width=720,height=900');
+      if (!notesWin) { console.warn('[deck] presenter-notes popup was blocked'); return; }
+      notesWin.document.open();
+      notesWin.document.write(DOC);
+      notesWin.document.close();
+      pushNotes(activeSlide());
+      // Hand keyboard focus back to the deck so ← / → keep driving the slides.
+      try { window.focus(); } catch (e) {}
+    };
+
+    // Track the deck live as the presenter navigates the (shared) deck window.
+    deck.addEventListener('slidechange', (e) => pushNotes(e.detail.slide, e.detail));
+
+    window.addEventListener('keydown', (e) => {
+      const t = e.target;
+      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key !== 'n' && e.key !== 'N') return;
+      e.preventDefault();
+      if (notesWin && !notesWin.closed) { notesWin.close(); notesWin = null; }
+      else openWin();
+    });
+
+    // Don't orphan the popup when the deck tab is closed or reloaded.
+    const closeNotes = () => {
+      try { if (notesWin && !notesWin.closed) notesWin.close(); } catch (e) {}
+    };
+    window.addEventListener('pagehide', closeNotes);
+    window.addEventListener('beforeunload', closeNotes);
+  })();
+
   /* ═══════════════════════════════════════════════════════════════
      PRESENTATION CHROME — context meter · progress + chapters · help
      All page-level (outside the scaled deck canvas) and print-hidden.
@@ -3262,6 +3364,7 @@
           '<dt><kbd>R</kbd></dt><dd>Reset to the start</dd>' +
           '<dt><kbd>F</kbd></dt><dd>Toggle fullscreen</dd>' +
           '<dt><kbd>L</kbd></dt><dd>Hide / show the slide list</dd>' +
+          '<dt><kbd>N</kbd></dt><dd>Open / close presenter-notes window</dd>' +
           '<dt><kbd>?</kbd></dt><dd>Show / hide this help</dd>' +
           '<dt><kbd>Esc</kbd></dt><dd>Close help · exit fullscreen</dd>' +
         '</dl>' +
