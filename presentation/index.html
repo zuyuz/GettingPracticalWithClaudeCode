@@ -1337,6 +1337,82 @@
       clip-path: none !important;
     }
     :host .m-line > span { transform: none !important; }
+
+    /* ── Slide 12 Production skill — pg-flow polish ── */
+
+    /* Step 03 "Review" hero: when active, ring the step label in blue */
+    .slide .pg-flow .step.is-review.on .lbl {
+      position: relative;
+    }
+    .slide .pg-flow .step.is-review.on .lbl::after {
+      content: "";
+      position: absolute;
+      inset: -4px -8px;
+      border-radius: 6px;
+      box-shadow: 0 0 0 2px var(--ds-blue);
+      pointer-events: none;
+    }
+
+    /* Review hero card: faint blue-tinted surface to signal "gate" */
+    .slide .pg-flow .flow-card--review-hero {
+      background: rgba(27, 156, 248, 0.06);
+      border-color: rgba(27, 156, 248, 0.28);
+      border-width: 1.5px;
+      position: relative;
+      gap: 14px;
+    }
+
+    /* Pause icon: two ink vertical bars rendered in pure CSS (no emoji) */
+    .slide .pg-flow .pause-icon {
+      display: inline-block;
+      width: 16px;
+      height: 20px;
+      vertical-align: middle;
+      margin-right: 10px;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .slide .pg-flow .pause-icon::before,
+    .slide .pg-flow .pause-icon::after {
+      content: "";
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 5px;
+      border-radius: 3px;
+      background: var(--ds-ink);
+    }
+    .slide .pg-flow .pause-icon::before { left: 0; }
+    .slide .pg-flow .pause-icon::after  { right: 0; }
+
+    /* Pause cmd line: ink color (not blue-electric) to feel like a halt */
+    .slide .pg-flow .flow-cmd--pause {
+      color: var(--ds-ink);
+      display: flex;
+      align-items: center;
+    }
+
+    /* "AWAITING HUMAN" badge — all-caps eyebrow chip, ink on mist */
+    .slide .pg-flow .review-gate-badge {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      font-family: var(--ds-font-sans);
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ds-ink);
+      background: var(--ds-mist);
+      border: 1px solid var(--ds-line);
+      border-radius: 8px;
+      padding: 7px 14px;
+    }
+
+    /* Review subline: slightly reduced to keep card height consistent */
+    .slide .pg-flow .review-subline {
+      font-size: 22px;
+      line-height: 1.4;
+    }
   </style>
 </head>
 <body>
@@ -1424,8 +1500,8 @@
         <ul class="bullets m-rise" data-stagger>
           <li>Five levels — <code>low · medium · high · xhigh · max</code>; <b>high</b> is the Opus 4.8 default everywhere, Claude Code included</li>
           <li>Start at <code>xhigh</code> for coding &amp; agentic work; drop to <code>medium</code>/<code>low</code> only when evals show quality holds</li>
-          <li>Reach for <code>max</code> on the hardest problems — a concurrency bug, a refactor, an EF Core migration</li>
-          <li><b>ultracode</b> is a Claude Code menu mode, not an API level — it pins <code>xhigh</code> and triggers a dynamic workflow when warranted</li>
+          <li><b>Plan rich, execute lean</b> — <code>opusplan</code> reasons with Opus in plan mode, then switches to Sonnet for the build; spend <code>max</code>/<code>xhigh</code> on the thinking, step down for the obvious edits</li>
+          <li><b>Effort vs ultracode</b> — effort is one mind thinking deeper; <b>ultracode</b> pairs <code>xhigh</code> with auto-orchestrated workflows across many agents</li>
         </ul>
       </div>
       <div class="col-visual m-from-right">
@@ -1460,7 +1536,7 @@
     <span class="wm m-fade-in m-quick">devspiration</span>
     <span class="pg m-fade-in m-quick">03 / 29</span>
     <footer class="src m-fade-in m-quick">
-      Sources: <a href="https://platform.claude.com/docs/en/build-with-claude/effort" target="_blank" rel="noopener">platform.claude.com/docs · effort</a> · <a href="https://platform.claude.com/docs/en/about-claude/models/whats-new-claude-4-8" target="_blank" rel="noopener">docs · what's new in Opus 4.8</a>
+      Sources: <a href="https://platform.claude.com/docs/en/build-with-claude/effort" target="_blank" rel="noopener">platform.claude.com/docs · effort</a> · <a href="https://code.claude.com/docs/en/model-config" target="_blank" rel="noopener">code.claude.com/docs · model-config</a>
     </footer>
   </section>
 
@@ -1586,10 +1662,9 @@
         <div class="eyebrow m-rise-sm">Slash commands</div>
         <h2 class="m-rise">A handful of commands you'll reach for daily.</h2>
         <ul class="bullets m-rise" data-stagger>
-          <li><b><code>/ide</code></b> — pair the CLI with VS Code or a JetBrains IDE like Rider or IntelliJ: diffs open in the editor, and its diagnostics + current selection flow back to Claude</li>
-          <li><b><code>/goal</code></b> — set a verifiable finish line; Claude works across turns until a checker confirms it's met</li>
-          <li><b><code>/context</code></b> — see what's filling the window before it gets tight</li>
-          <li><b><code>/rewind</code></b> — step back to an earlier checkpoint when a path goes wrong</li>
+          <li><b><code>/ide</code></b> — pair the CLI with VS Code or a JetBrains IDE (Rider, IntelliJ): your open file and selection become context, diffs open in the editor, and diagnostics flow back to Claude</li>
+          <li><b><code>/compact</code></b> — summarize the conversation to reclaim the context window without losing the thread; <code>/clear</code> wipes it instead</li>
+          <li><b><code>/rewind</code></b> — Claude checkpoints your code before each edit, one per prompt; press <b>Esc Esc</b> to restore code, conversation, or both</li>
         </ul>
       </div>
       <div class="col-visual m-from-right">
@@ -1601,13 +1676,12 @@
           </div>
           <div class="pg-body">
             <div class="cmd-menu" data-cmd-list>
-              <div class="cmd-row on"><span class="k">/ide</span><span class="d">Connect VS Code · Rider · IntelliJ</span></div>
-              <div class="cmd-row"><span class="k">/init</span><span class="d">Scaffold CLAUDE.md for this repo</span></div>
-              <div class="cmd-row"><span class="k">/memory</span><span class="d">View &amp; edit what Claude remembers</span></div>
+              <div class="cmd-row on"><span class="k">/ide</span><span class="d">Shared context · inline diffs · diagnostics</span></div>
               <div class="cmd-row"><span class="k">/mcp</span><span class="d">Manage MCP servers &amp; connections</span></div>
               <div class="cmd-row"><span class="k">/context</span><span class="d">Token usage for this session</span></div>
+              <div class="cmd-row"><span class="k">/compact</span><span class="d">Summarize to reclaim the window</span></div>
+              <div class="cmd-row"><span class="k">/rewind</span><span class="d">Restore a checkpoint — Esc Esc</span></div>
               <div class="cmd-row"><span class="k">/goal</span><span class="d">Set a finish line, then run to it</span></div>
-              <div class="cmd-row"><span class="k">/rewind</span><span class="d">Jump back to a checkpoint</span></div>
             </div>
           </div>
         </div>
@@ -1619,7 +1693,7 @@
     <span class="wm m-fade-in m-quick">devspiration</span>
     <span class="pg m-fade-in m-quick">06 / 29</span>
     <footer class="src m-fade-in m-quick">
-      Source: <a href="https://code.claude.com/docs/en/commands" target="_blank" rel="noopener">code.claude.com/docs/en/commands</a>
+      Sources: <a href="https://code.claude.com/docs/en/commands" target="_blank" rel="noopener">code.claude.com/docs · commands</a> · <a href="https://code.claude.com/docs/en/checkpointing" target="_blank" rel="noopener">checkpointing</a> · <a href="https://code.claude.com/docs/en/vs-code" target="_blank" rel="noopener">vs-code</a>
     </footer>
   </section>
 
@@ -1895,6 +1969,86 @@
     <footer class="src m-fade-in m-quick">
       Sources: <a href="https://code.claude.com/docs/en/skills" target="_blank" rel="noopener">code.claude.com/docs/en/skills</a> · <a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices" target="_blank" rel="noopener">docs · authoring best practices</a> · <a href="https://claude.com/plugins/skill-creator" target="_blank" rel="noopener">plugins · skill-creator</a>
     </footer>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 12b — Real production skill (release-notes-add)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide s-content-code" data-screen-label="12 Production skill">
+    <div class="stage-pad">
+      <div class="col-text m-from-left">
+        <div class="eyebrow">A skill in production</div>
+        <h2>One skill we run every week before release.</h2>
+        <ul class="bullets" data-stagger>
+          <li><code>release-notes-add</code> takes a version and a since-date, then reads the git log for what shipped</li>
+          <li>It drafts the release notes in HTML, then <b>pauses for a human to review</b> before it writes a single file</li>
+          <li>On approval it writes the C# EF Core seed, the Markdown page, and the migration, proves the build, and opens the PR</li>
+          <li>This is what a real skill looks like — a long, exact procedure you trust to run the same way every time</li>
+        </ul>
+      </div>
+      <div class="pg-flow col-code m-from-right">
+        <div class="steps">
+          <div class="step"><span class="num">01</span><span class="lbl">Read</span><span class="bar"></span></div>
+          <div class="step"><span class="num">02</span><span class="lbl">Draft</span><span class="bar"></span></div>
+          <div class="step is-review"><span class="num">03</span><span class="lbl">Review</span><span class="bar"></span></div>
+          <div class="step"><span class="num">04</span><span class="lbl">Write</span><span class="bar"></span></div>
+          <div class="step"><span class="num">05</span><span class="lbl">Migrate</span><span class="bar"></span></div>
+          <div class="step"><span class="num">06</span><span class="lbl">Ship</span><span class="bar"></span></div>
+        </div>
+        <div class="stage">
+          <div class="panel" data-caption="Start from the truth — what actually shipped.">
+            <div class="flow-card">
+              <div class="flow-cmd">git log --since &lt;last release&gt;</div>
+              <p>Read every change since the last release date — the raw material for the notes.</p>
+            </div>
+          </div>
+          <div class="panel" data-caption="Draft, don't publish.">
+            <div class="flow-card">
+              <div class="flow-cmd">drafts release-notes HTML</div>
+              <p>Compose a grouped <b>HTML</b> block — feature cards with NEW / IMPROVED / FIXED badges, ready to read.</p>
+            </div>
+          </div>
+          <div class="panel" data-caption="The human gate — nothing is written yet.">
+            <div class="flow-card flow-card--review-hero">
+              <div class="flow-cmd flow-cmd--pause"><span class="pause-icon" aria-hidden="true"></span>pause for review</div>
+              <p class="review-subline"><b>Stops and waits.</b> A person reads the draft and edits the wording before any file is touched.</p>
+              <div class="review-gate-badge">AWAITING HUMAN</div>
+            </div>
+          </div>
+          <div class="panel" data-caption="One approval becomes many correct files.">
+            <div class="flow-card">
+              <div class="flow-cmd">seed.cs &middot; page.md &middot; .order</div>
+              <p>Writes the C# <b>EF Core</b> seed, the Markdown page, and the overview + <code>.order</code> updates in one pass.</p>
+            </div>
+          </div>
+          <div class="panel" data-caption="Prove it before it leaves your machine.">
+            <div class="flow-card">
+              <div class="flow-cmd">dotnet ef migrations add &middot; test</div>
+              <p>Scaffolds the EF migration (one <code>InsertData</code>), then runs the <b>build and tests</b> green.</p>
+            </div>
+          </div>
+          <div class="panel" data-caption="Ship it the same way every week.">
+            <div class="flow-card">
+              <div class="flow-cmd">open PR &middot; Azure DevOps</div>
+              <p>Opens the pull request with the notes and the diff — <b>once a week, before each release</b>.</p>
+            </div>
+          </div>
+        </div>
+        <div class="nav">
+          <span class="caption"></span>
+          <div class="ctl">
+            <button class="prev" type="button">← Prev</button>
+            <button class="next primary" type="button">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="prop prop-tr m-rise-prop">
+      <img src="../devspiration-design-system/project/assets/brand-objects/3d-square-glass.png" alt="">
+    </div>
+    <span class="wm m-fade-in m-quick">devspiration</span>
+    <span class="pg m-fade-in m-quick">12 / 29</span>
+    <footer class="src m-fade-in m-quick">Source: internal · release-notes-add skill</footer>
   </section>
 
   <!-- ════════════════════════════════════════════════════════════
@@ -2669,8 +2823,8 @@
       <div class="pg-flow col-code m-from-right" data-comment-anchor="c2abf2e6a7-div">
         <div class="steps">
           <div class="step"><span class="num">01</span><span class="lbl">Brainstorm</span><span class="bar"></span></div>
-          <div class="step"><span class="num">02</span><span class="lbl">Plan</span><span class="bar"></span></div>
-          <div class="step"><span class="num">03</span><span class="lbl">Brand</span><span class="bar"></span></div>
+          <div class="step"><span class="num">02</span><span class="lbl">Brand</span><span class="bar"></span></div>
+          <div class="step"><span class="num">03</span><span class="lbl">Plan</span><span class="bar"></span></div>
           <div class="step"><span class="num">04</span><span class="lbl">Build</span><span class="bar"></span></div>
           <div class="step"><span class="num">05</span><span class="lbl">Verify</span><span class="bar"></span></div>
           <div class="step"><span class="num">06</span><span class="lbl">Ship</span><span class="bar"></span></div>
@@ -2682,16 +2836,16 @@
               <p>One question at a time, then 2–3 approaches with a recommendation → <b>spec.md</b> committed.</p>
             </div>
           </div>
-          <div class="panel" data-caption="Every step explicit; no TBD.">
-            <div class="flow-card">
-              <div class="flow-cmd">/superpowers:writing-plans</div>
-              <p>File map first, then a numbered checklist — every step explicit → <b>plan.md</b>.</p>
-            </div>
-          </div>
           <div class="panel" data-caption="The brand is the source of truth.">
             <div class="flow-card">
               <div class="flow-cmd">Claude Design · brand kit</div>
               <p>The Devspiration design system loads via Claude Design — tokens, 3D props, and motion the build must honor.</p>
+            </div>
+          </div>
+          <div class="panel" data-caption="Every step explicit; no TBD.">
+            <div class="flow-card">
+              <div class="flow-cmd">/superpowers:writing-plans</div>
+              <p>File map first, then a numbered checklist — every step explicit → <b>plan.md</b>.</p>
             </div>
           </div>
           <div class="panel" data-caption="Teammates claim tasks and SendMessage each other.">
@@ -3114,16 +3268,17 @@
     const NOTES = {
       'Title': `This is a working tour, not a feature pitch.\nClaude Code is the agentic coding tool that runs in your terminal.\nFour stops — foundations, workflow tooling, orchestration, and one real end-to-end build to close.`,
       'What is Claude Code': `This is one engine, not four tools.\nA single Claude Code that reads your codebase, edits files, and runs the commands itself — across many files.\nIt's in the terminal, your IDEs, Desktop, and the browser, so you learn it once.\nAnd through MCP it connects to external tools and data over one open standard.`,
-      'Effort levels': `On Opus 4.8, high is the default everywhere.\nBut the docs say to start at xhigh for coding and agentic work.\nSo raise effort before you assume the model is underpowered.\nStep down only when your own evals show a lower level holds.\nAnd ultracode is the Claude Code menu mode that runs xhigh with multi-agent permission — not a separate API level.`,
+      'Effort levels': `On Opus 4.8, high is the default everywhere.\nThe docs say start at xhigh for coding and agentic work, so raise effort before you assume the model is underpowered.\nThe real move is plan rich, execute lean — opusplan reasons with Opus while you plan, then switches to Sonnet to build.\nAnd keep effort and ultracode straight: effort is one mind thinking deeper, ultracode pairs xhigh with workflows that fan the job out across many agents.`,
       'CLAUDE.md': `This is the fix for "Claude forgot our conventions again."\nRun /init once and it drafts CLAUDE.md from your project — so you refine rather than author.\nKeep it to the non-obvious — the build gotcha, the convention that differs from the default.\nWrapping a line in IMPORTANT or YOU MUST improves adherence.\nAnd check it into git, so the whole team contributes.`,
       'Auto memory': `This is the fix for "Claude forgot what I told it last week."\nAuto memory keeps a per-repo directory.\nIts MEMORY.md index loads at the start of every session — carrying build commands, gotchas, and preferences across.\nThe number that matters: only the first 200 lines load automatically, deeper topics on demand — so keep the index lean.\nYou drive it by asking Claude to remember, and audit or toggle it with /memory.`,
-      'Useful commands': `These are the day-to-day commands you'll actually type.\nFor this Rider and IntelliJ room, /ide manages IDE integrations and shows their status.\nAnd the one worth highlighting — /goal sets a condition, and Claude keeps working across turns until it's met, instead of stopping after a single reply.`,
+      'Useful commands': `These are the commands you'll actually type day to day.\nFor this Rider and IntelliJ room, /ide is the big one — your open file and selection become context, diffs open right in the editor, and the IDE's diagnostics flow back to Claude.\nWhen the window fills up, /compact summarizes the thread to reclaim room, where /clear would throw the conversation away.\nAnd /rewind is your safety net: Claude snapshots your code before every edit, one checkpoint per prompt, so Esc Esc rolls code, conversation, or both back.`,
       'Section divider': `Now we pivot from setup to how the team actually works.\nThe superpowers plugin ships skills that force the rituals teams drop under deadline pressure.\nThe next four slides walk one skill each — brainstorming, writing-plans, TDD, and a verification gate.\nThe discipline lives in the tooling, not in willpower.`,
       'Brainstorming': `This is the design discipline most teams skip.\nThe skill writes no code and scaffolds nothing until you approve a design — then it commits that design doc to git.\nIt asks one question at a time, and always returns 2–3 approaches with a recommendation — so the trade-offs are on the table first.\nAnd that committed design is what writing-plans consumes next.`,
       'Writing plans': `This is the discipline that makes a plan executable by a fresh agent with almost no context.\nIt bans "TBD" and demands the actual file, command, and code block in every step.\nThe rhythm is 2–5 minutes per step — write the failing test, run it red, write the code, run it green, commit.\nIt's the same red-green-commit loop our dotnet test work already runs on.`,
       'TDD': `One rule, enforced before any agent writes code: no production code without a failing test first.\nThe step people skip is watching it go red — because a test that passes on arrival proves nothing.\nFor our stack, the same loop carries up into Aspire's testing host.\nThere, DistributedApplicationTestingBuilder spins up the AppHost and its resources for closed-box integration testing.`,
       'Verification': `This is the gate in front of every other skill: no completion claim without fresh evidence.\nClaude can't say tests pass unless it ran the proving command this turn and read the exit code.\nFor us, that's dotnet test — not a clean Roslyn pass.\nSkipping that step is lying, not verifying.\nAnd /goal turns the condition into a spec a separate small, fast model checks after every turn, before the session can stop.`,
       'Writing skills': `Here's the moment: a CLAUDE.md section has quietly become a procedure, or you keep re-pasting the same checklist.\nThat's the signal to pull it into a folder with a SKILL.md.\nThe description field is what Claude reads to decide when to fire it — so write what it does, plus when to use it.\nAnd /skill-creator scaffolds and benchmarks it.\nKeep SKILL.md under about 500 lines, and push the rest into reference files loaded on demand.`,
+      'Production skill': `Skill anatomy is one thing — here's a real one we run every week.\nrelease-notes-add takes a version and a since-date and reads the git log for what shipped.\nThe part that makes it trustworthy is the pause: it drafts the notes in HTML and stops for a human to review before it writes anything.\nOnce approved it does the exact, boring work — the EF Core seed, the Markdown page, the migration — proves the build and tests, and opens the PR.\nThat's the lesson: a skill is worth writing when the procedure is long, exact, and you want it run the same way every single time.`,
       'Visual planning': `Here's a real problem: when brainstorming hits a genuinely visual question, a paragraph of text is a poor way to choose between two layouts.\nBut a question about a UI isn't automatically visual.\nOpen the browser only when the user would understand it better by seeing it than reading it.\nAnd that bridges to the wider pattern — rendering plans and reports as HTML.`,
       'Effectiveness of HTML': `Here's a one-line habit: end a prompt for a plan, a PR review, or a flag editor with "make an HTML file."\nThen Claude renders a real table or SVG instead of an ASCII diagram in Markdown.\nAnd these artifacts are two-way — a flag editor with sliders plus a "copy as JSON" button exports the changed keys straight back into your code.`,
       'Ways to build UI': `This is a decision tree, not a feature tour — the slide gives you three routes, by how much brand you already own.\nWith nothing yet, Claude Design — an Anthropic Labs research preview — reads your codebase and assets and builds a reusable system you refine on a canvas.\nIn the middle, the frontend-design skill builds distinctive, production-grade UI and dodges generic AI-slop defaults.\nAnd if you already have tokens and a motion system, you point Claude at what exists.\nThat's how these slides were built — against our own design system.`,
